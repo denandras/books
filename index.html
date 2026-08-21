@@ -1934,7 +1934,7 @@
       </div>
       <div class="editorial-index">
         <span id="palette-label">Ultramarine · bone · copper</span>
-        <button class="admin-btn" id="admin-button" type="button" hidden>Admin</button>
+        <button class="admin-btn" id="admin-button" type="button" hidden>Login</button>
       </div>
     </header>
 
@@ -3287,7 +3287,7 @@
     const CONTENT_MARGIN_X = 54;
     const CONTENT_MAX_WIDTH = 512 - CONTENT_MARGIN_X * 2 - 10;
     const CONTENT_TOP = 132;
-    const CONTENT_BOTTOM = 716;
+    const CONTENT_BOTTOM = 690;
 
     function extractContentBlocks(html) {
       const container = document.createElement("div");
@@ -3501,14 +3501,22 @@
       ctx.letterSpacing = "2.3px";
       ctx.fillText((book.author || book.discipline || "").toUpperCase(), 54, 174);
 
-      ctx.font = `400 ${book.title.length > 14 ? 42 : 54}px "Iowan Old Style", Baskerville, Georgia, serif`;
+      // Scale font size down for long titles so they don't overflow
+      const titleLen = book.title.length;
+      const titleFont = titleLen > 40 ? 28 : titleLen > 25 ? 36 : titleLen > 14 ? 42 : 54;
+      ctx.font = `400 ${titleFont}px "Iowan Old Style", Baskerville, Georgia, serif`;
       ctx.letterSpacing = "0px";
-      drawWrappedCanvasText(ctx, book.title, 52, 246, 18, 54, 2);
+      const titleLineHeight = Math.round(titleFont * 1.12);
+      const maxTitleLines = titleLen > 40 ? 4 : titleLen > 25 ? 3 : 2;
+      drawWrappedCanvasText(ctx, book.title, 52, 246, 24, titleLineHeight, maxTitleLines);
 
+      // Position author below the title, adapt to title height
+      const titleEndY = 246 + titleLineHeight * maxTitleLines;
+      const authorY = Math.min(titleEndY + 30, 480);
       ctx.globalAlpha = 0.62;
       ctx.fillStyle = accent;
       ctx.font = '400 20px "Iowan Old Style", Baskerville, Georgia, serif';
-      ctx.fillText(book.author || "", 54, 452);
+      ctx.fillText(book.author || "", 54, authorY);
 
       ctx.fillStyle = ink;
       ctx.font = '500 10px Inter, "Helvetica Neue", Arial, sans-serif';
@@ -6299,10 +6307,28 @@
     }
 
     function onKeyDown(event) {
+      // Escape: if book is open (reading), close the book first, then close detail
       if (event.key === "Escape" && mode === "detail") {
         event.preventDefault();
-        closeDetail();
+        if (readingOpen) {
+          setReadingOpen(false);
+        } else {
+          closeDetail();
+        }
         return;
+      }
+
+      // Enter: if in hero mode, open the selected book. If in detail but book not open, open it.
+      if ((event.key === "Enter" || event.key === " ") && !event.metaKey && !event.ctrlKey && !event.altKey) {
+        if (mode === "hero") {
+          event.preventDefault();
+          openDetail(inspectButton);
+          return;
+        } else if (mode === "detail" && !readingOpen) {
+          event.preventDefault();
+          setReadingOpen(true);
+          return;
+        }
       }
 
       if (
@@ -6341,9 +6367,6 @@
       } else if (event.key === "ArrowRight") {
         event.preventDefault();
         navigate(1, document.activeElement);
-      } else if ((event.key === "Enter" || event.key === " ") && document.activeElement === inspectButton) {
-        event.preventDefault();
-        openDetail(inspectButton);
       }
     }
 
@@ -6592,7 +6615,15 @@
       nextButton.addEventListener("click", () => navigate(1, nextButton));
       inspectButton.addEventListener("click", () => openDetail(inspectButton));
       closeButton.addEventListener("click", closeDetail);
-      toggleBookButton.addEventListener("click", () => setReadingOpen(!readingOpen));
+      toggleBookButton.addEventListener("click", () => {
+        if (readingOpen) {
+          // When book is open and "Close book" is clicked, close the book AND return to shelf
+          setReadingOpen(false);
+          closeDetail();
+        } else {
+          setReadingOpen(true);
+        }
+      });
       previousPageButton.addEventListener("click", () => turnPage(-1));
       nextPageButton.addEventListener("click", () => turnPage(1));
       resetButton.addEventListener("click", resetInspectionView);
