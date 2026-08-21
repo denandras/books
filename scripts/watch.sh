@@ -21,15 +21,14 @@ run_cycle() {
 
     log "Syncing to S3..."
     python3 "$SCRIPT_DIR/sync_s3.py" \
-        --local "$REPO_DIR" \
-        --bucket tb1/books || log "ERROR: s3 sync failed"
+        --local "$REPO_DIR" || log "ERROR: s3 sync failed"
 
     log "Git commit + push..."
     cd "$REPO_DIR"
-    git add books.json covers/ index.html app.js styles.css 2>/dev/null || true
+    git add books.json covers/ index.html assets/ 2>/dev/null || true
     if ! git diff --cached --quiet 2>/dev/null; then
         git commit -m "auto: book shelf update $(date '+%Y-%m-%d %H:%M')" 2>/dev/null || true
-        git push origin main 2>/dev/null || log "WARN: git push failed (may need auth)"
+        git push origin master 2>/dev/null || log "WARN: git push failed (may need auth)"
         log "Pushed to GitHub"
     else
         log "No changes to commit"
