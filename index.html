@@ -6,9 +6,9 @@
   <meta name="theme-color" content="#171a24">
   <meta
     name="description"
-    content="Working Volumes is an original interactive Three.js library of seven tactile field guides for contemporary creative tools."
+    content="A personal 3D book shelf by András Denes."
   >
-  <title>Working Volumes — Seven Tools for Making</title>
+  <title>Book Shelf — András Denes</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
@@ -1710,6 +1710,79 @@
         transition: none;
       }
     }
+
+    /* Login overlay */
+    .login-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(16, 19, 27, 0.92);
+      backdrop-filter: blur(8px);
+    }
+
+    .login-card {
+      width: min(320px, 86vw);
+      padding: 32px 28px;
+      background: var(--paper);
+      border: 1px solid var(--rule);
+      border-radius: 14px;
+      text-align: center;
+    }
+
+    .login-card h2 {
+      margin: 0 0 20px;
+      font-family: var(--mono);
+      font-size: 1.1rem;
+      font-weight: 500;
+      color: var(--ink);
+      letter-spacing: 0.02em;
+    }
+
+    .login-card input {
+      width: 100%;
+      padding: 10px 14px;
+      margin-bottom: 14px;
+      border: 1px solid var(--rule);
+      border-radius: 8px;
+      background: var(--paper-deep);
+      color: var(--ink);
+      font-family: var(--mono);
+      font-size: 0.9rem;
+      outline: none;
+      transition: border-color 200ms ease;
+    }
+
+    .login-card input:focus {
+      border-color: var(--ink);
+    }
+
+    .login-card button {
+      width: 100%;
+      padding: 10px;
+      border: none;
+      border-radius: 8px;
+      background: var(--ink);
+      color: var(--paper);
+      font-family: var(--mono);
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: opacity 200ms ease;
+    }
+
+    .login-card button:hover {
+      opacity: 0.88;
+    }
+
+    .login-error {
+      margin: 12px 0 0;
+      font-size: 0.8rem;
+      color: #e88;
+      font-family: var(--mono);
+    }
   </style>
   <script type="importmap">
     {
@@ -1721,6 +1794,18 @@
   </script>
 </head>
 <body>
+  <!-- Login overlay -->
+  <div class="login-overlay" id="login-overlay" hidden>
+    <div class="login-card">
+      <h2>Admin Login</h2>
+      <form id="login-form">
+        <input type="password" id="login-password" placeholder="Password" autocomplete="current-password">
+        <button type="submit">Enter</button>
+      </form>
+      <p class="login-error" id="login-error" hidden>Incorrect password.</p>
+    </div>
+  </div>
+
   <main class="experience" id="experience">
     <div class="scene-shell">
       <canvas id="scene" aria-hidden="true"></canvas>
@@ -1728,11 +1813,10 @@
 
     <header class="editorial-header" aria-label="Collection">
       <div class="editorial-identity">
-        <strong>Working Volumes</strong>
-        <span>Seven field guides for making</span>
+        <strong>Book Shelf</strong>
+        <span>András Denes · Personal library</span>
       </div>
       <div class="editorial-index">
-        <span>Edition 02 · 2026</span>
         <span id="palette-label">Ultramarine · bone · copper</span>
       </div>
     </header>
@@ -1758,31 +1842,31 @@
     </div>
 
     <div class="pointer-label" id="pointer-label" aria-hidden="true">
-      <span id="pointer-label-index">Volume 01</span>
-      <strong id="pointer-label-title">Codex</strong>
+      <span id="pointer-label-index">Book 01</span>
+      <strong id="pointer-label-title"></strong>
     </div>
 
     <section class="browse-ui" id="browse-ui" aria-label="Shelf navigation">
       <div class="selection">
-        <span class="counter" id="counter">01 / 07</span>
+        <span class="counter" id="counter">01 / 01</span>
         <div class="selection__copy">
-          <h1 class="selection__title" id="selection-title">Codex</h1>
-          <p class="selection__note" id="selection-note">Precise intent, translated into tested systems.</p>
+          <h1 class="selection__title" id="selection-title"></h1>
+          <p class="selection__note" id="selection-note"></p>
         </div>
       </div>
 
       <div class="browse-actions">
-        <button class="round-button" id="previous" type="button" aria-label="Previous volume">
+        <button class="round-button" id="previous" type="button" aria-label="Previous book">
           <svg viewBox="0 0 16 16" aria-hidden="true"><path d="m10.5 3.5-4.5 4.5 4.5 4.5"></path></svg>
         </button>
         <button class="text-button" id="inspect" type="button">Open</button>
-        <button class="round-button" id="next" type="button" aria-label="Next volume">
+        <button class="round-button" id="next" type="button" aria-label="Next book">
           <svg viewBox="0 0 16 16" aria-hidden="true"><path d="m5.5 3.5 4.5 4.5-4.5 4.5"></path></svg>
         </button>
       </div>
 
-      <nav class="index-nav" aria-label="Volume index">
-        <div class="markers" id="markers" role="tablist" aria-label="Choose a volume"></div>
+      <nav class="index-nav" aria-label="Book index">
+        <div class="markers" id="markers" role="tablist" aria-label="Choose a book"></div>
         <p class="microcopy">Wheel · arrows · select</p>
       </nav>
     </section>
@@ -1796,30 +1880,28 @@
       aria-hidden="true"
       inert
     >
-      <button class="close-button" id="close-detail" type="button" aria-label="Return volume to shelf">
+      <button class="close-button" id="close-detail" type="button" aria-label="Return book to shelf">
         <svg viewBox="0 0 16 16" aria-hidden="true"><path d="m4 4 8 8M12 4l-8 8"></path></svg>
       </button>
-      <p class="eyebrow" id="detail-eyebrow">Volume I · Agentic craft</p>
-      <h2 class="detail-title" id="detail-title">Codex</h2>
-      <p class="detail-deck" id="detail-deck">
-        A field manual for turning clear intent into working software, with verification treated as part of the craft.
-      </p>
+      <p class="eyebrow" id="detail-eyebrow"></p>
+      <h2 class="detail-title" id="detail-title"></h2>
+      <p class="detail-deck" id="detail-deck"></p>
       <dl class="meta-list">
         <div>
-          <dt>Binding</dt>
-          <dd id="detail-binding">Evergreen cloth · antique brass foil</dd>
+          <dt>Author</dt>
+          <dd id="detail-binding"></dd>
         </div>
         <div>
           <dt>Format</dt>
-          <dd id="detail-format">148 × 216 mm · imagined edition</dd>
+          <dd id="detail-format"></dd>
         </div>
         <div>
           <dt>Theme</dt>
-          <dd id="detail-theme">Intent into implementation</dd>
+          <dd id="detail-theme"></dd>
         </div>
         <div>
           <dt>Motif</dt>
-          <dd id="detail-motif">Nested brackets</dd>
+          <dd id="detail-motif"></dd>
         </div>
       </dl>
       <div class="page-navigation" role="group" aria-label="Browse sample pages">
@@ -1845,28 +1927,20 @@
 
     <div class="sr-only" id="live-region" aria-live="polite"></div>
 
-    <section class="static-fallback" id="static-fallback" aria-labelledby="fallback-title">
+    <section class="static-fallback" id="static-fallback" aria-labelledby="fallback-title" hidden>
       <div class="fallback__header">
         <div>
-          <p class="fallback__kicker">Working Volumes · Static catalog</p>
-          <h2 id="fallback-title">Seven tools for making.</h2>
+          <p class="fallback__kicker">Book Shelf · Static catalog</p>
+          <h2 id="fallback-title">Personal library</h2>
         </div>
         <p class="fallback__status" id="fallback-status">
           The complete catalog remains readable while the interactive shelf is prepared.
         </p>
       </div>
-      <div class="fallback__grid" aria-label="Seven conceptual hardcovers">
-        <article class="fallback-book" style="--book-color:#182a43;--book-foil:#c87046;--book-height:390px"><span>Volume I</span><strong>Codex</strong></article>
-        <article class="fallback-book" style="--book-color:#c24d24;--book-foil:#efc16d;--book-height:356px"><span>Volume II</span><strong>Claude Code</strong></article>
-        <article class="fallback-book" style="--book-color:#afc400;--book-foil:#171a16;--book-height:374px"><span>Volume III</span><strong>Cursor</strong></article>
-        <article class="fallback-book" style="--book-color:#1537a1;--book-foil:#dbe8f1;--book-height:404px"><span>Volume IV</span><strong>Antigravity</strong></article>
-        <article class="fallback-book" style="--book-color:#c83222;--book-foil:#efb0aa;--book-height:365px"><span>Volume V</span><strong>Figma</strong></article>
-        <article class="fallback-book" style="--book-color:#da3b2f;--book-foil:#ff8eab;--book-height:385px"><span>Volume VI</span><strong>Framer</strong></article>
-        <article class="fallback-book" style="--book-color:#78a7bd;--book-foil:#e4e7e5;--book-height:398px"><span>Volume VII</span><strong>Xcode</strong></article>
+      <div class="fallback__grid" aria-label="Book collection">
       </div>
       <div class="fallback__footer">
-        <span>All bindings, motifs, descriptions, geometry, and cover artworks are original to this conceptual study.</span>
-        <span>Product names are used editorially and remain the property of their respective owners.</span>
+        <span>3D shelf based on MengTo/complete-shelf. Book notes by András Denes.</span>
       </div>
     </section>
 
@@ -1885,28 +1959,298 @@
     import { RoundedBoxGeometry } from "three/addons/geometries/RoundedBoxGeometry.js";
     import { RectAreaLightUniformsLib } from "three/addons/lights/RectAreaLightUniformsLib.js";
 
-    // Book data removed — populate BOOKS with your own volume definitions.
-    // Each book object follows the same schema as the original complete-shelf project.
-    // See https://github.com/MengTo/complete-shelf for the original structure.
-    const BOOKS = [];
-    // Embedded cover atlas removed — provide your own atlas image or URL.
-    // Original used a base64-encoded WebP atlas. Set this to your atlas image data or URL.
-    const COVER_ATLAS_DATA = "";
-    // Embedded wood texture removed — provide your own wood texture image data or URL.
-    const WOOD_TEXTURE_DATA = "";
-    // Embedded audio removed — provide your own audio data or URLs.
-    const AUDIO_DATA = Object.freeze({});
-    // Cover crop coordinates removed — define crops for your own atlas layout.
-    const COVER_CROPS = [];
+    // ============================================================
+    // Authentication: simple admin password, never-expiring localStorage
+    // ============================================================
+    const ADMIN_PASSWORD = "denes-books-2026";
+    const AUTH_KEY = "bookshelf-auth";
+    const loginOverlay = document.querySelector("#login-overlay");
+    const loginForm = document.querySelector("#login-form");
+    const loginPassword = document.querySelector("#login-password");
+    const loginError = document.querySelector("#login-error");
+    let isAuthenticated = localStorage.getItem(AUTH_KEY) === "true";
+
+    function showLogin() {
+      loginOverlay.hidden = false;
+      loginPassword.value = "";
+      loginError.hidden = true;
+      loginPassword.focus();
+    }
+
+    function hideLogin() {
+      loginOverlay.hidden = true;
+    }
+
+    loginForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      if (loginPassword.value === ADMIN_PASSWORD) {
+        localStorage.setItem(AUTH_KEY, "true");
+        isAuthenticated = true;
+        hideLogin();
+        rebuildShelf();
+      } else {
+        loginError.hidden = false;
+        loginPassword.select();
+      }
+    });
+
+    // ============================================================
+    // Book data: fetched from books.json, mapped to engine schema
+    // ============================================================
+    let BOOKS = [];
+    let ALL_BOOKS = []; // unfiltered, kept for auth toggle
+    const textureLoader = new THREE.TextureLoader();
+
+    // Color palette — deterministic from book id hash, no red
+    const BOOK_PALETTE = [
+      { color: "#1a3a5c", foil: "#c8a96a" },
+      { color: "#2d4a3e", foil: "#d4b87a" },
+      { color: "#3a2e1c", foil: "#c8a060" },
+      { color: "#1c2e4a", foil: "#b0c4d8" },
+      { color: "#2a2a3c", foil: "#a8b0c4" },
+      { color: "#1e3a3a", foil: "#c0b870" },
+      { color: "#2c3e2d", foil: "#c4b06a" },
+      { color: "#3c2e2e", foil: "#b8a888" },
+      { color: "#1a2e3e", foil: "#8ec4d0" },
+      { color: "#2e2e3a", foil: "#a0a8c0" },
+      { color: "#3a3225", foil: "#c0a878" },
+      { color: "#2a3a3e", foil: "#88b8c4" },
+      { color: "#1e2a3a", foil: "#a4b8d4" },
+      { color: "#322e3a", foil: "#a8a0b8" },
+      { color: "#2a3c2a", foil: "#b8c878" },
     ];
+
+    const MOTIF_KEYS = ["brackets", "paths", "caret", "orbits", "modules", "frames"];
+
+    function hashString(str) {
+      let h = 0;
+      for (let i = 0; i < str.length; i++) {
+        h = ((h << 5) - h + str.charCodeAt(i)) | 0;
+      }
+      return Math.abs(h);
+    }
+
+    function toRoman(num) {
+      const vals = [1000, 900, 500, 400, 100, 90, 50, 40, 10, 9, 5, 4, 1];
+      const syms = ["M", "CM", "D", "CD", "C", "XC", "L", "XL", "X", "IX", "V", "IV", "I"];
+      let result = "";
+      for (let i = 0; i < vals.length; i++) {
+        while (num >= vals[i]) {
+          result += syms[i];
+          num -= vals[i];
+        }
+      }
+      return result;
+    }
+
+    function mapBook(raw, index) {
+      const seed = hashString(raw.id) % 1000;
+      const paletteIdx = hashString(raw.id) % BOOK_PALETTE.length;
+      const p = BOOK_PALETTE[paletteIdx];
+      const motifKey = MOTIF_KEYS[seed % MOTIF_KEYS.length];
+      const roman = toRoman(index + 1);
+      // Deterministic book dimensions
+      const baseHeight = 0.34 + (seed % 7) * 0.008;
+      const baseWidth = 0.225 + (seed % 5) * 0.006;
+      const baseDepth = 0.028 + (seed % 4) * 0.004;
+
+      return {
+        id: raw.id,
+        title: raw.title,
+        author: raw.author,
+        cover: raw.cover,
+        content: raw.content || "",
+        published: raw.published || false,
+        lent: raw.lent || false,
+        // Engine fields
+        seed: seed,
+        color: p.color,
+        foil: p.foil,
+        motifKey: motifKey,
+        motif: motifKey.charAt(0).toUpperCase() + motifKey.slice(1),
+        roman: roman,
+        discipline: raw.author,
+        note: "",
+        deck: raw.content ? raw.content.substring(0, 200) : "",
+        binding: "Cloth · " + p.foil,
+        format: "148 × 216 mm",
+        theme: raw.author,
+        chapters: ["Notes", "Quotes", "Review"],
+        paletteLabel: p.color + " · " + p.foil,
+        width: baseWidth,
+        height: baseHeight,
+        depth: baseDepth,
+        palette: {
+          paper: "#171a24",
+          paperDeep: "#10131b",
+          paperPale: "#f1eadf",
+          ink: "#f4eee6",
+          inkSoft: "#b9b4ae",
+          wall: "#e9dfcb",
+          shelf: "#4a2b1d",
+          shelfDark: "#2a170f",
+          light: "#ffe8c2",
+          fill: "#d8e3e7",
+        },
+      };
+    }
+
+    // ============================================================
+    // Cover texture: load individual images via TextureLoader
+    // ============================================================
+    const coverTextureCache = new Map();
+
+    function makeCoverTexture(book) {
+      // Check cache first
+      if (coverTextureCache.has(book.id)) {
+        return coverTextureCache.get(book.id);
+      }
+
+      // Fallback: draw on canvas while texture loads
+      const canvas = document.createElement("canvas");
+      canvas.width = 768;
+      canvas.height = 1152;
+      const ctx = canvas.getContext("2d");
+
+      // Fill with book color as base
+      ctx.fillStyle = book.color;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      // Draw title text as fallback
+      ctx.fillStyle = book.foil;
+      ctx.font = `600 ${book.title.length > 20 ? 42 : 56}px "Iowan Old Style", Baskerville, Georgia, serif`;
+      ctx.textAlign = "center";
+      ctx.textBaseline = "middle";
+      // Wrap title
+      const words = book.title.split(" ");
+      const lines = [];
+      let currentLine = "";
+      const maxWidth = canvas.width - 80;
+      for (const word of words) {
+        const testLine = currentLine ? currentLine + " " + word : word;
+        if (ctx.measureText(testLine).width > maxWidth && currentLine) {
+          lines.push(currentLine);
+          currentLine = word;
+        } else {
+          currentLine = testLine;
+        }
+      }
+      if (currentLine) lines.push(currentLine);
+      const lineHeight = parseInt(ctx.font) * 1.2;
+      const startY = canvas.height / 2 - (lines.length * lineHeight) / 2;
+      lines.forEach((line, i) => {
+        ctx.fillText(line, canvas.width / 2, startY + i * lineHeight);
+      });
+
+      // Author text below title
+      if (book.author) {
+        ctx.font = '400 32px Inter, sans-serif';
+        ctx.fillStyle = book.foil;
+        ctx.fillText(book.author, canvas.width / 2, startY + lines.length * lineHeight + 40);
+      }
+
+      const texture = new THREE.CanvasTexture(canvas);
+      texture.colorSpace = THREE.SRGBColorSpace;
+      texture.anisotropy = 4;
+      texture.minFilter = THREE.LinearMipmapLinearFilter;
+      texture.magFilter = THREE.LinearFilter;
+      texture.generateMipmaps = true;
+      texture.needsUpdate = true;
+
+      // Edge shading
+      const edgeShade = ctx.createLinearGradient(0, 0, canvas.width, 0);
+      edgeShade.addColorStop(0, "rgba(0,0,0,0.16)");
+      edgeShade.addColorStop(0.055, "rgba(255,255,255,0.015)");
+      edgeShade.addColorStop(0.93, "rgba(255,255,255,0)");
+      edgeShade.addColorStop(1, "rgba(0,0,0,0.1)");
+      ctx.fillStyle = edgeShade;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      texture.needsUpdate = true;
+
+      // Async load real cover image
+      if (book.cover) {
+        textureLoader.load(
+          book.cover,
+          (coverTex) => {
+            coverTex.colorSpace = THREE.SRGBColorSpace;
+            coverTex.anisotropy = 4;
+            coverTex.minFilter = THREE.LinearMipmapLinearFilter;
+            coverTex.magFilter = THREE.LinearFilter;
+            coverTex.generateMipmaps = true;
+            coverTex.needsUpdate = true;
+            coverTextureCache.set(book.id, coverTex);
+            // Update material map if book rig exists
+            const rig = bookRigs.find((r) => r.data.id === book.id);
+            if (rig && rig.materials) {
+              const coverMat = rig.materials.find((m) => m && m.map === texture);
+              if (coverMat) {
+                coverMat.map = coverTex;
+                coverMat.needsUpdate = true;
+              }
+            }
+            requestFrame();
+          },
+          undefined,
+          () => {} // Silent fallback — canvas texture stays
+        );
+      }
+
+      coverTextureCache.set(book.id, texture);
+      return texture;
+    }
+
     const coverAtlasImage = new Image();
-    coverAtlasImage.decoding = "async";
-    coverAtlasImage.src = COVER_ATLAS_DATA;
     let coverAtlasReady = false;
     const woodTextureImage = new Image();
     woodTextureImage.decoding = "async";
-    woodTextureImage.src = WOOD_TEXTURE_DATA;
     let woodTextureReady = false;
+
+    // ============================================================
+    // Filtering: public sees published only, admin sees all
+    // ============================================================
+    function getVisibleBooks() {
+      if (isAuthenticated) return ALL_BOOKS;
+      return ALL_BOOKS.filter((b) => b.published);
+    }
+
+    function applyFilter() {
+      const visible = getVisibleBooks();
+      BOOKS = visible;
+    }
+
+    function rebuildShelf() {
+      // Remove existing book rigs from scene
+      if (bookRigs.length > 0) {
+        bookRigs.forEach((rig) => {
+          if (rig.root && rig.root.parent) {
+            rig.root.parent.remove(rig.root);
+          }
+          // Dispose materials
+          if (rig.materials) {
+            rig.materials.filter(Boolean).forEach((material) => material.dispose());
+          }
+        });
+      }
+      // Clear markers
+      markers.innerHTML = "";
+
+      applyFilter();
+
+      // Rebuild
+      buildMarkers();
+
+      bookRigs = BOOKS.map((book, index) => {
+        const rig = createBookRig(book, index);
+        shelfStage.add(rig.root);
+        return rig;
+      });
+
+      updateSelection(0, true);
+      requestFrame();
+    }
+
+    const AUDIO_DATA = Object.freeze({});
+    const COVER_CROPS = [];
 
     const experience = document.querySelector("#experience");
     const canvas = document.querySelector("#scene");
@@ -2506,87 +2850,7 @@
       return texture;
     }
 
-    function makeCoverTexture(book) {
-      const canvasTexture = document.createElement("canvas");
-      canvasTexture.width = 768;
-      canvasTexture.height = 1152;
-      const ctx = canvasTexture.getContext("2d");
-
-      if (coverAtlasReady) {
-        const [sourceX, sourceY, sourceWidth, sourceHeight] = COVER_CROPS[BOOKS.indexOf(book)];
-        ctx.drawImage(
-          coverAtlasImage,
-          sourceX,
-          sourceY,
-          sourceWidth,
-          sourceHeight,
-          0,
-          0,
-          canvasTexture.width,
-          canvasTexture.height
-        );
-
-        const edgeShade = ctx.createLinearGradient(0, 0, canvasTexture.width, 0);
-        edgeShade.addColorStop(0, "rgba(0,0,0,0.16)");
-        edgeShade.addColorStop(0.055, "rgba(255,255,255,0.015)");
-        edgeShade.addColorStop(0.93, "rgba(255,255,255,0)");
-        edgeShade.addColorStop(1, "rgba(0,0,0,0.1)");
-        ctx.fillStyle = edgeShade;
-        ctx.fillRect(0, 0, canvasTexture.width, canvasTexture.height);
-
-        return configureCanvasTexture(new THREE.CanvasTexture(canvasTexture));
-      }
-
-      const random = seededRandom(hashSeed(book.id) + book.seed);
-
-      ctx.fillStyle = book.color;
-      ctx.fillRect(0, 0, canvasTexture.width, canvasTexture.height);
-
-      const edge = ctx.createLinearGradient(0, 0, canvasTexture.width, 0);
-      edge.addColorStop(0, "rgba(0,0,0,0.24)");
-      edge.addColorStop(0.075, "rgba(255,255,255,0.035)");
-      edge.addColorStop(0.5, "rgba(255,255,255,0.01)");
-      edge.addColorStop(0.94, "rgba(0,0,0,0.06)");
-      edge.addColorStop(1, "rgba(0,0,0,0.19)");
-      ctx.fillStyle = edge;
-      ctx.fillRect(0, 0, canvasTexture.width, canvasTexture.height);
-
-      for (let line = 0; line < 1250; line += 1) {
-        const x = random() * canvasTexture.width;
-        const y = random() * canvasTexture.height;
-        const length = 4 + random() * 22;
-        ctx.strokeStyle = random() > 0.5 ? "rgba(255,255,255,0.024)" : "rgba(0,0,0,0.025)";
-        ctx.lineWidth = 0.6 + random() * 0.8;
-        ctx.beginPath();
-        ctx.moveTo(x, y);
-        ctx.lineTo(x + length, y + (random() - 0.5) * 2);
-        ctx.stroke();
-      }
-
-      ctx.strokeStyle = book.foil;
-      ctx.globalAlpha = 0.72;
-      ctx.lineWidth = 2;
-      ctx.strokeRect(42, 42, canvasTexture.width - 84, canvasTexture.height - 84);
-      ctx.strokeRect(55, 55, canvasTexture.width - 110, canvasTexture.height - 110);
-      ctx.globalAlpha = 1;
-
-      drawMotif(ctx, book, canvasTexture.width, canvasTexture.height);
-
-      ctx.fillStyle = book.foil;
-      ctx.textAlign = "center";
-      ctx.textBaseline = "middle";
-      ctx.font = '500 18px Inter, "Helvetica Neue", Arial, sans-serif';
-      ctx.letterSpacing = "4px";
-      ctx.fillText(`WORKING VOLUMES  /  ${book.roman}`, canvasTexture.width / 2, 92);
-
-      const titleSize = book.title.length > 10 ? 72 : 88;
-      ctx.font = `400 ${titleSize}px "Iowan Old Style", Baskerville, Georgia, serif`;
-      ctx.fillText(book.title, canvasTexture.width / 2, canvasTexture.height * 0.72);
-      ctx.font = '500 16px Inter, "Helvetica Neue", Arial, sans-serif';
-      ctx.fillText(book.discipline.toUpperCase(), canvasTexture.width / 2, canvasTexture.height * 0.79);
-
-      return configureCanvasTexture(new THREE.CanvasTexture(canvasTexture));
-    }
+    // Original makeCoverTexture removed — replaced by new implementation above.
 
     function makeFoilTexture(book) {
       const foilCanvas = document.createElement("canvas");
@@ -2603,7 +2867,7 @@
 
       ctx.font = '500 15px Inter, "Helvetica Neue", Arial, sans-serif';
       ctx.letterSpacing = "2.8px";
-      ctx.fillText(`WORKING VOLUMES  /  ${pad(index)}`, 58, 70);
+      ctx.fillText(`BOOK SHELF  /  ${pad(index)}`, 58, 70);
       ctx.globalAlpha = 0.7;
       ctx.lineWidth = 1;
       ctx.beginPath();
@@ -2919,7 +3183,7 @@
         ctx.globalAlpha = 0.58;
         ctx.font = '500 10px Inter, "Helvetica Neue", Arial, sans-serif';
         ctx.letterSpacing = "1.8px";
-        ctx.fillText(`WORKING VOLUMES  /  ${book.roman}`, 48, 48);
+        ctx.fillText(`BOOK SHELF  /  ${book.roman}`, 48, 48);
         ctx.textAlign = "right";
         ctx.fillText(pad(pageIndex + 1), logicalWidth - 48, 48);
         ctx.textAlign = "left";
@@ -3028,7 +3292,7 @@
           ctx.font = '400 18px "Iowan Old Style", Baskerville, Georgia, serif';
           drawWrappedCanvasText(
             ctx,
-            `${book.binding}. ${book.format}. Conceived as an original editorial study for Working Volumes.`,
+            `${book.binding}. ${book.format}. Book shelf.`,
             54,
             306,
             44,
@@ -3332,7 +3596,7 @@
 
       ctx.font = '500 16px Inter, "Helvetica Neue", Arial, sans-serif';
       ctx.letterSpacing = "3px";
-      ctx.fillText(`WORKING VOLUMES  /  ${book.roman}`, 68, 82);
+      ctx.fillText(`BOOK SHELF  /  ${book.roman}`, 68, 82);
       ctx.globalAlpha = 0.72;
       ctx.fillRect(68, 108, 176, 2);
       ctx.globalAlpha = 1;
@@ -4356,7 +4620,7 @@
         button.className = "marker";
         button.type = "button";
         button.role = "tab";
-        button.setAttribute("aria-label", `Select volume ${index + 1}: ${book.title}`);
+        button.setAttribute("aria-label", `Select book ${index + 1}: ${book.title}`);
         button.setAttribute("aria-current", index === 0 ? "true" : "false");
         button.setAttribute("aria-selected", index === 0 ? "true" : "false");
         button.addEventListener("click", () => selectMarker(index, button));
@@ -4463,7 +4727,7 @@
       selectedIndex = nextIndex;
       const book = BOOKS[selectedIndex];
       selectionTitle.textContent = book.title;
-      selectionNote.textContent = book.note;
+      selectionNote.textContent = book.author;
       counter.textContent = `${pad(selectedIndex + 1)} / ${pad(BOOKS.length)}`;
       paletteLabel.textContent = book.paletteLabel;
       inspectButton.setAttribute("aria-label", `Open ${book.title}`);
@@ -4480,15 +4744,20 @@
       });
 
       if (announce) {
-        liveRegion.textContent = `Selected volume ${selectedIndex + 1} of ${BOOKS.length}: ${book.title}. ${book.note}`;
+        liveRegion.textContent = `Selected book ${selectedIndex + 1} of ${BOOKS.length}: ${book.title}.`;
       }
     }
 
     function populateDetail(book) {
-      detailEyebrow.textContent = `Volume ${book.roman} · ${book.discipline}`;
+      detailEyebrow.textContent = `Book ${book.roman} · ${book.author}`;
       detailTitle.textContent = book.title;
-      detailDeck.textContent = book.deck;
-      detailBinding.textContent = book.binding;
+      // Use HTML content if available, otherwise fall back to deck
+      if (book.content) {
+        detailDeck.innerHTML = book.content;
+      } else {
+        detailDeck.textContent = book.deck;
+      }
+      detailBinding.textContent = book.author;
       detailFormat.textContent = book.format;
       detailTheme.textContent = book.theme;
       detailMotif.textContent = book.motif;
@@ -5255,7 +5524,7 @@
       canvas.classList.toggle("has-book-hover", index >= 0);
       if (index >= 0) {
         const book = BOOKS[index];
-        pointerLabelIndex.textContent = `Volume ${pad(index + 1)}`;
+        pointerLabelIndex.textContent = `Book ${pad(index + 1)}`;
         pointerLabelTitle.textContent = book.title;
         pointerLabel.setAttribute("aria-hidden", "false");
       } else {
@@ -5925,6 +6194,25 @@
     }
 
     async function initialize() {
+      // Fetch books.json and map to engine schema
+      try {
+        const response = await fetch("books.json");
+        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+        const rawData = await response.json();
+        ALL_BOOKS = rawData.map((raw, index) => mapBook(raw, index));
+      } catch (error) {
+        showFallback("Could not load books.json. The interactive shelf needs book data.");
+        return;
+      }
+
+      // Apply auth-based filtering
+      applyFilter();
+
+      // Show login if not authenticated and there are unpublished books
+      if (!isAuthenticated) {
+        showLogin();
+      }
+
       const woodTexturePromise = woodTextureImage.decode().then(
         () => true,
         () => false
@@ -5936,12 +6224,7 @@
         // The system sans-serif fallback keeps the interface usable offline.
       }
 
-      try {
-        await coverAtlasImage.decode();
-        coverAtlasReady = true;
-      } catch (error) {
-        coverAtlasReady = false;
-      }
+      // Cover atlas no longer used — individual covers loaded via TextureLoader
 
       try {
         renderer = new THREE.WebGLRenderer({
