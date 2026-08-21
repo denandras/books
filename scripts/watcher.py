@@ -183,15 +183,21 @@ def extract_title(fm, filename):
 
 
 def slugify_filename(filename):
-    """Create URL-safe slug from filename (without .md extension)."""
+    """Create ASCII URL-safe slug from filename (without .md extension).
+
+    Uses NFD decomposition + ASCII ignore to transliterate Hungarian
+    accented characters (ű→u, é→e, etc.) so cover filenames match
+    what's on disk and what S3/Vercel can serve reliably.
+    """
     base = filename.rsplit(".md", 1)[0]
-    # NFC normalize (important for S3 / Unicode consistency)
-    base = unicodedata.normalize("NFC", base)
-    slug = base.strip().lower()
+    # NFD decompose, then drop non-ASCII (transliterates accents)
+    slug = unicodedata.normalize("NFD", base)
+    slug = slug.encode("ascii", "ignore").decode("ascii")
+    slug = slug.strip().lower()
     # Replace spaces and underscores with hyphens
     slug = re.sub(r"[\s_]+", "-", slug)
-    # Remove non-alphanumeric (keep hyphens, Unicode letters via \w)
-    slug = re.sub(r"[^\w\-]", "", slug, flags=re.UNICODE)
+    # Remove non-alphanumeric (keep hyphens only)
+    slug = re.sub(r"[^\w\-]", "", slug)
     # Collapse multiple hyphens
     slug = re.sub(r"-{2,}", "-", slug)
     # Trim hyphens
@@ -304,8 +310,22 @@ def scan_vault(vault_path, covers_dir, skip_covers=False):
                 # Convert body markdown to HTML (strips H1 title)
                 content_html = body_to_html(body)
 
-                # Download cover (or use placeholder path)
-                if skip_covers:
+                # Determine cover path: check for existing file with any extension,
+                # otherwise use .jpg as default
+                cover_path = None
+                for ext in (".jpg", ".png", ".webp", ".gif", ".jpeg"):
+                    candidate = os.path.join(covers_dir, f"{book_id}{ext}")
+                    if os.path.isfile(candidate) and os.path.getsize(candidate) > 0:
+                        cover_path = f"covers/{book_id}{ext}"
+                        break
+
+                if cover_path:
+                    if skip_covers:
+                        status = "EXISTING"
+                    else:
+                        # Still try to download if URL present and no existing cover
+                        status = "OK"
+                elif skip_covers:
                     cover_path = f"covers/{book_id}.jpg"
                     status = "SKIP"
                 else:
@@ -314,10 +334,10 @@ def scan_vault(vault_path, covers_dir, skip_covers=False):
                         status = "OK"
                     elif not cover_url:
                         status = "NONE"
+                        cover_path = f"covers/{book_id}.jpg"  # expected path
                     else:
                         status = "FAIL"
                         cover_path = f"covers/{book_id}.jpg"  # expected path
-
                 book = {
                     "id": book_id,
                     "title": title,

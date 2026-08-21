@@ -1,36 +1,36 @@
 [
   {
-    "id": "oscar-wilde-a-boldog-herceg-és-más-mesék",
+    "id": "oscar-wilde-a-boldog-herceg-es-mas-mesek",
     "title": "A boldog herceg és más mesék",
     "author": "Oscar Wilde",
-    "cover": "covers/oscar-wilde-a-boldog-herceg-és-más-mesék.jpg",
+    "cover": "covers/oscar-wilde-a-boldog-herceg-es-mas-mesek.jpg",
     "content": "<h3>Idegen szavak</h3>\n\nidegenszo:: \n<h3>Említések</h3>\n\n- \n<h3>Vélemény</h3>\n\n- \n<h3>Idézetek</h3>\n\n&gt; idézet:: sajnos azonban a szerelem nem divat többé, a költők megölték. Annyit írtak rólay hogy senki sem hisz már nekik, amit egyébként nem is csodálok.\n\n&gt; idézet:: A háborúban az erős szolgájává tesz a gyengét, a békében pedig a gazdag teszi szolgájává a szegényt.",
     "published": false,
     "lent": false
   },
   {
-    "id": "frank-herbert-a-dűne-eretnekei",
+    "id": "frank-herbert-a-dune-eretnekei",
     "title": "A Dűne eretnekei",
     "author": "Frank Herbert",
-    "cover": "covers/frank-herbert-a-dűne-eretnekei.jpg",
+    "cover": "covers/frank-herbert-a-dune-eretnekei.jpg",
     "content": "\n<h3>Kiemelések</h3>\n```dataviewjs\nconst bookTitle = dv.current().title;\nconst highlights = dv.pages(`&quot;sources/books/${bookTitle}/highlights&quot;`)\n  .where(p =&gt; p.type === &quot;highlight&quot;)\n  .sort(p =&gt; p.sort_order);\n\nconst colorNames = {\n  blue: &quot;Említések&quot;,\n  yellow: &quot;Idézetek&quot;,\n  magenta: &quot;Idegen szavak&quot;\n};\n\nconst colors = {};\nhighlights.forEach(h =&gt; {\n  const c = h.color || &quot;unknown&quot;;\n  if (!colors[c]) colors[c] = [];\n  colors[c].push(h);\n});\n\nfor (const [color, items] of Object.entries(colors)) {\n  const heading = colorNames[color] || color.charAt(0).toUpperCase() + color.slice(1);\n  dv.header(3, heading);\n  for (const h of items) {\n    let text = h.text?.toString() || &quot;&quot;;\n    let note = h.note?.toString() || &quot;&quot;;\n    dv.paragraph(`&gt; [!quote]\\n&gt; ${text.replace(/\\n/g, &quot;\\n&gt; &quot;)}` + (note ? `\\n\\n<strong>Jegyzet:</strong> ${note}` : &quot;&quot;));\n  }\n}\n```\n\n<h3>Idegen szavak</h3>\n\nidegenszo:: \n\n<h3>Említések</h3>\n\n- \n\n<h3>Vélemény</h3>\n\n- \n\n<h3>Idézetek</h3>\n\n&gt; ",
     "published": false,
     "lent": false
   },
   {
-    "id": "frank-herbert-a-dűne-gyermekei",
+    "id": "frank-herbert-a-dune-gyermekei",
     "title": "A Dűne gyermekei",
     "author": "Frank Herbert",
-    "cover": "covers/frank-herbert-a-dűne-gyermekei.jpg",
+    "cover": "covers/frank-herbert-a-dune-gyermekei.jpg",
     "content": "\n<h3>Idézetek</h3>\n\n&gt; idézet:: Egyes folyamatoknak van végük, de nincs kezdetük; másoknak van kezdetük, de nincs végük. Minden attól függ, hol áll a megfigyelő. (114)\n\n&gt; idézet:: megnyitotta elméjét Jacurutu előtt, azt sugallva önmagának, hogy nem tud róla semmit. A <em>tudás</em> olyan torlasz, amely akadályozza a megismerést.\n\n<h3>Dalok</h3>\n\n<li>41</li>\n<li>83</li>\n<li>151</li>\n<li>171</li>\n<li>250</li>",
     "published": true,
     "lent": false
   },
   {
-    "id": "frank-herbert-a-dűne-istencsászára",
+    "id": "frank-herbert-a-dune-istencsaszara",
     "title": "A Dűne Istencsászára",
     "author": "Frank Herbert",
-    "cover": "covers/frank-herbert-a-dűne-istencsászára.jpg",
+    "cover": "covers/frank-herbert-a-dune-istencsaszara.jpg",
     "content": "[[Kecskeméti Laura]]\n# [[Frank Herbert - A Dűne gyermekei|&lt;-]] [[Frank Herbert - A Dűne eretnekei|-&gt;]]\n# A Dűne Istencsászára (4)\n\n<h3>Dalok</h3>\n\n<li>309</li>\n<li>389</li>\n\n<h3>Említések</h3>\n\n<li>[[Frank Herbert - Dűne]]</li>\n<li>[[Frank Herbert - A Dűne gyermekei]]</li>\n<li>[[Frank Herbert - A Dűne messiása]]</li>\n\n<h3>Vélemény</h3>\n\n<li>megfelelően érzékelteti az általa felölelt időszak hosszát, az események lassabban történnek, de így is izgalmas marad a cselekmény</li>\n\n<h3>Idézetek</h3>\n\n&gt; idézet:: A felismerés, hogy mi vagyok én, az időtlen tudatosságban történik, amely nem stimulál és nem ámít. Egy én vagy középpont nélküli mezőt teremtek, egy mezőt, ahol a halál is csak hasonlattá válik. Nem várok eredményeket. Csupán megengedem a mező létezését, amelynek se célja, se vágya nincs, se tökéletessége, se elvárt eredménye. Ezen a mezőn a mindenütt jelen lévő, ősi öntudat az egyetlen létező. Ez a fény, ami átszivárog az univerzumom ablakain.\n\n&gt; idézet:: Minél tovább tűrök, annál sebezhetőbbé válok.\n\n&gt; idézet:: A legtöbb civilizáció a gyávaságon alapul. Nagyon könnyű a gyávaságot megtanítva civilizálni. Csak le kell csökkenteni a bátorság mércéjét. Korlátozni az akaratot. Szabályozni az étvágyat. Bekeríteni a láthatárt. Törvényt hozni minden lépésre. Tagadni a káosz létezését. Még a gyerekeknek is a lassú légzést tanítjuk. Szelídíteni. \n\n&gt; idézet:: Lon Bramlis: A meglepetések forrásai vagyunk!",
     "published": false,
     "lent": true
@@ -45,91 +45,91 @@
     "lent": false
   },
   {
-    "id": "kőhalmi-zoltán-a-férfi-aki-megölte-a-férfit-aki-megölt-egy-férfit-avagy-101-hull",
+    "id": "kohalmi-zoltan-a-ferfi-aki-megolte-a-ferfit-aki-megolt-egy-ferfit-avagy-101-hull",
     "title": "A férfi aki megölte a férfit aki megölt egy férfit - avagy 101 hulla Dramfjordban",
     "author": "Kőhalmi Zoltán",
-    "cover": "covers/kőhalmi-zoltán-a-férfi-aki-megölte-a-férfit-aki-megölt-egy-férfit-avagy-101-hull.jpg",
+    "cover": "covers/kohalmi-zoltan-a-ferfi-aki-megolte-a-ferfit-aki-megolt-egy-ferfit-avagy-101-hull.jpg",
     "content": "<h3>Vélemény</h3>\n<li>hihetetlenül humoros, tetszett nagyon a vége, ötletes</li>\n<li>kicsit nehezen olvasható, meg kell szokni az északi ö betűket</li>",
     "published": false,
     "lent": false
   },
   {
-    "id": "luis-trenker-a-hegyek-hőse",
+    "id": "luis-trenker-a-hegyek-hose",
     "title": "A hegyek hőse",
     "author": "Luis Trenker",
-    "cover": "covers/luis-trenker-a-hegyek-hőse.jpg",
+    "cover": "covers/luis-trenker-a-hegyek-hose.jpg",
     "content": "<h3>Vélemény</h3>\n<li>igazán jó kis történet, szórakoztat, elmesél, gimnazistáknak főleg jó lehet a történelmi ismereteket illetően</li>",
     "published": false,
     "lent": false
   },
   {
-    "id": "reuel-denny-a-magányos-tömeg",
+    "id": "reuel-denny-a-maganyos-tomeg",
     "title": "A magányos tömeg",
     "author": "",
-    "cover": "covers/reuel-denny-a-magányos-tömeg.jpg",
+    "cover": "covers/reuel-denny-a-maganyos-tomeg.jpg",
     "content": "[[Reuel Denny]]",
     "published": false,
     "lent": false
   },
   {
-    "id": "szentesi-éva-a-mai-naphoz-nincsenek-emlékeim",
+    "id": "szentesi-eva-a-mai-naphoz-nincsenek-emlekeim",
     "title": "A mai naphoz nincsenek emlékeim",
     "author": "Szentesi Éva",
-    "cover": "covers/szentesi-éva-a-mai-naphoz-nincsenek-emlékeim.jpg",
+    "cover": "covers/szentesi-eva-a-mai-naphoz-nincsenek-emlekeim.jpg",
     "content": "<h3>Említések</h3>\n\n<li>[[Jórgosz Lánthimosz]] filmek</li>\n<h3>Vélemény</h3>\n\n<li>visz, realista (majdnem pesszimista), zseniális</li>\n",
     "published": false,
     "lent": false
   },
   {
-    "id": "dr-steven-laureys-a-meditációról-érthetően",
+    "id": "dr-steven-laureys-a-meditaciorol-erthetoen",
     "title": "A meditációról érthetően",
     "author": "Dr. Steven Laureys",
-    "cover": "covers/dr-steven-laureys-a-meditációról-érthetően.jpg",
+    "cover": "covers/dr-steven-laureys-a-meditaciorol-erthetoen.jpg",
     "content": "\nElkülönül egymástól az elméleti és a gyakorlati rész:\n<li><strong>Elmélet</strong>: 1-125. o.</li>\n<li><strong>Gyakorlat</strong>: 125-249. o.</li>\n\n<h3>Említések</h3>\n\n<li>[[Christophe André]]</li>\n<li>[[Fréderic Lenoir]]</li>\n<li>[[Kabat Zinn]]</li>\n<li>[ ] [[Jules Evans - Breaking Open]]</li>\n<li>[ ] [[Philosophy for Life and Other Dangerous Situations]]</li>\n<li>[ ] [[David Wise - Headache in the Pelvis]]</li>\n<li>[ ] [[Teach Us to Sit Still]]</li>\n<li>[ ] [[Edel Maex - Mindfullness]]</li>\n<li>[ ] [[Rinpoche - Tibeti könyv]]</li>\n<li>[ ] [[The Anatomy of Doubt]]</li>\n<li>[ ] [[The Art of Losing Control]]</li>\n<li>[ ] [[3 perces légzéstér gyakorlat]]</li>\n\n#### Appok és eszközök\n\nImagine Clarity\nPetit BamBou\nMindfulness App\nHeadspace\nCalm\nWaking Up\nMuse (viselhető eszköz)\n\n<h3>Technikák</h3>\n\n#### Összpontosítás\n* vizualizációs meditáció\n* összpontosított figyelem meditáció\n\n#### Érzelmi\n* érzelmi meditáció\n* szerető kedvesség meditáció\n\n#### Légzés\n<li>3 perces légzéstér gyakorlat</li>\n\n#### Mantrával\n* transzcendentális meditáció\n\n#### Külső tényező\n<li>binaural beats meditáció</li>\n* nyitott figyelmű szemlélődés meditáció",
     "published": false,
     "lent": false
   },
   {
-    "id": "karen-horney-a-neurózis-és-az-emberi-fejlődés",
+    "id": "karen-horney-a-neurozis-es-az-emberi-fejlodes",
     "title": "A neurózis és az emberi fejlődés",
     "author": "",
-    "cover": "covers/karen-horney-a-neurózis-és-az-emberi-fejlődés.jpg",
+    "cover": "covers/karen-horney-a-neurozis-es-az-emberi-fejlodes.jpg",
     "content": "#üres \n[[Karen Horney]]",
     "published": false,
     "lent": false
   },
   {
-    "id": "bertrand-russell-a-nyugati-filozófia-története",
+    "id": "bertrand-russell-a-nyugati-filozofia-tortenete",
     "title": "A nyugati filozófia története",
     "author": "",
-    "cover": "covers/bertrand-russell-a-nyugati-filozófia-története.jpg",
+    "cover": "covers/bertrand-russell-a-nyugati-filozofia-tortenete.jpg",
     "content": "#üres \n\n[[Bertrand Russell]]",
     "published": false,
     "lent": false
   },
   {
-    "id": "alex-comfort-a-szex-öröme",
+    "id": "alex-comfort-a-szex-orome",
     "title": "A szex öröme",
     "author": "",
-    "cover": "covers/alex-comfort-a-szex-öröme.jpg",
+    "cover": "covers/alex-comfort-a-szex-orome.jpg",
     "content": "#üres \n[[Alex Comfort]]",
     "published": false,
     "lent": false
   },
   {
-    "id": "andré-gide-a-vatikán-titka",
+    "id": "andre-gide-a-vatikan-titka",
     "title": "A Vatikán titka",
     "author": "André Gide",
-    "cover": "covers/andré-gide-a-vatikán-titka.jpg",
+    "cover": "covers/andre-gide-a-vatikan-titka.jpg",
     "content": "<h3>Idegen szavak</h3>\n\nidegenszo:: \n<h3>Említések</h3>\n\n- \n<h3>Vélemény</h3>\n\n- \n<h3>Idézetek</h3>\n\n&gt; idézet:: A regény: történelem, mely megtörténhetett volna, a történelem pedig megtörtént regény.",
     "published": false,
     "lent": false
   },
   {
-    "id": "alyssa-palombo-a-velencei-hegedűs",
+    "id": "alyssa-palombo-a-velencei-hegedus",
     "title": "A velencei hegedűs",
     "author": "Alyssa Palombo",
-    "cover": "covers/alyssa-palombo-a-velencei-hegedűs.jpg",
+    "cover": "covers/alyssa-palombo-a-velencei-hegedus.jpg",
     "content": "<h3>Vélemény</h3>\n<li>kicsit nyálas, de egész jó korrajz</li>\n<li>[[Alyssa Palombo]]</li>\n<h3>Idézetek</h3>\n\n&gt; idézet:: Mi szükségem az alvásra, ha már maga az élet egy álom?",
     "published": false,
     "lent": false
@@ -144,19 +144,19 @@
     "lent": false
   },
   {
-    "id": "krasznahorkai-lászló-az-ellenállás-melankóliája",
+    "id": "krasznahorkai-laszlo-az-ellenallas-melankoliaja",
     "title": "Az ellenállás melankóliája",
     "author": "Krasznahorkai László",
-    "cover": "covers/krasznahorkai-lászló-az-ellenállás-melankóliája.jpg",
+    "cover": "covers/krasznahorkai-laszlo-az-ellenallas-melankoliaja.jpg",
     "content": "<h3>Említések</h3>\n- \n<h3>Ami megfogott benne</h3>\n<li>a furcsa hangulat, szinte megfogalmazhatatlan érzés</li>\n<h3>Idézetek</h3>\n&gt; idézet:: <em>s most döbbent rá arra is, hogy azok a vérfagyasztó események</em>, amiknek szereplője vagy szemtanúja itt (ez a lidérces, megmagyarázhatatlan jármű, az ütlegelés az Erdélyi Sándor utcában, a szinte időzített elsötétítés, az embertelen csürhe az állomás előtt s mindezek fölött a maga rezzenetlen, jéghideg tekintetével uralkodó posztókabátos borzasztó alakja) <em>nem csupán önkényes tárgyai örökösen balsejtő képzeletének, hanem közöttük kétségbevonhatatlan összefüggés munkál, pontos és célszerű vonatkozás</em>.\n\n&gt; idézet:: s bár kétségbevonhatatlannak látszott, hogy mostantól <em>nem fenyegeti veszély, mégsem érezte maga körül azt a biztonságot</em>, amelyre pedig oly nagy szüksége volt: gondolatai zaklatottan űzték egymást, hol ez, hol az tűnt mindennél fontosabbnak\n\t- [[meditáció]]\n\t- [[Korényi Eszter]] gondolata, miszerint a szépérzék maga a lélek (cáfolat, inkább <strong>fénypászmája</strong> a léleknek)\n\n&gt; idézet:: ráfordítva a kulcsot a világra\n\n&gt; idézet:: <em>hirtelen elszakadt már egymástól épület és lakó</em> #megírni\n\t- a mai korokban egyre kevesebb ember tudja, hogy mi és miért kavarog benne\n\t- egyre kevésbé van megtöltve tartalommal a világ &lt;- a rengeteg fogyasztható tartalom\n\t- &quot;még a fagerendák szerkezete is fokozatosan veszít belső szilárdságából&quot;\n<h3>Inspirálta</h3>\n<li>[[vak lámpa]]</li>\n\t- <em>&quot;vak ostorlámpák lekonyuló ágai&quot;</em>\n\t- a lámpa látja-e saját fényét?",
     "published": true,
     "lent": false
   },
   {
-    "id": "kazuo-ishiguro-az-eltemetett-óriás",
+    "id": "kazuo-ishiguro-az-eltemetett-orias",
     "title": "Az eltemetett óriás",
     "author": "Kazuo Ishiguro",
-    "cover": "covers/kazuo-ishiguro-az-eltemetett-óriás.jpg",
+    "cover": "covers/kazuo-ishiguro-az-eltemetett-orias.jpg",
     "content": "<h3>Vélemény</h3>\n\n<li>gyönyörű, izgalmas és lineáris történet egy hosszú párkapcsolatról</li>\n<li>amolyan bevezető lehet a fantasybe</li>",
     "published": false,
     "lent": false
@@ -171,28 +171,28 @@
     "lent": false
   },
   {
-    "id": "kőhalmi-zoltán-az-utolsó-450-év",
+    "id": "kohalmi-zoltan-az-utolso-450-ev",
     "title": "Az utolsó 450 év",
     "author": "Kőhalmi Zoltán",
-    "cover": "covers/kőhalmi-zoltán-az-utolsó-450-év.jpg",
+    "cover": "covers/kohalmi-zoltan-az-utolso-450-ev.jpg",
     "content": "<h3>Dalok</h3>\n\n<li>73</li>\n<h3>Vélemény</h3>\n\n<li>Kicsit tiniregényes a megfogalmazás, de sok a jó ötlet benne</li>\n<h3>Idézetek</h3>\n\n&gt; idézet:: Tulajdonképpen Zsákos Frodó korának legkitartóbb környezetvédő aktivistája volt, aki a veszélyes hulladékot visszavitte a gyártónak.\n\n&gt; idézet:: a legunalmasabb munka is lehetállandó kaland, ha maximalista vezetők irányítása alatt hisztérikus munkatársak végzik.",
     "published": false,
     "lent": false
   },
   {
-    "id": "carl-sagan-az-éden-sárkányai",
+    "id": "carl-sagan-az-eden-sarkanyai",
     "title": "Az Éden sárkányai",
     "author": "Carl Sagan",
-    "cover": "covers/carl-sagan-az-éden-sárkányai.jpg",
+    "cover": "covers/carl-sagan-az-eden-sarkanyai.jpg",
     "content": "<h3>Említések</h3>\n<li>[[Jacob Bronowsky]] - Az ember fölemelkedése</li>\n<li>[[Gould]] 1976-os cikke</li>\n<li>[[Charles Darwin]]</li>\n<li>[[Sallustius]]</li>\n<li>[[Szókratész]] - Az állam</li>\n<li>[[Rousseau]] - Az emberi egyenlőtlenségek eredetéről és alapjairól</li>\n<li>[[Shakespeare]] - A vihar</li>\n<li>[[W. Blake]] - A tigris</li>\n<h3>Vélemény</h3>\n- \n<h3>Idézetek</h3>\n&gt; idézet:: A biológia inkább hasonlít a történelemre, mint a fizikára: a múlt véletlenei, tévedései és szerencsés fordulatai erőteljesen előrevetítik a jelent.\n\n&gt; idézet:: A bizonyíték hiánya még nem a hiány bizonyítéka.\n\n&gt; idézet:: A faj olyan csoport, amely önmagán belül kereszteződéssel termékeny utódokat képes létrehozni, de önmagán kívül nem.\n\n&gt; ",
     "published": false,
     "lent": false
   },
   {
-    "id": "az-év-novellái-2023",
+    "id": "az-ev-novellai-2023",
     "title": "Az év novellái 2023",
     "author": "",
-    "cover": "covers/az-év-novellái-2023.jpg",
+    "cover": "covers/az-ev-novellai-2023.jpg",
     "content": "<h3>Idegen szavak</h3>\n\nidegenszo:: \n<h3>Említések</h3>\n\n- \n<h3>Vélemény</h3>\n\n- \n<h3>Idézetek</h3>\n\n<li>[[Patócs Molnár János - Farkasveremben]]</li>\n\t- idézet:: Mondják, az idő mindent begyógyít. Ám a lelki seb olyan, mint a törött csont: időváltozáskor fáj.\n<li>[[Juhász Zsuzsanna - Hazaizgalom]]</li>\n\t- idézet:: Azt mondta, sose szerettük igazán. Se én, se a testvérei, se az anyánk. És én megértem, megértem őt, kislányom. Mert az irántunk való gyűlölete tartja őt ott. A gyűlölet úgy kell neki, mint egy falat kenyér. Hát csak egye, egye.\n<li>[[Száraz Miklós György - Haláli éjszaka]]</li>\n\t- [[Piszkos Fred]], [[Előretolt helyőrség]]\n\t- idézet:: Nem tudta alszik-e vagy ébren-ban, mert az az állapot, amiben szinte lebegett, alvásnak valószerű volt, ébrenlétnek pedig álomszerű, mint amikor tudjuk, hogy álmodunk, vagy amikor azon gondolkozunk, hogy ébren vagyunk-e.\n\t- [[Weltall und Menschheit]]\n- ",
     "published": false,
     "lent": false
@@ -234,19 +234,19 @@
     "lent": false
   },
   {
-    "id": "oscar-wilde-dorian-gray-arcképe",
+    "id": "oscar-wilde-dorian-gray-arckepe",
     "title": "Dorian Gray arcképe",
     "author": "Oscar Wilde",
-    "cover": "covers/oscar-wilde-dorian-gray-arcképe.jpg",
+    "cover": "covers/oscar-wilde-dorian-gray-arckepe.jpg",
     "content": "anyánál\n# Dorian Gray arcképe\n<h3>Vélemény</h3>\n<li>nagyon jó elmélkedés a művészetről amellett, hogy zseniális a storyline</li>",
     "published": false,
     "lent": true
   },
   {
-    "id": "irvin-d-yalom-egzisztenciális-pszichoterápia",
+    "id": "irvin-d-yalom-egzisztencialis-pszichoterapia",
     "title": "Egzisztenciális pszichoterápia",
     "author": "Irvin D Yalom",
-    "cover": "covers/irvin-d-yalom-egzisztenciális-pszichoterápia.jpg",
+    "cover": "covers/irvin-d-yalom-egzisztencialis-pszichoterapia.jpg",
     "content": "<li>4 rész</li>\n\t- halál (leghosszabb)\n\t\t- milyen szerepe lehet a halálnak fizikailag egészséges páciensek terápiájában?\n\t- szabadság\n\t\t- életünk kétségtelen szerzői ([[Jean-Paul Sartre]])\n\t\t- minden esetleges\n\t- elszigeteltség\n\t\t- egyedül jöttünk, egyedül megyünk\n\t\t- &quot;egyetlen vigaszunk, amely a halálba elkísér, az a tudat, hogy jól éltünk&quot;\n\t- értelemnélküliség\n\t\t- az élet értelme, ha semmi sem állandó\n\t\t- [[Allen Wheelis]] beszámolója a kutyájával való játékról\n<li>klinikai megfigyelések, filozófusok és írók forrásainak bemutatása</li>\n<li>[[Irvin D Yalom]] nem akart önálló területet létrehozni a könyvvel</li>",
     "published": false,
     "lent": false
@@ -261,10 +261,10 @@
     "lent": false
   },
   {
-    "id": "komlós-fortepianók-és-zenéjük",
+    "id": "komlos-fortepianok-es-zenejuk",
     "title": "Fortepianók és zenéjük",
     "author": "",
-    "cover": "covers/komlós-fortepianók-és-zenéjük.jpg",
+    "cover": "covers/komlos-fortepianok-es-zenejuk.jpg",
     "content": "[[Komlós Katalin]] - Fortepianók és zenéjük",
     "published": true,
     "lent": false
@@ -273,25 +273,25 @@
     "id": "hbrs-10-must-reads-on-high-performance",
     "title": "HBR's 10 Must-reads on High Performance",
     "author": "Harvard Business Review",
-    "cover": "covers/hbrs-10-must-reads-on-high-performance.jpg",
+    "cover": "covers/hbrs-10-must-reads-on-high-performance.png",
     "content": "## Említések\n\n<li>[[Benjamin Bloom - Developing Talent in Young People|Benjamin Bloom - Developing Talent in Young People]]</li>\n<li>[[Cambridge University Press - The Cambridge Handbook of Expertise and Expert Performance|Cambridge University Press - The Cambridge Handbook of Expertise and Expert Performance]]</li>\n## The Making of an Expert\n\n[[K Anders Ericsson|K Anders Ericsson]], [[Michael J Prietula|Michael J Prietula]], [[Edward T Cokely|Edward T Cokely]]\n\n<li>Polgár család története a gyerekeik sakktudásán keresztül</li>\n<li>a &quot;zseni&quot;, az expert sosem csak úgy lesz, mindig dolgoznak rajta</li>\n\t- kitartással és folyamatosan\n\t- szorgalmas és lelkes emberek\n<li>az expert</li>\n\t- folyamatosan kitűnő teljesítményt nyújt\n\t- konkrét eredményeket ér el\n\t- megismételhető, rekreálható (nem indokolatlan)\n<li>sokszor csípőből cselekedni könnyebb</li>\n\t- mert nem jár vele negatív következmény\n\t- intuíció helyett a komfortzóna elhagyása\n\t\t- zenészek, akik folyamatosan ezt teszik\n<li>a profik megítélése</li>\n\t- az idézet nem profizmus, a gyűjtés módja befolyásolhatja az eredményre vetülő fényt\n\t- sok emberről hiszik, hogy profi, pedig nem az\n\t- a &quot;hallgass az ösztöneidre&quot; lehet jó, de kizárólag ezekre hagyatkozni badarság\n\t- a körülmények megváltoztatása néha csak bezavar\n\t- a tudásmenedzsment minősége mindegy, ha hiányzik a tudás\n<li>a verseny általánosít és mérhetővé tesz</li>\n<li>gyakorold azt, ami nem megy</li>\n\t- a hobbi azért marad sokszor hobbi, mert nem fejlesztjük tovább a képességeket, hanem a meglévőket használjuk\n\t- addig, amíg a koncentrációd kitart\n\t\t- a koncentráció gyakorlása másik dolog\n\t- az expert folyamatosan elemzi önmagát és hogy mit csinálhatott volna jobban\n<li>a jó vezető karizmatikussága tanulható</li>\n<li>manapság sokkal nehezebb eljutni a világszínvonalra, mert az folyamatosan emelkedik</li>\n<li>mentorok</li>\n\t- fontos szerepet játszanak a profik életében\n\t- először dicsérő, lelkesítő tanárra van szükség\n\t\t- aztán olyanokra, amilyenné válni akarsz, nemzetközi szintű profikra\n\t\t- valamint konstruktív, építő kritikára, ami néha fájdalmas lehet\n<li>ha profi lettél</li>\n\t- ideális helyzetben a mentorod segített függetlenedni magától\n\t- saját mérföldköveket helyezel kilátásba\n\t- önelemzés, belső mentor\n\t- más profikhoz hasonlítsd magad\n\t\t- próbáld meg lemásolni\n\t\t- vesd össze, majd elemezd, hogy hol hibáztál\n\n&gt; idézet:: Experts are always made, not born.\n\n&gt; idézet:: Living in a cave doesn&#x27;t make you a geologist.\n\n&gt; idézet:: If you practice with your fingers, no amount is enough. If you practice with your head, two hours is plenty. (Professor [[Leopold Auer|Leopold Auer]], violin)\n\n## Managing Oneself\n\n[[Peter F Drucker|Peter F Drucker]]\n\n<li>a lehetőség felelősséggel jár: rajtad múlik, hogy végigmész-e a kijelölt úton, hogy mikor változtatsz irányt, és hogy élvezed-e a foglalkozásod egy akár 50 éves karrier útján</li>\n\t- ehhez meg kell ismerned önmagad, hogy hogyan tudsz másokkal jól együttműködni, hogy milyen értékeket képviselsz, és hogy milyen környezet hozza ki a legtöbbet belőled\n<li>a történelem nagy alakjai jól menedzselték magukat</li>\n<li>régebben beleszülettél egy munkába, nem volt választásod, ezért nem volt fontos, miben vagy jó</li>\n<li>sokan úgy hiszik, tudják, miben jók és rosszak, de sokszor tévednek</li>\n\t- megoldás: feedback analízis - amikor fontos döntést hozol, írd le a várt következményeket, és egy év múlva olvasd vissza őket\n\t\t- 14. században használták először, majd [[Kálvin|Kálvin]] és [[Loyolai Szent Ignác|Loyolai Szent Ignác]] is alkalmazták\n\t\t- megmutatja, hol nem vagy igazán kompetens, és hol nincs egyáltalán esélyed\n<li>koncentrálj az erősségeidre</li>\n\t- fejleszd azokat\n<li>fedezd fel, hogy hol rombol intellektuális arroganciád</li>\n\t- pl. mérnökök, akik még büszkék is rá, hogy nem értenek az emberekhez\n\t- de egy mérnöknek kivitelezők kellenek, el kell tudni magyarázni nekik, valamint ismerni a pontot, ahol nem érdemes folytatni\n<li>sokkal nehezebb kezdőből haladóvá lenni, mint kompetensből a legjobbá válni</li>\n\t- és mégis a tanárok, rendszerek előbbit előnyben részesítik\n\n<h3>Munkamódszer</h3>\n\n<li>a <em>mit</em> mellett a <em>hogyan</em> is ugyanolyan fontos</li>\n\t- sokan nem ismerik a legjobb munkamódszerüket\n<li>olvasó vagy, vagy hallgató?</li>\n\t- egyszerű kérdés, mégsem tudják sokan, hogy ez a két típus létezik, főleg nem, hogy melyikbe tartoznak\n\t- fatális következményekkel járhat ezen ismeret hiánya\n\t\t- pl. Kennedy utódja\n<li>hogyan tanulsz?</li>\n\t- olvasás, írás, hallgatás, vizuális memória, elmepalota, mozgás, beszéd, stb.\n\t- az iskolák azt veszik alapul, hogy mindenki ugyanúgy tud tanulni, de ez nem igaz\n\t- sokan tudják a módszerüket, de nem alkalmazzák azt\n<li>hogyan dolgozom emberekkel?</li>\n\t- felettük, alattuk, mellettük, milyen viszonyban a legjobb?\n<li>döntéshozó vagyok, vagy tanácsadó?</li>\n\t- sokszor egy nagy cég jobbkeze rossz vezető lesz\n<li>stressz, vagy megszokott környezet?</li>\n<li>nagy szervezet, vagy kicsi az ideális?</li>\n<li>ne próbálj magadon változtatni, igazítsd a körülményeidet a személyiségedhez</li>\n<li>értékrend</li>\n\t- nehéz egy olyan szervezetnek dolgozni, ami eltérő értékrendet, morált képvisel\n\t- nem lesz effektív a munka\n\t- ha a hatékony munkamódszer nem egyeztethető össze egy munka értékrendjével, nem érdemes egy életet rááldozni\n<li>hova tartozom?</li>\n\t- kevesen tudják korán a választ, pl. zenészek, séfek\n\t- sokaknak problémát jelent az elhelyezkedés\n\t- érdemes tudni a húszas évekre, hogy hogyan dolgozol jól (és hogy hogyan nem, és nemet tudj mondani az ilyen lehetőségekre)\n\t\t- egy állásnál ismerni a saját feltételeidet\n<li>a sikeres karrier nincs megtervezve</li>\n\t- lehetőségekre adott jó válaszok\n\t- önismeret\n<li>változás a &#x27;60-as években</li>\n\t- pályaválasztás\n\t- mit követel a szituáció?\n\t- az erősségeim adottak; hogy tudok a legjobb módon hozzájárulni a közjóhoz?\n\t- milyen eredmények szükségesek a változáshoz?\n<li>fontos az időkeret, ez 18 hónapnál ideálisan belátható</li>\n<li>nehézség</li>\n\t- elérhető, de nem könnyű cél az ideális\n\n<h3>Kapcsolatok</h3>\n\n<li>nagyon kevesen tudják magukat teljesen egyedül menedzselni</li>\n<li>felelősség</li>\n\t- elfogadni, hogy mások ugyanúgy egyének, mint te\n\t\t- ne csak magadat, hanem a veled dolgozó embereket is ismerd\n\t\t- erősségek, munkamódszer kiismerése (egy főnöknél is!)\n\t\t- a munkakapcsolatok ugyanannyira az embereken, amennyire a munkán múlnak\n\t- kommunikálni\n\t\t- és ezáltal megismerni mások értékeit, személyét és munkamódszerét\n\t\t- elvárások helyett türelmesnek lenni és kérdezni, beszélgetni\n<li>40 év munka után régen nem kellett az unalom miatt aggódni</li>\n\t- mert az átlagos munka nem tudásalapú volt, hanem fizikai\n\t- ma tovább kell dolgozni akkor is, ha a csúcson vagyunk\n\t- megoldás: második karrier\n\t\t- új fajta munka\n\t\t\t- ok: közösség, pénz, kihívás\n\t\t- párhuzamos karrier\n\t\t\t- általában non-profit szervezeteknél\n\t\t- szociális előadók\n\t\t\t- egyre kevesebb időt/energiát fektetnek az elsődleges munkába, közben elkezdenek valami mást is\n\t- hamarabb kell elkezdeni, mint hogy belevágnál a tényleges munkába\n\t\t- ez akkor főleg jól jön, ha a az elsődleges állással, vagy az életben valami történik\n<li>átalakult a társadalmi-gazdasági berendezkedés</li>\n\t- már az emberek élnek több ideig, mint egy szervezet, és nem maradnak ott, ahova először felvették őket\n\t- mindenkinek a saját főnökének kell lennie\n\n&gt; idézet:: He believes that ideas move mountains. But bulldozers move mountains; ideas show where the bulldozers should go work.\n\n&gt; idézet:: Organizations are no longer built on force but on trust. The existence of trust between people does not necessarily mean that they like one another.\n\n## Are You a High Potential?\n\n[[Douglas A Ready|Douglas A Ready]], [[Jay A Conger|Jay A Conger]], [[Linda A Hill|Linda A Hill]]\n\n<li>rengeteg szervezetnek megvan a maga &quot;nagy potenciál-listája&quot;</li>\n\t- főleg ott, ahol korlátozottak az erőforrások\n<li>hogyan kerülj rá?</li>\n\n<h3>The Anatomy of a High Potential</h3>\n\n<li>top 3-5 %</li>\n\t- konzisztensen kiemelkedően teljesítenek\n\t- a szervezet értékrendjéhez illően viselkednek\n\t- karrierjükben gyorsabban haladnak\n\n<h3>A szervezetek szempontjai</h3>\n\n1. a jó eredmények mellett megbízhatóan kell viszonyulni a kollégákhoz és a főnökökhöz is\n2. az elején elég a technikai dolgokban kimagaslónak lenni, ezután a több lábon állás, pl. a vezető szerep tanulása a megfelelő lépés\n3. ismerd be, hogy a viselkedés számít\n\t- a &quot;megfelelő&quot;-ből a &quot;példakép/tanár&quot; kategóriába\n\n<h3>A saját szempontok</h3>\n\n<li>áldozatokat hoznak, mert szeretnének a jón és a nagyon jón túl kimagasló eredményeket</li>\n<li>nem csak gyorsan tanulnak, hanem könnyen lesznek kreatív ötleteik, amiket lefordítanak a szakmai nyelvre, produktív gyakorlatba</li>\n<li>az új és izgalmas dolgok nem állnak a döntések útjába, többet számít a kihívás a kockázatnál</li>\n\t- ahhoz, hogy ez ne katasztrofális hibákhoz vezessen, kell egy érzék a szituációk áthátásához, a lehetőségek kiszaglásához és jó időzítési képesség\n<li>önanalízis</li>\n<li>érdemes-e elmondani az alkalmazottnak, hogy &quot;nagy potenciál&quot;</li>\n\t- igen, mert sokszor nincsenek tisztában saját képességeikkel\n\t- mostanra 85% fölé emelkedett ez az arány (hogy elmondják nekik)\n\t- transzparencia, ami nyomást helyez rájuk\n<li>megítélés</li>\n\t- tudja, hogy lehetőség rejlik benne, ezért mások irigységét is latba veszi\n<li>cégként</li>\n\t- tiszta szándékok az alkalmazottak képességeit illetően\n\t- tehetséget következetesen előtérbe hozni\n\t- kreatív hozzáállás a jövőhöz\n<li>nem csak felkerülni lehet hasonló listákra</li>\n\n\n\n\n\n## Making Yourself Indispensable\n[[John H Zenger|John H Zenger]], [[Joseph R Folkmann|Joseph R Folkmann]], [[Scott K Edinger|Scott K Edinger]]\n\n<li>az erősségeken dolgozni nehéz, sokkal apróbban látszik a hatása</li>\n\t- kiegészítő készségeken dolgozni (atléták cross-trainingje vs. haladó marathon futók)\n\n<h3>The Interaction Effect</h3>\n\n<li>egyedül egy dolog kisebb hatást ér el, mint egy másikkal együtt (pl. edzés-diéta)</li>\n<li>16 vezetői tulajdonság</li>\n\t- mindegyik párosítható kb. 12 másikkal (competency companion)\n#### <strong>Jellem</strong>\n\n<li>Őszinteséget és tisztességet mutat</li>\n<li>Törődik másokkal és figyelmet fordít rájuk</li>\n<li>Megbízható</li>\n<li>Optimizmust sugároz</li>\n<li>Magabiztos</li>\n<li>Inspirál és motivál másokat</li>\n<li>Jól kezeli a bizonytalanságot</li>\n<li>Határozott</li>\n<li>Eredményekre összpontosít</li>\n\n#### <strong>Személyes képesség</strong>\n\n<li>Magas szintű szakmai tudást mutat</li>\n<li>Megoldja a problémákat és elemzi a kérdéseket</li>\n<li>Kezdeményező</li>\n<li>Jól szervezett és tervezési készségekkel rendelkezik</li>\n<li>Határozott</li>\n<li>Szereti a kihívásokat</li>\n<li>Stratégiai szemléletet fejleszt</li>\n<li>Önállóan cselekszik</li>\n<li>Technikai szakértelmet mutat</li>\n<li>Hatékonyan és széles körben kommunikál</li>\n\n#### <strong>Innováció</strong>\n\n<li>Kész kockázatot vállalni és megkérdőjelezni a status quo-t</li>\n<li>Támogatja a kockázatvállalást</li>\n<li>Megoldja a problémákat és elemzi a kérdéseket</li>\n<li>A változás élharcosa</li>\n<li>Gyorsan tanul a sikerekből és a kudarcokból</li>\n<li>Stratégiai szemléletet fejleszt</li>\n<li>Kezdeményező</li>\n\n#### <strong>Önfejlesztés gyakorlása</strong>\n\n<li>Meghallgat másokat</li>\n<li>Nyitott mások ötleteire</li>\n\n#### <strong>Tisztelet mások iránt</strong>\n\n<li>Tisztel másokat</li>\n<li>Őszinteséget és tisztességet mutat</li>\n<li>Inspirál és motivál másokat</li>\n<li>Hatékony visszajelzést és fejlődési lehetőségeket nyújt</li>\n<li>Kezdeményező</li>\n<li>Kész kockázatot vállalni és megkérdőjelezni a status quo-t</li>\n\n#### <strong>Eredményorientáltság</strong>\n\n<li>Eredményekre összpontosít</li>\n<li>Jól szervezett és tervezett gondolkodást alkalmaz</li>\n<li>Őszinteséget és tisztességet mutat</li>\n<li>Előre látja a problémákat</li>\n<li>Gyorsan észreveszi az elérhető eredményeket</li>\n<li>Hatékony visszajelzést és fejlődési lehetőségeket nyújt</li>\n<li>Kitűzi és eléri a célokat</li>\n<li>Inspirál és motivál másokat</li>\n<li>Kész kockázatot vállalni és megkérdőjelezni a status quo-t</li>\n<li>Másokat támogat és meggyőz</li>\n<li>Stratégiai szemléletet fejleszt</li>\n<li>A változás élharcosa</li>\n<li>Határozott</li>\n<li>Szakmai és üzleti szakértelmet mutat</li>\n<li>A bizonytalanságot jól kezeli</li>\n<li>Kitart a feladatok mellett</li>\n<li>Hatékonyan és széles körben kommunikál</li>\n#### <strong>Interperszonális készségek</strong>\n\n<li>Hatékonyan és széles körben kommunikál</li>\n<li>Inspirál és motivál másokat</li>\n<li>Stratégiai szemléletet fejleszt</li>\n<li>Kitűzi és eléri a célokat</li>\n<li>Hatékonyan kezeli a külvilággal való kapcsolatokat</li>\n<li>Megbízható</li>\n<li>Bevon másokat</li>\n<li>Üzeneteket fordít le érthetőbbé tétel érdekében</li>\n<li>Megoldja a problémákat és elemzi a kérdéseket</li>\n<li>Kezdeményező</li>\n<li>Innovatív</li>\n<li>Fejleszt másokat</li>\n<li>Érzelmileg kapcsolódik másokhoz</li>\n<li>Világos és egyértelmű irányokat mutat</li>\n<li>Együttműködik és támogatja a csapatmunkát</li>\n<li>Támogatja az innovációt</li>\n<li>Változást képvisel</li>\n<li>Példaképként szolgál</li>\n\n#### <strong>Kapcsolatok építése</strong>\n\n<li>Együttműködik és elősegíti a csapatmunkát</li>\n<li>Őszinteséget és tisztességet mutat</li>\n<li>Fejleszti másokat</li>\n<li>Meghallgat másokat</li>\n<li>Hatékonyan és széles körben kommunikál</li>\n<li>Elismerést és jutalmat biztosít</li>\n<li>Befogadást és sokszínűséget gyakorol</li>\n<li>Optimizmust sugároz</li>\n<li>Gyakorolja az önfejlesztést</li>\n\n#### <strong>Önfejlesztés</strong>\n\n<li>Törődik másokkal és figyelmet fordít rájuk</li>\n<li>Mások sikeréből merít motivációt</li>\n<li>Befogadást és sokszínűséget értékel</li>\n<li>Stratégiai szemléletet fejleszt</li>\n<li>Hatékony visszajelzést és fejlődési lehetőségeket nyújt</li>\n<li>Inspirál és motivál másokat</li>\n<li>Innovatív</li>\n<li>Elismerést és jutalmat biztosít</li>\n<li>Őszinte és tisztességes</li>\n<li>Alkalmazkodik a változásokhoz</li>\n\n#### <strong>Vezetés és változáskezelés</strong>\n\n<li>Stratégiai perspektívát fejleszt</li>\n<li>Ügyfélközpontú gondolkodást alkalmaz</li>\n<li>Innovatív</li>\n<li>Megoldja a problémákat és elemzi a kérdéseket</li>\n<li>Hatékonyan és széles körben kommunikál</li>\n<li>Kitűzi és eléri a célokat</li>\n<li>Üzleti éleslátást mutat</li>\n<li>Másokat inspirál és motivál</li>\n<li>Kapcsolatokat épít és hálózatot alakít ki</li>\n<li>Elismerést és jutalmat biztosít</li>\n<li>Befogadást és sokszínűséget gyakorol</li>\n<li>A változások mellett áll ki</li>\n<li>Eredményekre összpontosít</li>\n<li>Kész kockázatot vállalni és megkérdőjelezni a status quo-t</li>\n\n#### <strong>Kapcsolódás a külvilághoz</strong>\n\n<li>Széles perspektívát fejleszt</li>\n<li>Stratégiai szemléletet alakít ki</li>\n<li>Inspirál és motivál másokat</li>\n<li>Erős értékeket képvisel</li>\n<li>Kezdeményező</li>\n<li>Információkat gyűjt és beépít</li>\n<li>A változás élharcosa</li>\n<li>Hatékonyan és széles körben kommunikál</li>\n\n1. erősségek azonosítása\n\t- mi számít?\n\t\t- nem az önmagadról alkotott kép vagy egy objektív kép\n\t\t- mások véleménye\n\t- hogyan?\n\t\t- pszichometrikus módon, mérhető rendszerben\n\t\t- anonim kérdőívvel\n\t\t- világítson rá a fatális hibákra (amik elnyomják az erősségeket)\n\t\t- amíg nem az alsó 10%-ban van egy tulajdonság, nem muszáj foglalkozni vele\n\t- nem mindenből a jónak lenni, hanem pár dologból a legjobbnak\n\t\t- ez megengedi, hogy a gyengeségek ne számítsanak annyira\n\t\t- az alsó és a felső harmadban levést egyetlen erősség választja el egymástól\n\t\t\t- két erősség -&gt; felső 25%\n\t\t\t- három erősség -&gt; felső 20%\n\t\t\t- négy erősség -&gt; felső 11%\n\t- informális 360\n\t\t- mik az erősségeim?\n\t\t- van olyan hibám, ami fatális lehet - karriert veszélyeztető, ha nincs idejekorán észrevéve\n\t\t- mi az a vezetői tulajdonság, amelynek legnagyobb hatása lenne a karrieremre?\n\t\t- mi az a vezetői tulajdonság, melynek legnagyobb hatása van rád?\n2. egy erősség választása az alapján, hogy melyik tesz jót a szervezetnek, illetve melyik iránt érzel szenvedélyt\n3. kiegészítő tulajdonság választása\n4. lineáris önfejlesztés\n\n\n#\n\n&gt; idézet:: In the context of effective leadership, your view of your own (or even some perfectly objective view, supposing one could be had) is less important than the other people&#x27;s, because leadership is all about your effect on others.\n&gt; idézet:: Nevertheless, we recommend that developing leaders focus on a competency that matters to the organization and about which they feel some passion, because a strength you feel passionate about that is not important to your organization is essentially a hobby, and a strength the organization needs that you don&#x27;t feel passionate about is just a chore.\n\n\n\n",
     "published": true,
     "lent": false
   },
   {
-    "id": "tisza-kata-hipnózis-6-kor",
+    "id": "tisza-kata-hipnozis-6-kor",
     "title": "Hipnózis 6-kor",
     "author": "Tisza Kata",
-    "cover": "covers/tisza-kata-hipnózis-6-kor.jpg",
+    "cover": "covers/tisza-kata-hipnozis-6-kor.jpg",
     "content": "\n<h3>Kiemelések</h3>\n\n\n<h3>Említések</h3>\n\n<li>[[Máté Gábor|Máté Gábor]]</li>\n<li>[[Esther Perel|Esther Perel]]</li>\n<li>[[Roncsfilm|Roncsfilm]] film</li>\n<li>[[Ingmar Bergman|Ingmar Bergman]] svéd filmrendező</li>\n\n<h3>Vélemény</h3>\n\n<li>bármi is a lelkiállapotod - validál, mintha meghallgatna, megölel</li>\n\n<h3>Idézetek</h3>\n\n&gt; idézet:: Valószínűleg nincs az útnak sosem vége. Csak a halállal, az ostobasággal vagy a komplett tébollyal gondolhatja azt egy ember, hogy ő befejezte, végzett, készen van a fejlődéssel, ez teljesen nevetséges. Mindig csak egy lépést tudunk tenni befelé egyszerre, nem többet, és minden lépés nagy munka, és minden lépés után feltárul egy újabb lépés, újabb kihívás, újabb cél, újabb küzdés. Nem a végét kell megcélozni, hanem a progressziót. Azt lehetetlen kitűzni, hogy végképp megoldjuk, de azt látnunk kell, hogy valahonnan valahová haladunk. Az irányt ki kell jelölnünk, mint megtartóerőt, megengedve a tévedések lehetőségét. Hiszen ha már többé nem bízunk és nem kockáztatunk, akkor ott véget is ér mindenfajta fejlődési lehetőségünk, mert igen, a kapcsolódásban tudjuk megtapasztalni valós önmagunkat a teljes dimenzióban.\n\n&gt; idézet:: Még ez a látszólagos nemgyász is részét képezi egy nagyobb ívű gyásznak, s általa nyerhük vissza minden elkobzott, megmérgezett belső szépségünket.\n\n&gt; idézet:: De mégis. Semmi másra nem emlékeztem, csak erre, őrizted a szépségemet. Ez volt számomra a megszenvedett múltnak, mint romlott húsnak, egyetlen szerethető öröksége, mert mindig értelmet keresünk a szenvedésben, hogy elviselhetőbb legyen. Hordoztalak magamban egy ideig, féltve. Egyszerre a hiányod, és egyszerre a jelenléted. Végül megkerestelek.\n\n&gt; idézet:: Haza kell menni. A szégyenhez. A bűntudathoz. A félelemhez. A fájdalomhoz. A veszteséghez. A kudarchoz. A magányhoz. A tévedéshez. Az önátveréshez. A hazugsághoz. Ott kell ülni vele. Kicsinek kell lenni. Ölbe venni. Megérteni. Elfogadni. Átélni. Hordozni. Elbírni. Elviselni. Kihordani. Megszülni. Megszeretni. Megismerni. Megérezni mindenkor, ha működésbe lép. És megvédeni. Nem elmenekülni.\n\n&gt; idézet:: &quot;Nem ismerkedünk törött szívvel.&quot;\n\n&gt; idézet:: Ha bármelyik rész deficites itt, akkor nincs teljesség, nincs kölcsönösség, s a hiány mentén szakadni fog a vászon egy ponton. Mert lehet test mentén is kapcsolódni valakihez, az is egy kötelék, és lehet intellektus mentén is, és az is egy fontos dimenzió, de mégiscsak az érzelmeink azok, amelyek ezt össze tudják fogni és egységben tartani, és ezek akkor a legerősebbek, ha teljes körűek, vagyis fizikai és szellemi alapokon is nyugszanak, és közben állandó érzelmi áramlásban is vannak, s az érzelmi kommunikáció minden érzésnek, a nehezeknek, szorongatóknak és fájdalmasoknak is teret ad. Ezt nem lehet sokszor megélni, ez kétségtelen. Részeinkhez többen tudnak kapcsolódni egy életút során.\n\n&gt; idézet:: Számos nőt a testén keresztül szükséges felszabadítani ahhoz, hogy megtapasztalja önmaga létezését. A férfiaknak legtöbbször nem a testükön keresztül, hanem a veszteségérzés megengedésén és az ahhoz való kapcsolódáson keresztül lehet visszaadni a szabadságélményt- Mindkettő nagyon pontosan megmutatja, mitől foszt meg elsődlegesen a mérgező szocializáció. A lányokat a saját testük fölötti kontrolltól, a fiúkat pedig az érzelmi szabadságtól. Mindkettő csonkítás, és mindkettő végzetes. Végső soron mindkettő a test és a lélek kettéhasadásához vezet.\n\n&gt; idézet:: A kötődés azt jelenti, hogy benne maradsz az érzésben a félelemmel együtt. Vállalod a kockázatot, átadod magad annak a mély boldogságnak, aminek része a szorongás is, az aggodalom, a sebezhetőség. A kettő együtt jár, nincs egyik a másik nélkül, ez az egység, ez az érzelmi komplexitás. Ezt kell mélyen és szorosan átölelni, amikor a félelemtől nem megijedsz, hanem tudatosan fogadod el, ápolod és hordozod. Ez egyszerre nagyon súlyos. Megrendítő. Sorsfordító. És mérhetetlenül örömteli és felszabadító. Megérkezés. Ez a súly csakis érzelmi biztonságban elbírható. Az érzelmi biztonság pedig a kommunikáció, az érzelmek és gondolatok állandó és egyenletes közlése, és folytonos intimitás. Az egység minden eleme létkérdés, ha egy elem hiányzik, megbomlik az egység. Mert akkor ott valamit le kell takarnod, le kell fedned, el kell rejtened, el kell pusztítanod önmagadból, hogy kibírd. Akkor csak részekben tudsz kapcsolódni, az pedig fogsággá válik így. Megtapasztalni azt, életedben először, hogy figyelnek rád, úgy, ahogyan sohasem figyeltek korábban, beleértve úgy az érzelmi transzparenciát, mint a szellemi partnerséget, a kölcsönös és egyenrangú szexualitást, hordozza az örömét a jelen pillanatnak, a hiábavalóságát a múltnak s a jövő fölötti aggódást. Önkéntelenül félsz, hogy elveszítheted hiszen eddig sosem volt a tied, ez a figyelem pedig életadó erővé válik. Minden azon múlik, hogy együtt tudsz-e létezni ezzel a félelemmel. Az öröm félelmével. A szabadság felelősségével. A veszteség legetőségeivel.\n\n&gt; idézet:: És nehéz, hosszas, gyötrő munka. Mert minden nőben ott egy kislány, aki várja haza az apját, s ezért eltűr sok mindent. Vagy minden nőben egy kislány, aki sajnálja az anyját, s azonosul annak terheivel, és öntudatlanul letiltja a saját boldogságát. S minden férfiban egy kisfiú, akit a magányos anyja magához láncolt érzelmileg, s nem engedett el. Vagy egy kisfiú, akiben az anyja a saját érzelmeit büntette meg. Vagy egy kisfiú, aki olyan szeretett volna lenni, mint az apja, mert akkor hátha kapcsolódni tudnak. Vagy éppen másmilyen, mint egy abuzív apa, mert akkor hátha ő különb lesz. De ezekben az esetekben mégiscsak, bárhogy is, de végereményben: a szülőt várjuk haza, hogy szeressen minket. De az a szülő már nem tud hazajönni. Mi tudunk csak. És nélküle.\n\n&gt; idézet:: Az érzelmi biztonság a legfontosabb érték, s mégis, milyen nagyon eszméletlenül ritka. Súlyos érzés ráébredni, mi mindent ismételtem eddig, akaratlanul. — Page 137\n\n&gt; idézet:: Ha nincs mögötte emberi érzés, empátia, az intellektus köpeny lesz csupán, ugyanolyan unalmas és áthatolhatatlan, merev köpeny, mint önmaga hiánya. — Page 139\n\n&gt; idézet:: Belékaroltam, s csak sétáltunk. Nem terápiáltam, nem ítélkeztem, nem szerettem belé, nem korrigáltam sérült apaképemet általa, az ambivalenciát nem vezettem át illúzióba, nem gyógyítgattam rajta csalódottságaimat, s nem oldottam meg az életét. Csak köröztem vele a parkban, és meghallgattam mint barát. Láttam, hol tart, s magamat is láttam, hol tartok. Megtartottam, hogy ne dőljön el, s hazamentem utána. — Page 144\n\n&gt; idézet:: Az ellenazonosulás, noha látszólag ellentétes, mégis úgy hat, mint egy azonosulás, mert a referencia ugyanúgy egy másik személy marad, aki hat ránk, s így nem a saját, valós életünket éljük. Végeredményül ugyanaz a magány. — Page 154\n\n&gt; idézet:: Csak feküdni egymás mellett. Fogni egymás kezét. Nem csinálni semmit. Szabadon mondani, amit gondolsz, érzel. Akár sírni. Kérdezni. Eszedbe jut valami hülyeség, elmesélni. Egy álmot, egy egyszerű kis történetet. Egy bonyolultat, komolyat. Tanulsággal, tanulság nélkül, mindegy, megosztani egy darabot magadból. Büntetés, szankció, bírság, ítélet, közöny nélkül. Szabadon. Először tehát meg kell érteni. — Pages 161, 185\n\n&gt; idézet:: A fájdalom fejlemény, végre érzed, végre érezheted. Átéled a valódi veszteséged, és most elbírod, megbirkózol vele, mi akkor nem volt lehetséges. Gyógyulni kezdesz, és innen, életed végéig gyógyuló leszel. Gyógyulj. Szabad. Önmagad. Az lesz a társad, kinek büntetlenül mondhatsz igazat. Te magad leszel önmagad első társa. Megéled a valós érzéseidet, kifejezed őket. — Page 185\n\n&gt; idézet:: Nagyon erős jelzés, ha valaki nem tudja a nemet elfogadni válaszként, akkor az egy józanító marker, hogy erőszakkal állunk szemben. — Page 188\n\n&gt; idézet:: Sokáig azt hittem, a gondolataimnak, az érzéseimnek is ki vagyok szolgáltatva, nem tehetek velük szemben semmit. Hosszú és küzdelmes idő volt megtanulnom, hogy ez nem így van. Attól, mert érzek valamit, még hozhatok döntést. Attól, mert a gondolataim valamire kényszerítenek, a döntést az eltérő cselekvésről! mégis én hozom meg. Nem, nem könnyű eltérni a rögzült sémától, ez nem is kérdés. Ez élethosszig tartó, kemény edzés. Tehát akkor van mozgástér. A gondolat és az érzés jelzés, de nem verdikt. Nem végállomás. Nem állandó. Nem parancs. Csak jelzés. De nem te vagy, nem azonos veled. Vannak a gondolatok, és vannak az érzések, és vagy te. Te mindig ott vagy, a gondolatok és érzések pedig változnak. Nekik önmagukban nincsen cselekvőerejük. Cselekvőerőd csak neked van. — Page 192\n\n&gt; idézet:: Amikor az érzést már nem bírod el, már nincs hova menekülnie, akkor jön a test, akkor ki fog ülni a bánat, mi nem kapott szót, a test szélére. — Page 193\n\n&gt; idézet:: Figyelve van a testemre. Annak szükségére. És ezt lehet. Szabad. Sőt kell. Kötelező! Ha a veszteségre fókuszálok, az bezárja a teret. Ha arra, hogy mire tanít, mutat rá, hívja fel a figyelmet, akkor az kinyitja. — Page 194\n\n&gt; idézet:: egy kiszolgáltatott helyzetben lévő ember nem képes azonnal befogadni a valóságot. Mert az annyira ellentmondana az illúziónak, amit épített, amibe kapaszkodik, amiben él. De minden egyes hazugság egy kis hajszálrepedést okoz. Ha elfojtja, akkor gyengül, és egyre többet kibír. De ha megengedi magának az érzést, a fájdalmat, akkor elkezd benne tudatosodni. És ez a tudatosodás erővé áll össze, és amikor a kis apró felismerések nagy erővé érnek, akkor hirtelen be fogja tudni fogadni a teljes valóságot. Akkor már nem harít, nem dűlöngözi magát többet, akkor eljön a pillanat, amikor kimondja az igazat. És ott, akkor az igazság pillanatában már van annyira erős, hogy cselekedni tudjon. — Page 202\n\n&gt; idézet:: Ahogy itt állok, a háttérben szétárad bennem a szomorúság, a veszteség és a méltatlanság. De az előtérben már átkarol a saját méltóságom. — Page 207\n\n&gt; idézet:: Az egyedüllétem most egyszerre a fájdalma, a szabadsága, az erőm, a hiányom, a vágyakozásom, az egyensúlyom, a tudatosságom, a felnőttségem, a tévedésem, a javítételem, a tanulásom, és a szerelmem hitele is. — Page 207\n\n&gt; idézet:: a pusztán alkotói képzeletbe és intellektusba vezetett élet hogyan tartja elfojtásban a mögötte rejlő érzelmeket, azt a látszatot keltve, hogy foglalkozva van velük, miközben valójában csak esztétikailag van, de nincsen, s mindez hogyan vezet végül az intimitás hiányába egy egyébként magasan intellektuális kapcsolatban. — Page 209\n\n&gt; idézet:: Akkor is felelős vagy, ha a döntésed nem tudatos, mert azért is felelsz, hogy tudatosítsd a döntéseidet. — Page 210\n\n&gt; idézet:: Az erőfeszítés igazolása, a megfelelés kényszere, a szeretet illúziója, vágya, reménye, az e képet sulykoló társadalmi nyomás, a családi minta, a séma kémiája mind összefognak, és benne tartanak: kész, te csak szeretni akarsz, de már rég függőé vagy. Mindannyian ezt akarjuk tulajdonképpen, csak az eszközeink mások: ki kifelé, ki befelé halad érte. — Page 223\n\n&gt; idézet:: És minél nagyobb az eltérés a fenntartott, idealizált látszat és a mögötte húzódó valóság között, annál komolyabb ideológiát kell szőni a csupasz hézagok kitömésére, és annál tovább marad az egyén a gyerekkor fogságában. — Page 226\n\n&gt; idézet:: Kifejleszted az erőt, hogy elbírod a saját fájdalmaid. És megérzed a saját méltóságodat benne. Meghaladod az agyadat, és odamész az érzéseidhez, és velük lélekezel a gondolataid kizárólagossága helyett. Együtt lélekeztek, mind, egyben. Te vagy a saját családod. Amíg el nem jutsz a saját hazugságodig, a saját kínzó magadra utaltságodig, addig ennek nem lesz vége. — Page 227\n\n&gt; idézet:: Mert van a függőségnek egy ilyen mély, alattomosan működő húzó-húzó ereje, hogy minden tudást elfelejtesz, vagy félreteszel, és minden racionalitásnak és józanságnak fölé nő a reményed, a hited, az akarásod, a vágyad, a sóvárgásod, az a félelem, hogy ha ezt az érzést elveszíted, akkor meghalsz, egy égő, regresszív pánik a mellkasban, ami legyőz mindent, tömény sötétséget látsz mindenütt, s csak egyedül az a másik, a téged szinte megölő szerelmed, ott tűnik fel egyetlen fényként. Noha az a fény éppen a belőled elszívott élet ereje. De kívánod, és vágyod, mert az övé, ott van nála a soha be nem teljesült, de illúzióként hazudott gyermekkor íze és biztonságot hazudó ölelése. A soha meg nem élt szeretetet hajszoljuk benne. — Page 227\n\n&gt; idézet:: Békés elengedés kellene, de ez függővel nem lehetséges. Tagadni, vádolni, hazudni fog a végsőkig átírt valóságképpel, erre számíthatsz. S amíg te magad is függő vagy, partner leszel ebben a véget nem érő magyarázkodásban. Ezért hat, mivel kívülről nem lehetséges, belülről kell elrendezned ezt. Úgy látni őt, mint a legfájabb részed kivetülését, és ezért a saját, belső, legfájabb részeddel kell békét kötnöd, hogy őt is elengedhesd útjára, meg magadat is szépen. Nem menekülni többet. Nem cserélni testet testre meg lelket lélekre. Csak elköszönni csendben, kifelé, s az összes munkát nem irányába, hanem befelé végezni el, annak gyökeréig merészkedve. — Page 229\n\n&gt; idézet:: Nem kell többé senkinek magyaráznom a tetteimet. Lefogtam a két kezemet, a két lábamat, hogy megmaradjak, csak én tudom, milyen erő van mögöttem. A legszerethetőbb részem tartom így életben, azt, aki független tőle. Nem viszem oda többé magamat, ahol bántanak. — Page 230\n\n&gt; idézet:: De beleengedem magam a fájdalom szabadesésébe a tudat jelenlétével, mi a szilárd elhatározásom a vissza nem térésre és egyben a mély érzelmi együttérzésem a saját veszteségemmel, és ennek megélése eláraszt a nyugalom és az öröm érzésével. — Page 232\n\n&gt; idézet:: Mintha ki volnék bélelve belülről az érzéseimmel, és azok megtartanak, ha eldőlnék. — Page 232",
     "published": true,
     "lent": false
   },
   {
-    "id": "lukács-liza-hogyan-szeretsz",
+    "id": "lukacs-liza-hogyan-szeretsz",
     "title": "Hogyan szeretsz",
     "author": "Lukács Liza",
-    "cover": "covers/lukács-liza-hogyan-szeretsz.jpg",
+    "cover": "covers/lukacs-liza-hogyan-szeretsz.jpg",
     "content": "<h3>Említések</h3>\n<li>családi minták megismétlése, [[Richard Yates - A szabadság útjai]]</li>\n<h3>Idézetek</h3>\n&gt; idézet:: \n<h3>Kötődési minták</h3>\n<li>szorongó ambivalens</li>\n\t- serdülőkor elején párkapcsolatra vágyik\n\t- kész felajánlani mindenét\n\t\t- szeretne folyatmatos visszajelzést kapni arról, hogy őt is szeretik\n\t\t- de mi van, ha elhagy?\n\t\t\t- a közelséget nem képes élvezni\n\t- sokszor féltékeny típus\n\t- kétségbeesés, vágy a kizárólagosságra, ragaszkodás, következetlenség\n\t- gyermekkorban az anya jelenlétében is bátortalan, visszahúzódó\n\t\t- miért?\n\t\t\t- amikor nem találkozik a gyerek és az anya szükséglete\n\t\t\t- következetlen anyák\n\t\t\t- rosszul olvasott igények\n\t- reakciói kiszámíthatatlanok\n\t\t- párkapcsolatban is magányosnak érzi magát\n\t\t- követelőző, agresszív, majd hirtelen könyörgő, vagy hidegen hagyja a kapcsolat\n\t- mindenféle kapcsolata érzelmekkel átitatott\n\t- beosztottként megfelelési kényszer, alacsony önértékelés\n\t- konfliktusait kerüli, de benne dúlnak tovább a kétkedés miatt\n\t\t- néha kirobban belőle, de inkább otthon, mint ahol a probléma van\n\t- iskolában aggódik, hogy a tanár pikkel-e rá\n\t- kitüntetett szeretne lenni másoknak\n\t- saját és párja igényeit nehezen különbözteti meg\n<li>szorongva elkerülő</li>\n\t- burokban él, nem enged be se jót, se rosszat\n\t- érzelmeit gyermekként kifejezte egy darabig, de az anyának csak gondjára volt\n\t- nem figyeltek rá eleget, kizárták\n\t- elfojtja negatív és pozitív érzelmeit\n\t- párkapcsolataiban az ember magányos\n\t\t- és sok a &quot;nem tudom&quot; válasz\n\t- kiszámíthatatlan\n\t- hasonló édesanyjában nem tudja megkülönböztetni a segítségre szoruló felnőttet a szeretett anyától\n\t- emberektől távol\n\t- konfliktuskerülő\n\t- érzelmeit egy hideg zuhanyként önti rá párjára, amikor már az utolsó cseppig van a pohár\n\t- nincs oda a fizikai kontaktusért\n\t- szenvedélybetegségek\n\t\n\t- biztonságos kapcsolatot az tud a gyermekével kialakítani, aki feldolgozta a gyermekkorát\n\t\t- nem idealizálja, vagy dühös tőle",
     "published": false,
     "lent": false
@@ -324,10 +324,10 @@
     "lent": false
   },
   {
-    "id": "kurt-vonnegut-időomlás",
+    "id": "kurt-vonnegut-idoomlas",
     "title": "Időomlás",
     "author": "Kurt Vonnegut",
-    "cover": "covers/kurt-vonnegut-időomlás.jpg",
+    "cover": "covers/kurt-vonnegut-idoomlas.jpg",
     "content": "<h3>Idegen szavak</h3>\n\nidegenszo:: [[epifánia]]\n<h3>Említések</h3>\n\n<li>[[Ernest Hemingway - Az öreg halász és a tenger|Ernest Hemingway - Az öreg halász és a tenger]]</li>\n<li>[[Ernest Hemingway - A folyón át a fák közé|Ernest Hemingway - A folyón át a fák közé]]</li>\n<li>[[Mark Twain|Mark Twain]]</li>\n<li>[[Henry David Thoreau|Henry David Thoreau]]</li>\n<li>[[Günter Grass|Günter Grass]] regényíró és grafikus</li>\n<li>[[Robert Pinsky|Robert Pinsky]] költő</li>\n<li>[[Alex Vonnegut|Alex Vonnegut]]</li>\n<li>[[Ray Bradbury|Ray Bradbury]], [[J D Salinger|J D Salinger]], [[John Cheever|John Cheever]], [[John Collier|John Collier]], [[John O&#x27;Hara|John O&#x27;Hara]], [[Shirley Jackson|Shirley Jackson]], [[Flannery O&#x27;Connor|Flannery O&#x27;Connor]]</li>\n<li>[[Thornton Wilder - A mi kis városunk|Thornton Wilder - A mi kis városunk]] (színdarab)</li>\n<li>[[Tennessee Williams|Tennessee Williams]]</li>\n<li>[[A vágy villamosa|A vágy villamosa]]</li>\n<li>[[Arthur Miller - Az ügynök drámája|Arthur Miller - Az ügynök drámája]]</li>\n<li>[[Voltaire|Voltaire]]</li>\n<li>[[Thomas Jefferson|Thomas Jefferson]]</li>\n<li>[[Benjamin Franklin|Benjamin Franklin]]</li>\n<li>[[Bertrand Russell|Bertrand Russell]]</li>\n<li>&quot;ómódi&quot; írók: [[Henry Adams|Henry Adams]], [[William James|William James]], [[Henry James|Henry James]], [[Samuel Clemens|Samuel Clemens]]</li>\n<li>[[Edward McDowell|Edward McDowell]]</li>\n<li>[[James Whitcomb Riley|James Whitcomb Riley]] költő</li>\n<li>[[Shakespeare|Shakespeare]]</li>\n<li>[[Edward Muir|Edward Muir]] költő</li>\n<li>[[Nathaniel Hawthorne - A skarlát betűje|Nathaniel Hawthorne - A skarlát betűje]]</li>\n<li>[[Isaac Asimov|Isaac Asimov]]</li>\n<li>[[Benjamin Franklin|Benjamin Franklin]]</li>\n<li>[[Voltaire - Candide|Voltaire - Candide]]</li>\n<li>[[Hermann Merville|Hermann Merville]]</li>\n<li>[[A E Housman|A E Housman]] angol költő</li>\n<li>[[Ernest Hemingway - Búcsú a fegyverektől|Ernest Hemingway - Búcsú a fegyverektől]]</li>\n<li>[[Henry David Thoreau - Walden|Henry David Thoreau - Walden]]</li>\n<li>[[Kurt Vonnegut - Kékszakáll|Kurt Vonnegut - Kékszakáll]]</li>\n<li>[[Samuel Taylor Coleridge|Samuel Taylor Coleridge]] - [A hitetlenség felfüggesztése](https://hu.frwiki.wiki/wiki/Suspension_consentie_de_l%27incr%C3%A9dulit%C3%A9)</li>\n<li>[[Omar Khajjám - Rubáyiát|Omar Khajjám - Rubáyiát]]</li>\n<li>[[Lancelot Andrewes|Lancelot Andrewes]] angol író</li>\n<li>[[Avoni Bárd|Avoni Bárd]] angol író</li>\n<li>[[Shaw Thomas|Shaw Thomas]], [[Norman Thomas|Norman Thomas]], [[Eugene Debs|Eugene Debs]], [[John Dos Passos|John Dos Passos]] (magas színvonalú szocialista írók)</li>\n<li>[[Saul Bellow|Saul Bellow]] - Augie March kalandjai</li>\n<li>[[Willa Cather|Willa Cather]]</li>\n<li>[[William Styron|William Styron]] regényíró</li>\n<li>43-49</li>\n<li>[[Paul Krassner|Paul Krassner]] szatíraíró</li>\n<li>[[Perchy Bysshe Shelley|Perchy Bysshe Shelley]]</li>\n<li>[[Bartlett - Népszerű idézetek lexikona|Bartlett - Népszerű idézetek lexikona]]</li>\n<li>[[Fellini - 8 1/2|Fellini - 8 1/2]]</li>\n<li>[[Joseph Heller - A 22-es csapdája|Joseph Heller - A 22-es csapdája]]</li>\n<li>[[George Bernard Shaw - Vissza Matuzsálemhez|George Bernard Shaw - Vissza Matuzsálemhez]]</li>\n- \n<h3>Vélemény</h3>\n\n<li>Feltételez egy alapműveltséget, de sok dolgot említ, amivel kibővíti a látóteret</li>\n<li>Érdekes humora van</li>\n<li>Története nem igazán van, elmesél egy hipotetikus történést, és minden ahhoz kapcsolódót, ami eszébe jut</li>\n<h3>Idézetek</h3>\n\n&gt; idézet:: Amikor a dolgok igazán jól mennek, nagyon figyeljünk oda, hogy észre is vegyük. ([[Alex Vonnegut|Alex Vonnegut]])\n\n&gt; idézet:: Aztán pénzt kapott a dúsgazdag anyukájától, hogy előállítsa és piacra dobja ezeket az ördögi szerkentyűket, amelyek kiküszöbölték a képzelőerőt. Egy csapásra népszerűek lettek, hiszen annyira látványosak voltak a műsorok, annyira nem igényeltek gondolkodást. [...] A bubui serdülők már semmi értelmét nem látták, hogy képzelőerőt növesszenek, hiszen mást sem kellett tenniük, mint megnyomni egy gombot, s láthattak ezerféle csiricsáré szemetet. Elképedve nézték a nyomtatott lapot vagy a festményt: hogy lehet valaki olyan eszement, jogy ilyen együgyű, döglött holmkt bámuljon?\n\n&gt; idézet:: Jóformán fel sem megy a függöny, a színészek a darab első felvonásának első jelenetében már tudják, mit fognak majd mondani vagy csinálni, hogy végül hogyan alakulnak a dolgok, ha jól, ha rosszul. Mégis kénytelenek úgy viselkedni, mintha kész rejtelem volna a jövő.\n\n&gt; idézet:: &quot;Az emberek tömege csöndes elkeseredésben él&quot; ([[Henry David Thoreau|Henry David Thoreau]])\n\n&gt; idézet:: merő unaloműzés volt, &quot;szeméremsértő meztelenkedés azonos nemű világtalan személy jelenlétében&quot;\n\n&gt; idézet:: Meglehet, a Biblia minden idők legnagyszerűbb sztorija, de míg világ a világ, annál népszerűbb sztori nincs, mint mikor egy jóképű pár igazi szenvedéllyel közösül házasságon kívül, s ilyen-olyan okból muszáj nekik abbahagyni, amíg még tart az újdonság ingere.\n\n&gt; Csak mélyen hívő ember engedheti meg magának a vallási kételkedés fényűzését. ([[Friedrich Nietzsche|Friedrich Nietzsche]])\n\n&gt; idézet:: reflex volt, vagyis nem kellően kreatív, hogysem a szabad akarat számlájára legyen írható\n\n&gt; idézet:: A második világháború után Alex bácsikám politikailag annyira konzervatív lett, mint Gábriel arkangyal.\n\n&gt; idézet:: Ha elmennek egy nagyvárosba, márpedig az egyetem nagyváros, bagy valószínűséggel összefutnak Wolfgang Amadeus [[Mozart|Mozart]]tal. Maradjanak otthon, maradjanak otthon!\n\n&gt; 43. Fejezet\n\n&gt; idézet:: És egyáltalán: minek is vesződnének? Hogy miért? Mert sokan várnak kétségbeesetten erre az üzenetre: &quot;Nagyjából ugyanúgy érzek és gondolkodom, mint te, sok mindent ugyanúgy szeretek, mint te, még ha legtöbben ezeket nem is szeretik. Nem vagy egyedül.&quot;",
     "published": true,
     "lent": false
@@ -342,46 +342,46 @@
     "lent": true
   },
   {
-    "id": "lev-tolsztoj-ivan-iljics-halála",
+    "id": "lev-tolsztoj-ivan-iljics-halala",
     "title": "Ivan Iljics halála",
     "author": "",
-    "cover": "covers/lev-tolsztoj-ivan-iljics-halála.jpg",
+    "cover": "covers/lev-tolsztoj-ivan-iljics-halala.jpg",
     "content": "#üres \n\n[[Lev Tolsztoj]]",
     "published": false,
     "lent": false
   },
   {
-    "id": "nancy-fraser-kannibál-kapitalizmus",
+    "id": "nancy-fraser-kannibal-kapitalizmus",
     "title": "Kannibál kapitalizmus",
     "author": "Nancy Fraser",
-    "cover": "covers/nancy-fraser-kannibál-kapitalizmus.jpg",
+    "cover": "covers/nancy-fraser-kannibal-kapitalizmus.jpg",
     "content": "<h3>Idegen szavak</h3>\n\n<li>idegenszo:: [[kannibalizál]]</li>\n<li>idegenszo:: [[uroborosz]]</li>\n<li>idegenszo:: [[kommodifikálás]]</li>\n<li>idegenszo:: [[fordizmus]]</li>\n<li>idegenszo:: [[episztemikus]]</li>\n<li>idegenszo:: [[derivatíva]]</li>\n<li>idegenszo:: [[braudeliánus]]</li>\n<li>idegenszo:: [[apartheid]]</li>\n<li>idegenszo:: [[ontológia]]</li>\n<li>idegenszo:: [[meritokrácia]]</li>\n<li>idegenszo:: [[hegemónia]]</li>\n<li>idegenszo:: [[holisztikus]]</li>\n<h3>Említések</h3>\n\n<li>[[Kapitalkritik|Kapitalkritik]] hagyományai</li>\n<li>[[Karl Marx - A tőke|Karl Marx - A tőke]]</li>\n<li>[[Piero Sraffa - Áruk termelése áruk révén. Előjáték a közgazdasági elmélet bírálatához|Piero Sraffa - Áruk termelése áruk révén. Előjáték a közgazdasági elmélet bírálatához]]</li>\n<li>[[Immanuel Wallerstein - Historical Capitalism|Immanuel Wallerstein - Historical Capitalism]]</li>\n<li>[[Polányi Károly - A nagy átalakulás. Korunk gazdasági és politikai gyökerei|Polányi Károly - A nagy átalakulás. Korunk gazdasági és politikai gyökerei]]</li>\n<li>[[Rosa Luxemburg - A tőkefelhalmozás|Rosa Luxemburg - A tőkefelhalmozás]]</li>\n<li>[[Donna J. Haraway - Kiborg kiáltvány. Tudomány, technika és szocialista feminizmus a 80-as években|Donna J. Haraway - Kiborg kiáltvány. Tudomány, technika és szocialista feminizmus a 80-as években]]</li>\n<li>[[Geoffrey Ingham - The Nature of Money|Geoffrey Ingham - The Nature of Money]]</li>\n<li>[[David Graeber - Debt. The First 500 Years|David Graeber - Debt. The First 500 Years]]</li>\n<li>[[Ellen Meiksins Wood - Empire of Capital|Ellen Meiksins Wood - Empire of Capital]]</li>\n<li>[[Giovanni Arrighi|Giovanni Arrighi]] [[braudeliánus|braudeliánus]] történeti szociológus - [[Giovanni Arroghi - The Long Twentieth Century - Money, Power, and the Origins of Our Times|Giovanni Arroghi - The Long Twentieth Century - Money, Power, and the Origins of Our Times]]</li>\n<li>[[Lukács György - Az eldologiasodás és a proletariátus tudata|Lukács György - Az eldologiasodás és a proletariátus tudata]]</li>\n<li>[[Sara Ruddick - Mathernal Thinking - Towards a Politics of Peace|Sara Ruddick - Mathernal Thinking - Towards a Politics of Peace]]</li>\n<li>[[Nancy Fraser - Struggle over Needs. Outline of a Socialist-Feminist Critical Theory of Late-Capitalist Political Culture|Nancy Fraser - Struggle over Needs. Outline of a Socialist-Feminist Critical Theory of Late-Capitalist Political Culture]]</li>\n<li>[[James O’Connor - Capitalism, Nature, Socialism. A Theoretical Introduction]]</li>\n<h3>Vélemény</h3>\n\n- \n<h3>Idézetek</h3>\n\n&gt; idézet:: A “kapitalizmus” kifejezés nem a gazdaság hanem a társadalom egy formájára vonatkozik, amely a hivatalosként definiált gazdaságot felhatalmazza arra, hogy monetizált értéket halmozzon fel a befektetők és tulajdonosok számára, miközben mindenki más gazdaságon kívül eső javait felemészti.\n\n&gt; idezet:: A munka itt kétféle értelemben is “szabad”: elsőként jogi státusz tekintetében - nem rabszolgai, rögzöz kötött, öröklötten kirótt vagy más formában leláncolt egy sdott helyhez vagy gazdához -, ezért mobil, és képes munkaszerződésbe lépni. Másodszor pedig, a létfenntartáshoz és a termeléshez szükséges eszközökhöz való hozzáféréstől is “meg van szabadítva”, köztük a föld és a szerszámok hagyományos használati jogától - így tehát meg van fosztva azoktól a szavaktól és jogosultságtól amelyek lehetővé tennék a munkaerőpiactól való távolmaradást.\n\n&gt; idézet:: A kétszeresen szabad munkások a fosztogatott nyersanyagokat olyan gépekkel dolgozzák fel, amelyeket az elkobzott energiaforársok hajtanak. Béreiket az ellopott földön eladósodott parasztok által termelt élelmiszerek elérhetősége, valamint a kiszipolyozó üzemekben gyártott fogyasztói javak tartják alacsonyan. Az utóbbiakat olyan, szabadságuktól megfosztott, alárendelt helyzetben lévő &quot;mások&quot; állítják elő, akiknek a saját reprodukciós költségei nincsenek egészében fedezve. A kisajátítás ekképpen a kizsákmányolás alapjául szolgál, nyereségessé téve azt.\n\n&gt; idézet:: Be kell látnunk ugyanakkor, hogy ezek a gazdaságon kívüli normatív gondolatok sokszor öltenek olyan alakot, amely hirrarchikus és szűk látókörű (a társadalmi reprodukció esetében), korlátozott és kirekesztő (a politikai rendszer esetében), romantikus és szektariánus (az emberen túli természet esetében) vagy eldologiasodott és osztályvan (a kisajátítás esetében). Ezért aztán nem is szabad idealizálnunk őket. Fontos viszont leszögezni, hogy mennyire eltérnek ezek az értékek azoktól, amelyek a kapitalizmus homlokterében állnak: a mindenek felett álló növekedéstől, a hatékonyságtól, az egyenlő cserétől, az egyéni döntéstől, a negatív szabadságtól és a meritokratikus előmeneteltől.\n\n&gt; idézet:: Ha a kapitalizmusról mint az ezeken az elkülönítés en alapuló intézményesült társadalmi rendről beszélünk, azzal azt állítjuk, hogy a kapitalizmus nem véletlenszerűen, hanem szerkezetileg fonódik össze a nemi alapú dominanciával, az ökológiai degradációval, a faji és imperialista elnyomással és a politikai uralommal. Mindezt természetesen a (kétszeresen szabad) munkásosztály rendszerszintű, nem véletlenszerű, előtérben futó kizsákmányolása egészíti ki.\n\n&gt; idézet:: Ami az első nézőpontból egyenértékű áruk cseréjének tűnt, az [[Marx]] szemszögéből nem más, mint egy bűvésztrükk. Miközben társadalmi reprodukciójuk költségeinek csupán átlagosan szükséges részét kapják meg, a kapitalizmus munkásai nem rendelkezhetnek a munkájuk által előállított többletértékkel, amely a tőkés zsebébe vándorol. És éppen ez a lényeg.\n\n&gt; idézet:: A tőke által kisajátított embercsoportok alárendelése a kizsákmányolt munkások szabadságának rejtett alapfeltétele.",
     "published": true,
     "lent": false
   },
   {
-    "id": "nikosz-kazantzakisz-krisztus-utolsó-megkísértése",
+    "id": "nikosz-kazantzakisz-krisztus-utolso-megkisertese",
     "title": "Krisztus utolsó megkísértése",
     "author": "",
-    "cover": "covers/nikosz-kazantzakisz-krisztus-utolsó-megkísértése.jpg",
+    "cover": "covers/nikosz-kazantzakisz-krisztus-utolso-megkisertese.jpg",
     "content": "<li>[[Nikosz Kazantzakisz]]</li>",
     "published": false,
     "lent": false
   },
   {
-    "id": "nathaniel-hawthorne-kétszer-elmesélt-történetek",
+    "id": "nathaniel-hawthorne-ketszer-elmeselt-tortenetek",
     "title": "Kétszer elmesélt történetek",
     "author": "",
-    "cover": "covers/nathaniel-hawthorne-kétszer-elmesélt-történetek.jpg",
+    "cover": "covers/nathaniel-hawthorne-ketszer-elmeselt-tortenetek.jpg",
     "content": "[[Nathaniel Hawthorne]]",
     "published": false,
     "lent": false
   },
   {
-    "id": "albert-camus-közöny",
+    "id": "albert-camus-kozony",
     "title": "Közöny",
     "author": "Albert Camus",
-    "cover": "covers/albert-camus-közöny.jpg",
+    "cover": "covers/albert-camus-kozony.jpg",
     "content": "\n<h3>Idézetek</h3>\n\n&gt; idézet:: De hát valami megváltozott, mert a másnap várása közben megint csak a cellámra leltem. Mintha a nyári égre rajzolt és oly meghitt ösvények épp úgy vezetnének börtönbe, mint tiszta álmainkba.\n\n&gt; idézet:: Arról, amit nem ismerünk, mindig túlzott módon gondolkodunk.\n\n&gt; idézet:: Alapjában én is tudtam, hogy mindegy, akár harminc évvel, akár hetvennel halunk meg, mivel mindkét esetben és magától értetődőn, más férfiak és más nők tovább élnek, mégpedig sok-sok ezer esztendeig. Tulajdonképp semmi se világosabb. Mindenképp én halok meg, akár most, akár húsz év múlva. E pillanatban az bántott csak ebben az egész érvelésben, hogy valami szilaj ugrást éreztem mégis a bensőmben, ha az ezután következő húszévi életre gondoltam. De hát ezt is elfojtottam, ha előre elképzeltem, milyen gondolataim lehetnének húsz esztendő múlva, ha egyszer mégis oda kéne érnem. Ha már egyszer meghalunk, világos, hogy nem fontos, mikor és miképpen kell meghalnunk.",
     "published": true,
     "lent": false
@@ -396,55 +396,55 @@
     "lent": false
   },
   {
-    "id": "james-nestor-lélegzet",
+    "id": "james-nestor-lelegzet",
     "title": "Lélegzet",
     "author": "James Nestor",
-    "cover": "covers/james-nestor-lélegzet.jpg",
+    "cover": "covers/james-nestor-lelegzet.jpg",
     "content": "1. fejezet\n\t1. hogyan jutottunk ebbe a légzéstechnikailag rossz helyzetbe? Puha étrend\n2. fejezet\n\t1. A szájlégzés röviden rossz\n3. fejezet\n\t1. [[Siva-szvaródaja]]\n\t2. az orrnyílások méretének változásának ciklikussága\n\t3. [[váltott orrnyílásos légzés - nádí sódhana]]\n4. fejezet\n\t1. [[tibeti 5 gyakorlat]]\n\t2. tüdőtágítás\n5. fejezet\n\t1. a szén-dioxid fontossága\n\t2. minél több CO² van, annál több oxigént vesz fel egy sejt\n\t3. imádkozás -&gt; ideális kilégzési időy kb. 6 mp\n6. fejezet\n\t1. kisebb mennyiségű levegő szükséges egy embernek, mint amennyit belélegez\n\t2. a VO² max a kardiorespiratív fittség legjobb mérőszáma\n7. fejezet\n\t1. a rágás szerepe\n\t2. étrendbeli különbségek az idő változásával\n8. fejezet\n\t1. [[Wim Hof]]\n\t2. [[tummo]]\n\t3. ne utasai, hanem pilótái legyünk az autonóm idegrendszerünknek\n9. fejezet\n\t1. szorongás és kemoreceptorok: a szorongás lehet, hogy az alullégzésre adott immunválasz (a túllégzés) egyik tünete\n\t3. A kemoreceptorok a CO² szintek alapján az amygdalát kikerülve is vészjelzést adnak, pánikrohamot is előidézhet emiatt sok széndioxid\n\t4. fúvósként fontos a kemoreceptorok edzése, hogy hozzászokjunk az oxigénszegény környezethez\n11. fejezet\n\t1. [[Álvares DeRose]]-féle jóga\n\t2. [[csikung]] = &quot;légzésmunka&quot;\n\t3. [[Szvámi Ráma]]: az elme aktív, a test alszik\n\t4. [[Brihadáranyaka]] és [[Cshángdója]]\n\t5. [[szurdasan krija]]\n\t6. [[Sri Sri Ravi Shankar]]\n\t7. [[Dzsíva pránája]]\n<h3>Légzést segítő gyakorlatok</h3>\n<li>[[váltott orrnyílásos légzés - nádí sódhana]]</li>\n<li>[[légzéskoordináció]]</li>\n<li>[[rezonáns légzés]]</li>\n<li>[[Butejko-légzéstechnikák]]</li>\n\t- [[lélegzetvisszatartós séta]]\n<li>[[rágógumi]]</li>\n<li>POD ([[Preventive Oral Device]])</li>\n<li>[[szájpadlástágítás]]</li>\n<li>[[tummo]]</li>\n<li>[[szurdasan krija]]</li>\n<li>[[jógalégzés]]</li>\n<li>[[dobozlégzés]]</li>\n<li>[[4-7-8]]</li>\n<h3>Vélemény</h3>\n<li>minden fúvósnak (és tüdőhasználónak) ajánlom, zseniális körképet ad a szakterületen</li>",
     "published": false,
     "lent": false
   },
   {
-    "id": "martin-heidegger-lét-és-idő",
+    "id": "martin-heidegger-let-es-ido",
     "title": "Lét és idő",
     "author": "",
-    "cover": "covers/martin-heidegger-lét-és-idő.jpg",
+    "cover": "covers/martin-heidegger-let-es-ido.jpg",
     "content": "#üres \n[[Martin Heidegger]]",
     "published": false,
     "lent": false
   },
   {
-    "id": "marcus-aurelius-elmélkedések",
+    "id": "marcus-aurelius-elmelkedesek",
     "title": "Marcus Aurelius- Elmélkedések",
     "author": "Marcus Aurelius",
-    "cover": "covers/marcus-aurelius-elmélkedések.jpg",
+    "cover": "covers/marcus-aurelius-elmelkedesek.jpg",
     "content": "<h3>Idegen szavak</h3>\n\nidegenszo:: \n<h3>Említések</h3>\n\n- \n<h3>Vélemény</h3>\n\n- \n<h3>Idézetek</h3>\n\n&gt; ",
     "published": false,
     "lent": false
   },
   {
-    "id": "szentesi-éva-merkúr-a-retrográdban",
+    "id": "szentesi-eva-merkur-a-retrogradban",
     "title": "Merkúr a retrográdban",
     "author": "Szentesi Éva",
-    "cover": "covers/szentesi-éva-merkúr-a-retrográdban.jpg",
+    "cover": "covers/szentesi-eva-merkur-a-retrogradban.jpg",
     "content": "[[Elek Petra]]\n<h3>Idegen szavak</h3>\n\nidegenszo:: [[retrográd]]\n\n<h3>Vélemény</h3>\n\n<li>az egyik leginkább sírásra késztető könyv egy anya elvesztésének élményéről</li>\n<li>Raymond - I am Here</li>\n<h3>Idézetek</h3>\n\n&gt; ",
     "published": false,
     "lent": false
   },
   {
-    "id": "gurubi-ágnes-másik-isten",
+    "id": "gurubi-agnes-masik-isten",
     "title": "másik isten",
     "author": "Gurubi Ágnes",
-    "cover": "covers/gurubi-ágnes-másik-isten.jpg",
+    "cover": "covers/gurubi-agnes-masik-isten.jpg",
     "content": "<h3>Ami megfogott benne</h3>\n<li>végre egy nyálcsorgástól mentes szerelemről szóló regény</li>\n<li>teljesen eltérő lelkivilágú személyek</li>\n<li>nagyon könnyen olvasható, olyan, mintha egy kávé melletti monológ lenne, pikk-pakk befejeztem</li>\n<li>[[Lukács Liza - Hogyan szeretsz]] - kötődési minták</li>",
     "published": false,
     "lent": false
   },
   {
-    "id": "franz-kafka-naplók",
+    "id": "franz-kafka-naplok",
     "title": "Naplók",
     "author": "Franz Kafka",
-    "cover": "covers/franz-kafka-naplók.jpg",
+    "cover": "covers/franz-kafka-naplok.gif",
     "content": "<h3>Említések</h3>\n<li>[[Jean Racine|Jean Racine]] - Phaedra</li>\n<li>[[Alfred Musset|Alfred Musset]]</li>\n<li>[[Iphigénia Tauriszban|Iphigénia Tauriszban]]</li>\n<li>[[Justinus Kerner|Justinus Kerner]] - Úti árnyak</li>\n<li>[[Gerhart Hauptmann|Gerhart Hauptmann]] - A bischopfsbergi szüzek</li>\n<li>[[Goethe|Goethe]] naplói</li>\n- \n<h3>Vélemény</h3>\n\n<li>Néha kifejezetten a semmiről szól. Olyan kicsit, mint [[Jean-Paul Sartre - Az undor|Jean-Paul Sartre - Az undor]], meg lehet benne találni értékes gondolatokat.</li>\n<h3>Idézetek</h3>\n&gt; idézet:: A társaságtól azt várom, hogy mindazt megkapom tőlük, aminek híjával vagyok, mindenekelőtt erőim megszervezését, mert nem elég annyi összpontosítás, amennyi ettől az agglegénytől az utcán telhet.\n\n&gt; idézet:: csak annyi talaj van alatta, amennyi két lábnak kell, csak annyi támasz, ami két kéznek elég, tehát kevesebb, mint a trapézművésznek a varietében, aki alá legalább védőhálót feszítenek ki.\n\n&gt; idézet:: ez a felbomlás úgy megy végbe, mint egy apoteózis, amikor is elszáll belőlünk minden, ami életben tart bennünket, de miközben elszáll, emberi fényével még utoljára beragyog bennünket.\n\n&gt; idézet:: Nem engedek a fáradtságnak. Beleugrom a novellámba, ha szétszabdalja is az arcom.\n\n&gt; ",
     "published": true,
     "lent": false
@@ -459,19 +459,19 @@
     "lent": false
   },
   {
-    "id": "örkény-istván-novellák",
+    "id": "orkeny-istvan-novellak",
     "title": "Novellák",
     "author": "Örkény István",
-    "cover": "covers/örkény-istván-novellák.jpg",
+    "cover": "covers/orkeny-istvan-novellak.jpg",
     "content": "<h3>Novellák</h3>\n\n<li>Hódolat [[Franz Kafka|Kafkának]]</li>\n\t- A visszaváltozás\n\t\t- [[Franz Kafka - Az átváltozás]] folytatása\n\t- Álmomban\n\t\t- adriai cápanézés 1 Forintért, mint [[Krasznahorkai László - Az ellenállás melankóliája]]ban\n\t- Éden\n\t- Fort Quirinar\n\t- Niagara Nagykávéház\n<li>A hatvanas évektől - máig</li>\n\t- Az utolsó vonat\n\t- Fohász\n\t\t- [[Kayserling]]\n<h3>Idézetek</h3>\n\n&gt; idézet:: - Van ilyen? - Csak a képzelet birodalmában. - És mi hol élünk?\n\n&gt; idézet:: Egy gyerek néha úgy magába tud zárkózni, hogy nekünk, felnőtteknek, torkunkra forr a szó.\n\n&gt; idézet:: Nem csak a rossz nevében lehet ölni. A jóért, a szépért, a tudásért is. Egy adatért is lehet ölni; pedig nem tudni annyi, mint remélni; de csak mi [anyák] nem kívánjuk tudni a meg nem tudhatót.\n\n&gt; idézet:: Szeme nedvesen fénylett, mint akinek csak egyetlen könnye van már, mely azonban se leesni, se felszáradni nem tud.",
     "published": false,
     "lent": false
   },
   {
-    "id": "soltész-béla-osztatlan-közös",
+    "id": "soltesz-bela-osztatlan-kozos",
     "title": "Osztatlan közös",
     "author": "Soltész Béla",
-    "cover": "covers/soltész-béla-osztatlan-közös.jpg",
+    "cover": "covers/soltesz-bela-osztatlan-kozos.jpg",
     "content": "<h3>Kiemelések</h3>\n\n\n<h3>Említések</h3>\n<li>[[Wass Albert|Wass Albert]]</li>\n\t- [[Wass Albert - A funtineli boszorkány|Wass Albert - A funtineli boszorkány]]\n\n<h3>Vélemény</h3>\n",
     "published": true,
     "lent": false
@@ -486,28 +486,28 @@
     "lent": false
   },
   {
-    "id": "szabolcsi-bence-művei",
+    "id": "szabolcsi-bence-muvei",
     "title": "Szabolcsi Bence Művei",
     "author": "",
-    "cover": "covers/szabolcsi-bence-művei.jpg",
+    "cover": "covers/szabolcsi-bence-muvei.jpg",
     "content": "1984\n\n[[barokk a hétköznapokban]]",
     "published": true,
     "lent": false
   },
   {
-    "id": "kálnoky-lászló-szférák-zenéje",
+    "id": "kalnoky-laszlo-szferak-zeneje",
     "title": "Szférák zenéje",
     "author": "",
-    "cover": "covers/kálnoky-lászló-szférák-zenéje.jpg",
+    "cover": "covers/kalnoky-laszlo-szferak-zeneje.jpg",
     "content": "[Link](https://reader.dia.hu/document/Kalnoky_Laszlo-Osszegyujtott_versek-1000)\n## Szférák zenéje\nMeg-megrezdülök, mint hangvilla-ág,\nha olykor álmélkodva fedezem fel,\nhogy mossa sziklabörtönöm falát\naz egyetemes, örök zenetenger,\ns derűje a boldog harmóniának,\nha foszlányokban is, cellámig árad.\n\nFejem fölött zenéje hömpölyög\naz égre írt hangjegykolosszusoknak;\nóriás tűzgömbök, csillagködök\nütemre mért, zárt összhangban forognak,\ns akkordjaik oly világról beszélnek,\nmelytől elszakadtam, s melyet nem értek.\n\nE szebb világból hangzó zengzetek\nhulláma ringatott valaha engem,\nki az örök tudás lángja helyett\na tudat halvány mécséért esengtem,\ns végül kikönyörögtem a kegyelmet,\nmely kínzó rögeszmém és mindenem lett.\n\nBoldog hangok, tudom, a nagy hazát\nörökre elvesztettem, hol ti laktok.\nA földbe gyökereztem, mint a fák,\ns itt halok meg, hol bűzös emberaklok\nközül kígyózva csap magasba néha\na szenvedés, mint sistergő rakéta.\n\nA sorsa ellen lázadó parányt\nígy nyomja el a Végtelen szeszélye.\nEgyéniségem terhe visszaránt,\nha hívogat a mindenség zenéje,\nmelyből pár alamizsna-porszemecskét\nhullat a gúnyos Könyörületesség.\n## Hatástörténeti háttér\n<li>[[Kálnoky László]] ([wiki](https://www.wikiwand.com/hu/K%C3%A1lnoky_L%C3%A1szl%C3%B3))</li>\n\t- 1912-1985\n\t- a Nyugat harmadik nemzedékébe tartozott\n\t- költészetére, világképére végletes <strong>pesszimizmus</strong>, a tragikumot groteszkbe fordító látásmód jellemző\n\t- &#x27;47-től műfordító is\n\t- [[Iszlai Zoltán]] utal arra, hogy nem utolérte, hanem megteremtette az elvárásokat\n\t\t- &quot;eltussolandó visszásságaink egyike volt, s már-már kultúrbotrány számba megy, hogy tilos és ildomtalan lehetett-légyen pesszimista költészetet mívelni&quot;\n<li>a mű eredetileg magyar nyelven íródott</li>\n<h3>Recepciótörténet</h3>\n<li>Az igazság az, hogy a filozófus teljes rangjára csak bölcselő emelkedhet, költő nem. Ugyanakkor napnál világosabb, miszerint a LÉTEZÉS RÉMSÉGEI-nek öt darabja (a _Gyászos végű kaland,_ a _Szférák zenéje, A dicsőség törmelékei, A kárhozottak hímnusza_ és az _Óda a reménytelenséghez)_ oly versek, amelyek valamely [[neoegzisztencializmus|neoegzisztencialista]][^1] filozófiához Prolegomenául[^2] szolgálhatnának, s az egy [[Szabó Lőrinc]]en kívül kevesen írtak hozzájuk foghatót. ([[Határ Győző - Irodalomtörténet]] - [link](https://reader.dia.hu/document/Hatar_Gyozo-Irodalomtortenet-273))</li>\n\n---\n[^1]: Az egzisztencializmus egy filozófiai irányzat, amely az emberi létezés, a szabadság, a felelősség és a létezés abszurditása iránti érdeklődést helyezi előtérbe. A <strong>neoegzisztencializmus</strong> pedig az egzisztencialista gondolatokat továbbfejleszti és modernizálja.\n[^2]: előtanulmány, nagyobb mű bevezetése ([etimológiai szótár](https://www.arcanum.com/hu/online-kiadvanyok/Lexikonok-magyar-etimologiai-szotar-F14D3/p-F3534/prolegomena-F38DE/))",
     "published": true,
     "lent": false
   },
   {
-    "id": "paul-johnson-szókratész-egy-időszerű-ember",
+    "id": "paul-johnson-szokratesz-egy-idoszeru-ember",
     "title": "Szókratész - Egy időszerű ember",
     "author": "Paul Johnson",
-    "cover": "covers/paul-johnson-szókratész-egy-időszerű-ember.jpg",
+    "cover": "covers/paul-johnson-szokratesz-egy-idoszeru-ember.jpg",
     "content": "<h3>Idegen szavak</h3>\n\nidegenszo:: \n<h3>Említések</h3>\n\n<li>[[Konfuciusz]]</li>\n\t- [[Konfuciusz - Beszélgetések és mondások]]\n<li>[[Ezra]]</li>\n<li>[[Tóra]]</li>\n<li>[[Szókratész]]</li>\n<li>[[Wittgenstein]]</li>\n<li>[[Auguste Rodin]], [[Henri Moore]]</li>\n<li>szobrász [[Kleitón]]</li>\n<li>festő [[Parrhasziosz]]</li>\n<li>[[Cicero - Tusculumi eszmecsere]]</li>\n<li>[[Bertrand Russell]]</li>\n<li>[[Thomas Moore]] költő</li>\n<h3>Jegyzet</h3>\n\n<li>[[Szókratész]] középosztályból származott</li>\n\t- apja kőműves ([[Szóphroniszkosz]]), kőfaragó, anyja ([[Phainareté]]) bábaasszony\n\t\t- apja nyomdokaiba lép, kőfaragó lesz\n\t- az első - osztályokhoz nem kötődő személyiség\n\t- jó képzést kapott\n\t- érdekelte a gyógyászat, orvoslás\n\t- egyetlen szót sem írt\n\t- athéninek született - ott volt a legjobb élni akkor\n\t\t- versengés: bajnokságok, olümpiai játékok i. e. 776-tól (pogány esemény, de a vallásban gyökerezik: a győzelem lényege Zeusz szolgálata)\n\t\t- [[Pheidiász]] Zeusz-szobra\n\t\t- tragédia és komédia, [[Szókratész]] figyelemmel követi\n\t\t\t- barátai, [[Arisztophanész]] és [[Euripidész]] ([[Euripidész - Hippolütosz]])\n\t- demokratikus városállamban nőtt fel (ión csaták)\n\t\t- melynek alapjait [[Kleiszthenész]] fektette le\n\t\t- apja barátja [[Ariszteidész]]\n<li>két ember csatlakozott hozzá</li>\n\t- [[Xenophón]] - vidéki birtokos, utazó, kalandor, hadvezér\n\t\t- [[Xenophón - Anabaszisz]]\n\t\t- [[Xenophón - Emlékeim Szókratészról]]\n\t- tanítványa, [[Platón]]\n\t\t- zseni, professzor, tudós\n\t\t- az Akadémia megalapítója\n\t\t\t- legkiválóbb hallgató [[Arisztotelész]] volt, a későbbi Lükeion megalapítója\n\t\t- átalakulás, értelmiségi maszk[^1]\n\t\t- nem saját szájával, hanem [[Szókratész]] képével hirdeti saját igéjét\n\t\t\t- elmosódottá válik a határvonal az igazi és alkotott [[Szókratész]] között\n\t- független források (pontatlanok[^2])\n\t\t- [[Arisztophanész - Felhők]] - ellenséges hangvételű\n\t\t- [[Diogenész Laertiosz]] - azóta elveszett forrásokra támaszkodik\n\t\t- [[Cicero]]\n\t\t- [[Seneca]]\n\t\t- [[Plutarkhosz]]\n\t\t- [[Lukianosz]]\n\t\t- [[Szent Ágoston]]\n\t\t- [[Tertulianus]]\n<li>érzelmek</li>\n\t- szerinte bármilyen érzelem leolvasható az arcról - ő semmit sem arcával fejezett ki\n<li>erő</li>\n\t- háborúkban részt vett, nem volt pacifista, de megvolt véleménye az erő alkalmazásáról\n\t- szívós, tettre kész, ellenálló\n\t- közömbös a testi lóllét iránt (kivéve a társas életet)\n<li>alkata</li>\n\t- nem volt szép, kerek lábakkal bicegett, pocakot eresztett\n\t- szépségversenyre kelt társával, szokásos kérdve kifejtő módszerét alkalmazta\n\t- nevetségesnek, züllöttnek tartották\n<li>kiállhatatlan felesége Xanthippé</li>\n\t- női egyenjogúság\n\t- ha őt elviseli, bárkit el tud\n<h3>Idézetek</h3>\n\n&gt; idézet:: A kiművelődés - épp annak köszönhetően, hogy erényessé tesz bennünket - a legbiztosabb út a boldogsághoz.\n\n&gt; idézet:: Ő volt az első látó, akiről tudjuk, hogy alaposan végiggondolta, mi is teszi az embert boldoggá.\n\n&gt; idézet:: Mennyi mindenre nincs szükségem! (a piacon)\n\n&gt; idézet:: Ha valaki pofon vág, azzal nem engem aláz meg, hanem saját magát.\n\n&gt; idézet:: \n\n## Lábjegyzet\n\n[^1]: az eszmék fontosabbak, mint az emberek\n[^2]: hosszú papirusztekercsek, központozás és szereplőváltás jelzésének hiánya",
     "published": false,
     "lent": false
@@ -522,10 +522,10 @@
     "lent": false
   },
   {
-    "id": "irvin-d-yalom-terápiás-hazugságok",
+    "id": "irvin-d-yalom-terapias-hazugsagok",
     "title": "Terápiás hazugságok",
     "author": "Irvin D Yalom",
-    "cover": "covers/irvin-d-yalom-terápiás-hazugságok.jpg",
+    "cover": "covers/irvin-d-yalom-terapias-hazugsagok.jpg",
     "content": "<h3>Említések</h3>\n<li>[[Eric Berne - Emberi játszmák]]</li>\n\n<h3>Majdnem megfilmesítve</h3>\n<li>[[Harold Ramis]]</li>\n<li>[[Wayne Wang]]</li>\n<li>[[Ted Griffin]]</li>\n<h3>Vélemény</h3>\n<li>a tudás, amit aközben ad át, hogy lekötve szórakoztat</li>\n<li>az eleje unalmasnak hat, majd elkezdődik az okfejtés után az igazi történet, ami teljesen magába szippant, egyre inkább becsavarodik önmagába, de átlátható marad. Az utolsó 100 oldalnál nehéz letenni</li>\n<h3>Idézetek</h3>\n&gt; idézet:: Sosem értettem a jelentőségét ennek az elgondolásnak - folytatta Ernest. - Úgy gondolom, a legtöbb embert annyira fájdalmasan érinti az élet puszta esetlegessége, hogy boldogan hisz valamiféle kozmikus elrendezettségben. Engem soha sem vonzott ez a lehetőség. A véletlenszerűség vagy a természet közömbössége soha sem nyugtalanított. Miért olyan nagy borzalom az emberek számára a véletlen? Miért kellene benne mást látnunk, mint puszta véletlent? #megírni \n&gt; \t381",
     "published": false,
     "lent": false
@@ -558,10 +558,10 @@
     "lent": false
   },
   {
-    "id": "szerb-antal-utas-és-holdvilág",
+    "id": "szerb-antal-utas-es-holdvilag",
     "title": "Utas és holdvilág",
     "author": "Szerb Antal",
-    "cover": "covers/szerb-antal-utas-és-holdvilág.jpg",
+    "cover": "covers/szerb-antal-utas-es-holdvilag.jpg",
     "content": "<h3>Említések</h3>\n\n<li>[[Erwin Rohde - Psyche]]</li>\n<li>[[Homérosz - Iliász és Odüsszeia]]</li>\n<h3>Idézetek</h3>\n\n&gt; idézet:: A szerelemnek távolság kell, hogy a szerelmesek azon keresztül közeledhessenek egymáshoz.\n\n&gt; idézet:: a lélekben az ellentétek egymás mellett vannak. Nagy aszkéták nem hideg és szenvtelen emberekből lesznek, hanem a legtüzetesebbekből, azokból, akiknek van miről lemondaniuk. Ezért nem engedi az Egyház, hogy egy herélt pap legyen.\n\n&gt; idézet:: Van olyan férfi, akit nem izgat a telefonban megcsendülő ismeretlen és kellemes női hang? A nők, ha ismernék a férfiakat, mindent telefonon és ismeretlenül kérnének tőlük.",
     "published": false,
     "lent": false
@@ -585,28 +585,28 @@
     "lent": false
   },
   {
-    "id": "t-s-eliot-átokföldje",
+    "id": "t-s-eliot-atokfoldje",
     "title": "Átokföldje",
     "author": "",
-    "cover": "covers/t-s-eliot-átokföldje.jpg",
+    "cover": "covers/t-s-eliot-atokfoldje.jpg",
     "content": "#üres \n[[T S Eliot]]",
     "published": false,
     "lent": false
   },
   {
-    "id": "daniel-goleman-érzelmi-intelligencia",
+    "id": "daniel-goleman-erzelmi-intelligencia",
     "title": "Érzelmi intelligencia",
     "author": "Daniel Goleman",
-    "cover": "covers/daniel-goleman-érzelmi-intelligencia.jpg",
+    "cover": "covers/daniel-goleman-erzelmi-intelligencia.jpg",
     "content": "&gt; Open Kiadó, 30 éves jubileumi kiadás\n\n<h3>Kiemelések</h3>\n```dataviewjs\nconst bookTitle = dv.current().title;\nconst highlights = dv.pages(`&quot;sources/books/${bookTitle}/highlights&quot;`)\n  .where(p =&gt; p.type === &quot;highlight&quot;)\n  .sort(p =&gt; p.sort_order);\n\nconst colorNames = {\n  blue: &quot;Említések&quot;,\n  yellow: &quot;Idézetek&quot;,\n  magenta: &quot;Idegen szavak&quot;\n};\n\nconst colors = {};\nhighlights.forEach(h =&gt; {\n  const c = h.color || &quot;unknown&quot;;\n  if (!colors[c]) colors[c] = [];\n  colors[c].push(h);\n});\n\nfor (const [color, items] of Object.entries(colors)) {\n  const heading = colorNames[color] || color.charAt(0).toUpperCase() + color.slice(1);\n  dv.header(3, heading);\n  for (const h of items) {\n    let text = h.text?.toString() || &quot;&quot;;\n    let note = h.note?.toString() || &quot;&quot;;\n    dv.paragraph(`&gt; [!quote]\\n&gt; ${text.replace(/\\n/g, &quot;\\n&gt; &quot;)}` + (note ? `\\n\\n<strong>Jegyzet:</strong> ${note}` : &quot;&quot;));\n  }\n}\n```\n\n<h3>Idegen szavak</h3>\n\nidegenszo:: \n<h3>Említések</h3>\n\n- \n<h3>Vélemény</h3>\n\n- \n<h3>Idézetek</h3>\n\n&gt; ",
     "published": false,
     "lent": false
   },
   {
-    "id": "irvin-d-yalom-úton-önmagamhoz",
+    "id": "irvin-d-yalom-uton-onmagamhoz",
     "title": "Úton önmagamhoz",
     "author": "Irvin D Yalom",
-    "cover": "covers/irvin-d-yalom-úton-önmagamhoz.jpg",
+    "cover": "covers/irvin-d-yalom-uton-onmagamhoz.jpg",
     "content": "<h3>Idegen szavak</h3>\n\nidegenszo:: [[hübrisz]]\nidegenszo:: [[voyerizmus]]\nidegenszo:: [[szoliptikus]]\nidegenszo:: [[kontingens]]\nidegenszo:: [[ikonoklazmus]]\nidegenszo:: [[joviális]]\nidegenszo:: [[rekvizítum]]\n<h3>Említések</h3>\n\n<li>[[Franz Kafka|Franz Kafka]]</li>\n\t- [[Franz Kafka - A per|Franz Kafka - A per]]\n\t- [[Franz Kafka - Az átváltozás|Franz Kafka - Az átváltozás]]\n<li>[[Albert Camus|Albert Camus]]</li>\n\t- [[Albert Camus - Az idegen|Albert Camus - Az idegen]]\n<li>[[Jean-Paul Sartre|Jean-Paul Sartre]]</li>\n\t- [[Jean-Paul Sartre - Az undor|Jean-Paul Sartre - Az undor]]\n<li>neo[[Sigmund Freud|freud]]iánus szemlélet</li>\n\t- interperszonális kapcsolatok jelentősége\n\t- [[Harry Stack Sullivan|Harry Stack Sullivan]]\n\t- [[Karen Horney - A neurózis és az emberi fejlődés|Karen Horney - A neurózis és az emberi fejlődés]]\n\t- [[Erich Fromm|Erich Fromm]]\n<li>ortodox [[Sigmund Freud|freud]]i szemlélet</li>\n\t- a kisgyermekkorban tapasztaltak a fontosak\n<li>[[Philippe Pinel|Philippe Pinel]]</li>\n<li>[[Epikurosz|Epikurosz]]</li>\n<li>[[Marcus Aurelius|Marcus Aurelius]]</li>\n<li>[[Montaigne|Montaigne]]</li>\n<li>[[John Locke|John Locke]]</li>\n<li>[[Bertrand Russell - A nyugati filozófia története|Bertrand Russell - A nyugati filozófia története]]</li>\n<li>Archives of General Psychiatry</li>\n<li>[[Reuel Denny - A magányos tömeg|Reuel Denny - A magányos tömeg]]</li>\n<li>[[T S Eliot - Átokföldje|T S Eliot - Átokföldje]]</li>\n<li>Marilyn</li>\n\t- A per motívuma [[Franz Kafka|Franz Kafka]] és [[Albert Camus|Albert Camus]] munkáiban\n<li>lacani analitikus (képzés/szemlélet)</li>\n<li>[[Daphne du Maurier|Daphne du Maurier]]</li>\n<li>[[Ronald Fairbairn|Ronald Fairbairn]], [[D. W. Winnicott|D. W. Winnicott]]</li>\n<li>[[Alex Comfort - A szex öröme|Alex Comfort - A szex öröme]]</li>\n<li>kísérleti csoportok</li>\n\t- hagyományos NTL T-csoportok\n\t- encounter (önfejlesztő) csoportok\n\t- Gestalt-terápiás csoportok\n\t- Esalen (szenzoros tudatosság) csoportok\n\t- TA (tranzakció analízis) csoportok\n\t- pszichodrámacsoportok\n\t- Synanon (konfrontációs „forró szék&quot;) csoportok\n\t- pszichoanalitikusan orientált csoportok\n\t- maratoni csoportok\n\t- vezető nélküli, magnószalag által irányított csoportok\n<li>[[Stefan Zweig|Stefan Zweig]]</li>\n<li>[[Franz Werfel|Franz Werfel]]</li>\n<li>[[Arthur Schnitzler|Arthur Schnitzler]]</li>\n<li>[[Robert Musil|Robert Musil]]</li>\n<li>[[Joseph Roth|Joseph Roth]]</li>\n<li>[[Irvin D Yalom|Irvin D Yalom]]</li>\n\t- [[Irvin D Yalom - Amikor Nietzsche sírt|Irvin D Yalom - Amikor Nietzsche sírt]]\n\t- [[Irvin D Yalom - A terápia ajándéka|Irvin D Yalom - A terápia ajándéka]]\n\t\t- Terapeuta-páciens, egzisztencialista szemlélet feltárásának módjai, mindennapos gyakorlat, álmok, vedzélyek\n\t\t- [[Rilke - Levelek egy ifjú költőhöz|Rilke - Levelek egy ifjú költőhöz]]\n\t\t- [[Thomas Tusser - A Hundredth Good Pointes of Husbandrie|Thomas Tusser - A Hundredth Good Pointes of Husbandrie]]\n\t- [[Irvin D Yalom - Egzisztenciális pszichoterápia|Irvin D Yalom - Egzisztenciális pszichoterápia]]\n\t- [[Irvin D Yalom - Minden nappal közelebb|Irvin D Yalom - Minden nappal közelebb]]\n\t- [[Irvin D Yalom - A magyar macska átka|Irvin D Yalom - A magyar macska átka]]\n\t- [[Irvin D Yalom - Terápiás hazugságok|Irvin D Yalom - Terápiás hazugságok]]\n\t\t- tengerparti valós álma a halállal való kapcsolatról, 240. o. (itt 224.)\n\t- [[Irvin D Yalom - Inpatient Group Psychoterapy|Irvin D Yalom - Inpatient Group Psychoterapy]]\n\t- [[Irvin D Yalom - Szerelemhóhér|Irvin D Yalom - Szerelemhóhér]]\n\t- [[Irvin D Yalom - A Concise Guide to Psychoterapy|Irvin D Yalom - A Concise Guide to Psychoterapy]]\n\t- [[Irvin D Yalom - Yalom Reader|Irvin D Yalom - Yalom Reader]]\n\t- [[Irvin D Yalom - Schopenhauer-terápia|Irvin D Yalom - Schopenhauer-terápia]]\n\t- [[Irvin D Yalom - Szemben a nappal|Irvin D Yalom - Szemben a nappal]]\n\t- [[Irvin D Yalom - Szólok a rendőrnek|Irvin D Yalom - Szólok a rendőrnek]]\n\t- [[Irvin D Yalom - Creatures of a Day|Irvin D Yalom - Creatures of a Day]]\n\t\t- utalva [[Marcus Aurelius- Elmélkedések|Marcus Aurelius- Elmélkedések]]re\n\t- [[Irvin D Yalom - Esendő dolgok|Irvin D Yalom - Esendő dolgok]]\n<li>[[Sigmund Freud|Sigmund Freud]]</li>\n\t- mentora, [[Josef Breuer|Josef Breuer]]\n\t\t- [[Anna O|Anna O]] első pszichoanalízissel kezelt páciens\n\t- [[Sigmund Freud, Josef Breuer - Tanulmányok a hisztériáról|Sigmund Freud, Josef Breuer - Tanulmányok a hisztériáról]]\n<li>[[Viktor Frankl|Viktor Frankl]]</li>\n\t- [[Viktor Frankl - Mégis mondj igent az életre|Viktor Frankl - Mégis mondj igent az életre]]\n\t- logoterápia (elég brutális terápiás módszer)\n<li>[[Gustav Klimt|Gustav Klimt]]</li>\n<li>[[Egon Schiele|Egon Schiele]]</li>\n<li>[[Van Gogh|Van Gogh]]</li>\n<li>[[Hoffmann meséi|Hoffmann meséi]] opera</li>\n<li>[[Hans Steiner|Hans Steiner]]</li>\n<li>[[Rollo May - Existence|Rollo May - Existence]]</li>\n<li>[[Kuroszava Akira - A vihar kapujában|Kuroszava Akira - A vihar kapujában]] film</li>\n<li>[[Nathaniel Hawthorne - Kétszer elmesélt történetek|Nathaniel Hawthorne - Kétszer elmesélt történetek]]</li>\n<li>[[Ernest Hemingway|Ernest Hemingway]]</li>\n<li>[[Irvin D Yalom, Marilyn Yalom - Hemingway - Egy pszichiátriai elemzés|Irvin D Yalom, Marilyn Yalom - Hemingway - Egy pszichiátriai elemzés]]</li>\n\t- [[Alekszej Tolsztoj|Alekszej Tolsztoj]]\n\t- [[Conrad|Conrad]]\n\t- [[Albert Camus|Albert Camus]]\n<li>[[Nikosz Kazantzakisz|Nikosz Kazantzakisz]]</li>\n\t- [[Nikosz Kazantzakisz - Krisztus utolsó megkísértése|Nikosz Kazantzakisz - Krisztus utolsó megkísértése]]\n\t- Odüsszeia\n<li>[[Marylin Yalom|Marylin Yalom]]</li>\n\t- [[Marylin Yalom - A History of the Breast|Marylin Yalom - A History of the Breast]]\n\t- [[Marylin Yalom - Maternity, Modernity and the Literature of Madness|Marylin Yalom - Maternity, Modernity and the Literature of Madness]] (pszichológiai szempontú irodalomkritika)\n\t- [[Marylin Yalom - Blood Sisters, The French Revolution in Women&#x27;s Memory|Marylin Yalom - Blood Sisters, The French Revolution in Women&#x27;s Memory]]\n\t- [[Marylin Yalom - A History of the Wife|Marylin Yalom - A History of the Wife]]\n\t- [[Marylin Yalom - Birth of the Chess Queen|Marylin Yalom - Birth of the Chess Queen]]\n\t- [[Marylin Yalom - The American Resting Place|Marylin Yalom - The American Resting Place]]\n\t- [[Marylin Yalom - The Social Sex|Marylin Yalom - The Social Sex]]\n\t- [[Marylin Yalom - The Amorous Heart|Marylin Yalom - The Amorous Heart]]\n<li>filozófia</li>\n\t- [[Edmund Husserl|Edmund Husserl]]\n\t- [[Martin Heidegger - Lét és idő|Martin Heidegger - Lét és idő]] (ködös, de lenyűgöző)\n\t- [[Kierkegaard|Kierkegaard]]\n\t- [[Friedrich Nietzsche|Friedrich Nietzsche]]\n\t- [[Schopenhauer|Schopenhauer]]\n\t- [[Epikurosz|Epikurosz]]\n\t- [[Lucretius|Lucretius]]\n\t- [[Immanuel Kant|Immanuel Kant]]\n\t- [[Gottfried Leibnitz|Gottfried Leibnitz]] Leibniz?\n\t- [[Edmund Husserl|Edmund Husserl]]\n\t- [[Kierkegaard|Kierkegaard]]\n<li>egzisztencialista alkotók</li>\n\t- [[Dosztojevszkij|Dosztojevszkij]]\n\t- [[Lev Tolsztoj|Lev Tolsztoj]]\n\t- [[Samuel Beckett|Samuel Beckett]]\n\t- [[Milan Kundera|Milan Kundera]]\n\t- [[Hesse|Hesse]]\n\t- [[Mutis|Mutis]]\n\t- [[Hamsun|Hamsun]]\n<li>halállal kapcsolatos</li>\n\t- [[Platón|Platón]]\n\t- [[Lev Tolsztoj - Ivan Iljics halála|Lev Tolsztoj - Ivan Iljics halála]]\n\t- [[Jacques Choron - Death and Western Thought|Jacques Choron - Death and Western Thought]]\n\t- [[Ernest Becker - Denial of Death|Ernest Becker - Denial of Death]]\n\t- [[Elisabeth Kübler-Ross|Elisabeth Kübler-Ross]]\n<li>[[R D Laing|R D Laing]] brit terapeuta</li>\n<li>[[Kierkegaard|Kierkegaard]] és [[Christian Andersen|Christian Andersen]] sírja</li>\n<li>művészi élet Párizsban: [[Jacques Offenbach|Jacques Offenbach]]-koncert és [[Monet|Monet]]</li>\n<li>keleti bölcselet</li>\n\t- [[S N Goenka|S N Goenka]]\n\t- vipasszaná meditáció\n\t- Váránaszi, Szárnáth (városok)\n<li>[[Stanley Elkins|Stanley Elkins]]</li>\n<li>[[Robert Lindner - The Fifty-Minute Hour|Robert Lindner - The Fifty-Minute Hour]]</li>\n\t- [[Eva Hoffmann|Eva Hoffmann]] kritikája\n<li>[[Oliver Sacks - A férfi, aki kalapnak nézte a feleségét|Oliver Sacks - A férfi, aki kalapnak nézte a feleségét]]</li>\n<li>[[Oliver Sacks - Mozgásban|Oliver Sacks - Mozgásban]] (megrendítő)</li>\n<li>[[Phillip Lopate|Phillip Lopate]]</li>\n<li>[[André Gide - A Vatikán titka|André Gide - A Vatikán titka]]</li>\n<li>[[Martin Cruz Smith - Red Square|Martin Cruz Smith - Red Square]]</li>\n<li>[[Allen Wheelis - The Doctor of Desire|Allen Wheelis - The Doctor of Desire]]</li>\n<li>Non-Interpretive Mechanisms in Psychoanalytic Therapy: The &#x27;Something More&#x27; Than Interpretation</li>\n<li>[[Saul Bellow|Saul Bellow]]</li>\n<li>[[Arisztotelész|Arisztotelész]], [[Platón|Platón]], [[Szókratész|Szókratész]], [[Epikurosz|Epikurosz]], [[Aiszkhülosz|Aiszkhülosz]]</li>\n<li>[[Carl Jung|Carl Jung]], [[Mortimer Adler|Mortimer Adler]], [[Carl Rogers|Carl Rogers]], [[Abraham Mashlow|Abraham Mashlow]]</li>\n<li>[[Schopenhauer|Schopenhauer]]</li>\n\t- [[Schopenhauer - Parerga és Paralipomena|Schopenhauer - Parerga és Paralipomena]]\n\t- [[Schopenhauer - A világ mint akarat és képzet|Schopenhauer - A világ mint akarat és képzet]]\n<li>[[Dickens - Karácsonyi ének|Dickens - Karácsonyi ének]]</li>\n<li>[[Benedictus Spinoza|Benedictus Spinoza]]</li>\n\t- [[Rebecca Goldstein|Rebecca Goldstein]] regényíró-filozófus\n\t- [[ERR - Einsatzstab Reichsleiter Rosenberg|ERR - Einsatzstab Reichsleiter Rosenberg]]\n\t\t- [[Alfred Rosenberg|Alfred Rosenberg]]\n\t\t- [[Alfred Rosenberg - A huszadik század mítosza|Alfred Rosenberg - A huszadik század mítosza]]\n\t- [[Irvin D Yalom - A Spinoza-probléma|Irvin D Yalom - A Spinoza-probléma]]\n<li>[[Henry Ward Trueblood - A Surgeon&#x27;s War|Henry Ward Trueblood - A Surgeon&#x27;s War]]</li>\n<li>[[Irvin D Yalom|Irvin D Yalom]] az ő pártjukon áll:</li>\n\t- [[Lucretius|Lucretius]]\n\t- [[Christopher Hitchens|Christopher Hitchens]]\n\t- [[Sam Harris|Sam Harris]]\n\t- [[Richard Dawkins|Richard Dawkins]]\n<li>kedvenc írói</li>\n\t- [[Dickens|Dickens]]\n\t- [[Lev Tolsztoj|Lev Tolsztoj]]\n\t- [[Dosztojevszkij|Dosztojevszkij]]\n\t- [[Trollope|Trollope]]\n\t- [[David Mitchell|David Mitchell]]\n\t- [[Philip Roth|Philip Roth]]\n\t- [[Ian McEwan|Ian McEwan]]\n\t- [[Paul Auster|Paul Auster]]\n\t- [[Murakami Haruki|Murakami Haruki]]\n\t- [[J M Coetzee|J M Coetzee]]\n<li>[[Marylin Yalom|Marylin Yalom]] kedvencei</li>\n\t- [[Marcel Proust|Marcel Proust]]\n\t- [[Elena Ferrantére|Elena Ferrantére]]\n\t- [[Colm Tóbínra|Colm Tóbínra]]\n\t- [[Maxine Hong Kingston|Maxine Hong Kingston]]\n<li>[[Sabine Gisiger - Guru|Sabine Gisiger - Guru]] film egy oregoni kommuna manipulatív vezetőjéről, Radzsnísről (későbbi [[Osho|Osho]])</li>\n<li>[[Sabine Gisiger - Yalom-terápia|Sabine Gisiger - Yalom-terápia]] film</li>\n\t- [lásd](https://vimeo.com/ondemand/yalomscureextended)\n<li>szerető kedvesség meditáció</li>\n<li>skizofrénia, bipoláris zavar, depresszió új pszichofarmakológiája</li>\n<li>[[Fabrice Melquiot - The Unheatd of World|Fabrice Melquiot - The Unheatd of World]]</li>\n<li>[[Simon Mawer - Üvegszoba|Simon Mawer - Üvegszoba]]</li>\n<li>[[Christopher Nicholson - Winter|Christopher Nicholson - Winter]]</li>\n<li>kedvenc könyvei</li>\n\t- Száz év magány\n\t- Grendel\n\t- Szép remények\n\t- Maqroll\n\t- Árbocmester nekibuzdulásai és hanyatlásai\n\t- Örökösök\n\t- Az éjfél gyermekei\n\t- Julia néni és a tollnok\n\t- Daniel Deronda\n\t- Kései boldogság\n\t- Minden testnek útja\n\n<h3>Idézetek</h3>\n\n&gt; idézet:: Az előző nap emlékei huss, elszállnak. Minden kitörlődik az agyamból [...] nem olyan rossz ez. Nem is olyan rossz.\n\n&gt; idézet:: Milyen kár, hogy csak most tanultam meg élni, amikor a testemet felfalta a rák!\n\n&gt; idézet:: Azóta, hogy Freud 1911-ben publikálta az első állommal kapcsolatos nézeteit, valóságos mítosz övezi a témát. Freud szerint az első álom, melyet a páciens megoszt a terapeutájával, a maga kidolgozatlan voltában különösen sokat elárul, hiszen a páciensnek ilyenkor még nincsenek védőbástjái. Később, amikor a terápia során már több állommal dolgoznak, a tudattalanban lakozó álomszövő &quot;manó&quot; okosabbá válik, ezért sokkal összetettebb és nehezebben megfejthető álmokat sző.\n\n&gt; idézet:: Minden művész célja mesterséges eszközökkel megállítani a mozgást, ami az élet maga, és kimerítve megtartani, hogy száz év múlva, amikor egy idegen ránéz, újra mozgásba lendüljön. [[Faulkner|Faulkner]] (The Paris Review 1956 The Art of Fiction, No. 12)\n\n&gt; idézet:: Páciens és terapeuta útitársak. Gyakran előfordul, hogy a páciens olyasmit pillant meg és épít magába a társutazás során, ami elkerüli a terapeuta figyelmét.\n\n&gt; idézet:: Az ember nem rátalál egy kapcsolatra, hanem <em>létrehozza</em> azt.\n\n&gt; idézet:: Ezek az egyalkalmas konzultációk, amelyek során elismerem a páciens erőfeszítéseit és erősségeit, majd áldásomat adom rá, nagyrészt annak a hatalomnak köszönhetik a sikerüket, amellyel a páciens engem gondolatban felruház.\n\n&gt; idézet:: a határidő kitűzése mindjárt az elején általában növeli a hatékonságot, mert gyorsabban bevonja a pácienst a munkába. (eml. Otto Frank, [[Sigmund Freud|Sigmund Freud]] első tanítványa)",
     "published": true,
     "lent": false
