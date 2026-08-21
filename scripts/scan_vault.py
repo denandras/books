@@ -123,7 +123,11 @@ def normalize_filename(name):
 
 
 def slugify(title):
-    """Create URL-safe slug from title."""
+    """Create ASCII URL-safe slug from title.
+
+    Uses NFD decomposition + ASCII ignore to transliterate Hungarian
+    accented characters (ű→u, é→e, etc.) for consistent filenames.
+    """
     slug = unicodedata.normalize("NFD", title)
     slug = slug.encode("ascii", "ignore").decode("ascii")
     slug = re.sub(r"[^\w\s-]", "", slug).strip().lower()
