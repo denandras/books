@@ -2170,10 +2170,11 @@
       const p = BOOK_PALETTE[paletteIdx];
       const motifKey = MOTIF_KEYS[seed % MOTIF_KEYS.length];
       const roman = toRoman(index + 1);
-      // Deterministic book dimensions
-      const baseHeight = 0.34 + (seed % 7) * 0.008;
-      const baseWidth = 0.225 + (seed % 5) * 0.006;
-      const baseDepth = 0.028 + (seed % 4) * 0.004;
+      // Deterministic book dimensions — match original complete-shelf scale
+      // Original books: width ~1.0, height ~1.5, depth ~0.26
+      const baseHeight = 1.48 + (seed % 7) * 0.03;
+      const baseWidth = 0.96 + (seed % 5) * 0.04;
+      const baseDepth = 0.24 + (seed % 4) * 0.02;
 
       return {
         id: raw.id,
@@ -2207,7 +2208,7 @@
           paperPale: "#f1eadf",
           ink: "#f4eee6",
           inkSoft: "#b9b4ae",
-          wall: "#e9dfcb",
+          wall: "#171a24",
           shelf: "#4a2b1d",
           shelfDark: "#2a170f",
           light: "#ffe8c2",
@@ -2669,11 +2670,11 @@
     };
     const themeTargets = {
       floor: new THREE.Color(0xd8c8aa),
-      wall: new THREE.Color(0xe9dfcb),
+      wall: new THREE.Color(0x171a24),
       shelf: new THREE.Color(0x4a2b1d),
       shelfDark: new THREE.Color(0x2a170f),
       shadow: new THREE.Color(0x2f1d13),
-      fog: new THREE.Color(0xe9dfcb),
+      fog: new THREE.Color(0x171a24),
       hemisphere: new THREE.Color(0xfff8e8),
       hemisphereGround: new THREE.Color(0x5b4030),
       key: new THREE.Color(0xffe8c2),
@@ -4655,10 +4656,10 @@
       const narrow = viewWidth < 820;
       // On narrow screens the books fill more of the viewport by moving the
       // camera closer (smaller Z distance) than on desktop.
-      shelfCameraPosition.set(0, narrow ? 2.02 : 1.92, narrow ? 5.5 : 8.1);
+      shelfCameraPosition.set(0, narrow ? 2.02 : 1.92, narrow ? 6.0 : 8.1);
       shelfCameraTarget.set(0, narrow ? 1.57 : 1.55, 0);
       inspectPosition.set(narrow ? 0 : -2.25, narrow ? 2.3 : 1.56, narrow ? 0.15 : 0);
-      inspectCameraPosition.set(narrow ? 0 : -0.52, narrow ? 2.46 : 1.78, narrow ? 3.0 : 5.25);
+      inspectCameraPosition.set(narrow ? 0 : -0.52, narrow ? 2.46 : 1.78, narrow ? 3.8 : 5.25);
       inspectCameraTarget.copy(inspectPosition);
 
       if (narrow) {
