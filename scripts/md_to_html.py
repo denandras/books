@@ -90,14 +90,19 @@ def _preprocess_idezet_quotes(md_text):
             in_quote = True
         else:
             if in_quote and quote_buffer:
-                quote_html = ' '.join(quote_buffer)
+                quote_html = html_lib.escape(' '.join(quote_buffer))
+                # Convert markdown emphasis inside quotes: *text* → <em>text</em>, **text** → <strong>text</strong>
+                quote_html = re.sub(r'\*\*(.+?)\*\*', r'<strong>\1</strong>', quote_html)
+                quote_html = re.sub(r'\*(.+?)\*', r'<em>\1</em>', quote_html)
                 result.append(f'\n\n<blockquote class="book-quote"><p>{quote_html}</p></blockquote>\n\n')
                 quote_buffer = []
                 in_quote = False
             result.append(line)
 
     if quote_buffer:
-        quote_html = ' '.join(quote_buffer)
+        quote_html = html_lib.escape(' '.join(quote_buffer))
+        quote_html = re.sub(r'\*\*(.+?)\*\*', r'<strong>\1</strong>', quote_html)
+        quote_html = re.sub(r'\*(.+?)\*', r'<em>\1</em>', quote_html)
         result.append(f'\n\n<blockquote class="book-quote"><p>{quote_html}</p></blockquote>\n\n')
 
     return '\n'.join(result)
