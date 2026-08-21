@@ -1783,6 +1783,25 @@
       color: #e88;
       font-family: var(--mono);
     }
+
+    .admin-btn {
+      margin-left: 12px;
+      padding: 4px 12px;
+      border: 1px solid var(--rule);
+      border-radius: 6px;
+      background: transparent;
+      color: var(--ink-soft);
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: color 200ms ease, border-color 200ms ease;
+    }
+
+    .admin-btn:hover {
+      color: var(--ink);
+      border-color: var(--ink);
+    }
   </style>
   <script type="importmap">
     {
@@ -1818,6 +1837,7 @@
       </div>
       <div class="editorial-index">
         <span id="palette-label">Ultramarine · bone · copper</span>
+        <button class="admin-btn" id="admin-button" type="button" hidden>Admin</button>
       </div>
     </header>
 
@@ -1968,6 +1988,7 @@
     const loginForm = document.querySelector("#login-form");
     const loginPassword = document.querySelector("#login-password");
     const loginError = document.querySelector("#login-error");
+    const adminButton = document.querySelector("#admin-button");
     let isAuthenticated = localStorage.getItem(AUTH_KEY) === "true";
 
     function showLogin() {
@@ -1981,12 +2002,15 @@
       loginOverlay.hidden = true;
     }
 
+    adminButton.addEventListener("click", showLogin);
+
     loginForm.addEventListener("submit", (e) => {
       e.preventDefault();
       if (loginPassword.value === ADMIN_PASSWORD) {
         localStorage.setItem(AUTH_KEY, "true");
         isAuthenticated = true;
         hideLogin();
+        adminButton.hidden = true;
         rebuildShelf();
       } else {
         loginError.hidden = false;
@@ -6208,9 +6232,9 @@
       // Apply auth-based filtering
       applyFilter();
 
-      // Show login if not authenticated and there are unpublished books
+      // Admin button shown for unauthenticated users (optional login)
       if (!isAuthenticated) {
-        showLogin();
+        adminButton.hidden = false;
       }
 
       const woodTexturePromise = woodTextureImage.decode().then(
