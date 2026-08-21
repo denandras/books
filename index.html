@@ -486,6 +486,65 @@
       line-height: 0.72;
     }
 
+    /* Styling for the real HTML content rendered inside the detail panel */
+    .detail-deck .wikilink {
+      color: color-mix(in srgb, var(--accent) 80%, var(--ink));
+      font-style: italic;
+      border-bottom: 1px dotted color-mix(in srgb, var(--accent) 55%, transparent);
+      padding-bottom: 1px;
+    }
+
+    .detail-deck .book-section-title {
+      margin: 1.4em 0 0.35em;
+      font-size: 0.72em;
+      font-weight: 600;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--ink-soft);
+    }
+
+    .detail-deck .book-quote {
+      margin: 0.9em 0;
+      padding-left: 1.1em;
+      border-left: 2px solid color-mix(in srgb, var(--accent) 42%, transparent);
+      font-style: italic;
+    }
+
+    .detail-deck .book-quote p {
+      margin: 0 0 0.6em;
+    }
+
+    .detail-deck ul {
+      margin: 0.5em 0;
+      padding-left: 1.1em;
+    }
+
+    .detail-deck li {
+      margin: 0.28em 0;
+    }
+
+    .detail-deck .book-preamble {
+      margin-bottom: 0.6em;
+    }
+
+    .detail-deck .book-preamble h1 {
+      font-size: 1.05em;
+      margin: 0.3em 0;
+    }
+
+    .detail-deck em {
+      font-style: italic;
+    }
+
+    .detail-deck pre {
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      white-space: pre-wrap;
+      line-height: 1.4;
+      margin: 0.8em 0;
+      color: var(--ink-soft);
+    }
+
     .meta-list {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -1811,23 +1870,40 @@
       }
     }
   </script>
-  <!-- CDN fallback: if jsdelivr fails to load Three.js, retry from unpkg -->
+  <!-- CDN fallback: if jsdelivr fails to load Three.js, retry from unpkg.
+       ES module loading failures do not always surface as a resource error on
+       the <script> element; they can surface as a window-level error whose
+       message references the failed module URL. We catch both signals. -->
   <script>
     (function () {
       var retried = false;
-      // Catch module script load failures (these fire as error events on the script element)
+      function failOver() {
+        if (retried) return;
+        retried = true;
+        var imp = document.querySelector('script[type="importmap"]');
+        if (imp) {
+          try {
+            imp.textContent = imp.textContent.replace(/cdn\.jsdelivr\.net/g, "unpkg.com");
+          } catch (e) { /* ignore */ }
+        }
+        // Clear any module state and force a reload so the importmap applies.
+        location.reload();
+      }
       window.addEventListener("error", function (e) {
         if (retried) return;
-        // Only react to resource load failures, not random JS errors
         var target = e.target || e.srcElement;
+        // Resource load failure on a jsdelivr script element.
         if (target && target.tagName === "SCRIPT" && target.src &&
             target.src.indexOf("jsdelivr") !== -1) {
-          retried = true;
-          var imp = document.querySelector('script[type="importmap"]');
-          if (imp) {
-            imp.textContent = imp.textContent.replace(/cdn\.jsdelivr\.net/g, "unpkg.com");
-            location.reload();
-          }
+          failOver();
+          return;
+        }
+        // ES module import failure surfaced as a window error.
+        if (typeof e.message === "string" &&
+            (e.message.indexOf("cdn.jsdelivr.net") !== -1 ||
+             e.message.indexOf("Failed to fetch dynamically imported module") !== -1)) {
+          failOver();
+          return;
         }
       }, true); // capture phase to catch resource load errors
     })();
@@ -3205,10 +3281,256 @@
       return texture;
     }
 
+    // ============================================================
+    // Interior pages: render the book's real HTML content on canvas.
+    // ============================================================
+    const CONTENT_MARGIN_X = 54;
+    const CONTENT_MAX_WIDTH = 512 - CONTENT_MARGIN_X * 2 - 10;
+    const CONTENT_TOP = 132;
+    const CONTENT_BOTTOM = 716;
+
+    function extractContentBlocks(html) {
+      const container = document.createElement("div");
+      container.innerHTML = html || "";
+      const blocks = [];
+
+      const walk = (node) => {
+        if (!node || node.nodeType !== Node.ELEMENT_NODE) return;
+        const tag = node.tagName;
+        if (tag === "H1") {
+          const text = node.textContent.trim();
+          if (text) blocks.push({ type: "heading-lg", text });
+        } else if (tag === "H3" || node.classList.contains("book-section-title")) {
+          const text = node.textContent.trim();
+          if (text) blocks.push({ type: "heading-sm", text });
+        } else if (tag === "BLOCKQUOTE") {
+          const text = node.textContent.trim();
+          if (text) blocks.push({ type: "quote", text });
+        } else if (tag === "UL" || tag === "OL") {
+          Array.from(node.querySelectorAll("li")).forEach((li) => {
+            const text = li.textContent.trim();
+            if (text) blocks.push({ type: "list", text });
+          });
+        } else if (tag === "P") {
+          const text = node.textContent.trim();
+          if (text) blocks.push({ type: "paragraph", text });
+        } else if (tag === "PRE") {
+          const text = node.textContent.trim();
+          if (text) blocks.push({ type: "code", text });
+        } else {
+          Array.from(node.children).forEach(walk);
+        }
+      };
+
+      walk(container);
+      return blocks;
+    }
+
+    function getContentBlockFont(type) {
+      switch (type) {
+        case "heading-sm":
+          return '600 15px "Iowan Old Style", Baskerville, Georgia, serif';
+        case "heading-lg":
+          return '600 18px "Iowan Old Style", Baskerville, Georgia, serif';
+        case "quote":
+          return 'italic 400 16px "Iowan Old Style", Baskerville, Georgia, serif';
+        case "code":
+          return '400 11px Inter, "Helvetica Neue", Arial, sans-serif';
+        case "list":
+        case "paragraph":
+        default:
+          return '400 15px "Iowan Old Style", Baskerville, Georgia, serif';
+      }
+    }
+
+    function getContentBlockLineHeight(type) {
+      switch (type) {
+        case "heading-sm": return 21;
+        case "heading-lg": return 25;
+        case "quote": return 23;
+        case "code": return 16;
+        default: return 21;
+      }
+    }
+
+    function getContentBlockIndent(type) {
+      switch (type) {
+        case "quote": return 18;
+        case "list": return 18;
+        case "code": return 10;
+        default: return 0;
+      }
+    }
+
+    function wrapTextToWidth(ctx, text, maxWidth) {
+      const words = String(text).split(/\s+/).filter(Boolean);
+      const lines = [];
+      let line = "";
+      for (const word of words) {
+        const candidate = line ? `${line} ${word}` : word;
+        if (line && ctx.measureText(candidate).width > maxWidth) {
+          lines.push(line);
+          line = word;
+        } else {
+          line = candidate;
+        }
+      }
+      if (line) lines.push(line);
+      return lines;
+    }
+
+    function measureContentBlock(ctx, block) {
+      ctx.font = getContentBlockFont(block.type);
+      ctx.letterSpacing = "0px";
+      const indent = getContentBlockIndent(block.type);
+      const lines = wrapTextToWidth(ctx, block.text, CONTENT_MAX_WIDTH - indent);
+      const lineHeight = getContentBlockLineHeight(block.type);
+      const spaceBefore = block.type === "heading-sm" || block.type === "heading-lg"
+        ? 16
+        : block.type === "quote" ? 10 : block.type === "code" ? 8 : 6;
+      const spaceAfter = block.type === "quote" ? 12 : 4;
+      return {
+        ...block,
+        lines,
+        lineHeight,
+        indent,
+        height: lines.length * lineHeight + spaceBefore + spaceAfter
+      };
+    }
+
+    function paginateContent(blocks) {
+      const pages = [];
+      const ctx = document.createElement("canvas").getContext("2d");
+      let page = [];
+      let y = CONTENT_TOP;
+
+      const flush = () => {
+        pages.push(page);
+        page = [];
+        y = CONTENT_TOP;
+      };
+
+      blocks.forEach((rawBlock) => {
+        const block = measureContentBlock(ctx, rawBlock);
+        const usable = CONTENT_BOTTOM - CONTENT_TOP;
+        if (block.height > usable) {
+          if (page.length) flush();
+          page.push(block);
+          flush();
+          return;
+        }
+        if (y + block.height > CONTENT_BOTTOM && page.length) flush();
+        page.push(block);
+        y += block.height;
+      });
+
+      if (page.length) pages.push(page);
+
+      // Pad to 7 content pages so the reading layout stays stable even for
+      // short (or empty) content.
+      while (pages.length < 7) pages.push([]);
+
+      return pages;
+    }
+
+    function drawContentPage(ctx, blocks, ink, accent) {
+      ctx.fillStyle = ink;
+      ctx.strokeStyle = ink;
+      let y = CONTENT_TOP;
+
+      blocks.forEach((block) => {
+        const indent = getContentBlockIndent(block.type);
+        const lineHeight = block.lineHeight;
+        const textX = CONTENT_MARGIN_X + indent;
+
+        ctx.font = getContentBlockFont(block.type);
+        ctx.letterSpacing = "0px";
+
+        if (block.type === "heading-sm") {
+          y += 16;
+          ctx.fillStyle = ink;
+        } else if (block.type === "heading-lg") {
+          y += 16;
+          ctx.fillStyle = accent;
+        } else if (block.type === "quote") {
+          y += 10;
+          ctx.save();
+          ctx.strokeStyle = accent;
+          ctx.globalAlpha = 0.55;
+          ctx.lineWidth = 3;
+          ctx.beginPath();
+          ctx.moveTo(CONTENT_MARGIN_X + 2, y - lineHeight * 0.5);
+          ctx.lineTo(
+            CONTENT_MARGIN_X + 2,
+            y + block.lines.length * lineHeight - lineHeight * 0.5
+          );
+          ctx.stroke();
+          ctx.restore();
+          ctx.fillStyle = ink;
+        } else if (block.type === "code") {
+          y += 8;
+          ctx.fillStyle = accent;
+        } else {
+          y += 6;
+          ctx.fillStyle = ink;
+        }
+
+        block.lines.forEach((line, lineIndex) => {
+          const lineY = y + lineIndex * lineHeight;
+          if (block.type === "list") {
+            ctx.save();
+            ctx.fillStyle = accent;
+            ctx.globalAlpha = 0.8;
+            ctx.beginPath();
+            ctx.arc(CONTENT_MARGIN_X + 4, lineY - 4, 1.8, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.restore();
+            ctx.fillStyle = ink;
+          }
+          ctx.fillText(line, textX, lineY);
+        });
+
+        y += block.lines.length * lineHeight + (block.type === "quote" ? 12 : 4);
+      });
+    }
+
+    function drawTitlePage(ctx, book, ink, accent) {
+      ctx.fillStyle = ink;
+      ctx.strokeStyle = ink;
+      ctx.font = '500 12px Inter, "Helvetica Neue", Arial, sans-serif';
+      ctx.letterSpacing = "2.3px";
+      ctx.fillText((book.author || book.discipline || "").toUpperCase(), 54, 174);
+
+      ctx.font = `400 ${book.title.length > 14 ? 42 : 54}px "Iowan Old Style", Baskerville, Georgia, serif`;
+      ctx.letterSpacing = "0px";
+      drawWrappedCanvasText(ctx, book.title, 52, 246, 18, 54, 2);
+
+      ctx.globalAlpha = 0.62;
+      ctx.fillStyle = accent;
+      ctx.font = '400 20px "Iowan Old Style", Baskerville, Georgia, serif';
+      ctx.fillText(book.author || "", 54, 452);
+
+      ctx.fillStyle = ink;
+      ctx.font = '500 10px Inter, "Helvetica Neue", Arial, sans-serif';
+      ctx.letterSpacing = "1.6px";
+      ctx.fillText(`${book.roman}  ·  BOOK SHELF`, 54, 500);
+      ctx.globalAlpha = 1;
+    }
+
     function makeInteriorPageTextures(book) {
       const pageCount = 8;
       const inkColor = new THREE.Color(book.color).lerp(new THREE.Color(0x211b16), 0.62);
+      // Enforce sufficient contrast against the cream paper (#e8e1d3). If the
+      // computed ink still reads too light, darken it further.
+      const luminance = 0.2126 * inkColor.r + 0.7152 * inkColor.g + 0.0722 * inkColor.b;
+      if (luminance > 0.3) {
+        inkColor.lerp(new THREE.Color(0x191410), 0.55);
+      }
       const ink = `#${inkColor.getHexString()}`;
+      const accent = `#${inkColor.clone().lerp(new THREE.Color(0xc87046), 0.4).getHexString()}`;
+
+      const blocks = extractContentBlocks(book.content);
+      const contentPages = paginateContent(blocks);
 
       return Array.from({ length: pageCount }, (_, pageIndex) => {
         const canvas = document.createElement("canvas");
@@ -3236,118 +3558,9 @@
         ctx.globalAlpha = 1;
 
         if (pageIndex === 0) {
-          ctx.font = '500 12px Inter, "Helvetica Neue", Arial, sans-serif';
-          ctx.letterSpacing = "2.3px";
-          ctx.fillText(book.discipline.toUpperCase(), 54, 174);
-          ctx.font = `400 ${book.title.length > 10 ? 48 : 58}px "Iowan Old Style", Baskerville, Georgia, serif`;
-          ctx.letterSpacing = "0px";
-          drawWrappedCanvasText(ctx, book.title, 52, 246, 18, 58, 2);
-          ctx.globalAlpha = 0.55;
-          ctx.font = '400 22px "Iowan Old Style", Baskerville, Georgia, serif';
-          drawWrappedCanvasText(ctx, book.note, 54, 462, 36, 30, 4);
-        } else if (pageIndex === 1 || pageIndex === 3) {
-          const chapterIndex = pageIndex === 1 ? 0 : 1;
-          ctx.font = '500 11px Inter, "Helvetica Neue", Arial, sans-serif';
-          ctx.letterSpacing = "2px";
-          ctx.fillText(`CHAPTER ${pad(chapterIndex + 1)}`, 54, 166);
-          ctx.font = '400 49px "Iowan Old Style", Baskerville, Georgia, serif';
-          ctx.letterSpacing = "0px";
-          drawWrappedCanvasText(ctx, book.chapters[chapterIndex], 52, 244, 18, 54, 3);
-          ctx.globalAlpha = 0.52;
-          ctx.font = '400 20px "Iowan Old Style", Baskerville, Georgia, serif';
-          drawWrappedCanvasText(
-            ctx,
-            chapterIndex === 0 ? book.note : book.deck,
-            54,
-            438,
-            42,
-            28,
-            6
-          );
-        } else if (pageIndex === 2) {
-          ctx.font = '500 11px Inter, "Helvetica Neue", Arial, sans-serif';
-          ctx.letterSpacing = "2px";
-          ctx.fillText("PLATE 01  /  SYSTEM MOTIF", 54, 146);
-          ctx.save();
-          ctx.globalAlpha = 0.58;
-          drawMotif(ctx, { ...book, foil: ink }, logicalWidth, logicalHeight * 0.92);
-          ctx.restore();
-          ctx.globalAlpha = 0.48;
-          ctx.font = '400 17px "Iowan Old Style", Baskerville, Georgia, serif';
-          drawWrappedCanvasText(ctx, book.theme, 54, 650, 44, 24, 3);
-        } else if (pageIndex === 4) {
-          ctx.font = '500 11px Inter, "Helvetica Neue", Arial, sans-serif';
-          ctx.letterSpacing = "2px";
-          ctx.fillText(`NOTES  /  ${book.chapters[1].toUpperCase()}`, 54, 138);
-          ctx.globalAlpha = 0.44;
-          for (let column = 0; column < 2; column += 1) {
-            const left = 54 + column * 214;
-            for (let line = 0; line < 24; line += 1) {
-              const width = line % 7 === 6 ? 72 + random() * 54 : 138 + random() * 44;
-              ctx.fillRect(left, 190 + line * 18, width, 1.25);
-            }
-          }
-          ctx.globalAlpha = 0.78;
-          ctx.strokeRect(54, 654, 404, 54);
-          ctx.font = '500 10px Inter, "Helvetica Neue", Arial, sans-serif';
-          ctx.letterSpacing = "1.4px";
-          ctx.fillText(book.motif.toUpperCase(), 70, 686);
-        } else if (pageIndex === 5) {
-          ctx.font = '500 11px Inter, "Helvetica Neue", Arial, sans-serif';
-          ctx.letterSpacing = "2px";
-          ctx.fillText("CHAPTER 03", 54, 166);
-          ctx.font = '400 49px "Iowan Old Style", Baskerville, Georgia, serif';
-          ctx.letterSpacing = "0px";
-          drawWrappedCanvasText(ctx, book.chapters[2], 52, 244, 18, 54, 3);
-          ctx.globalAlpha = 0.52;
-          ctx.font = '400 20px "Iowan Old Style", Baskerville, Georgia, serif';
-          drawWrappedCanvasText(ctx, book.deck, 54, 438, 42, 28, 6);
-        } else if (pageIndex === 6) {
-          ctx.font = '500 11px Inter, "Helvetica Neue", Arial, sans-serif';
-          ctx.letterSpacing = "2px";
-          ctx.fillText("PLATE 02  /  TECHNICAL SYSTEM", 54, 146);
-          ctx.save();
-          ctx.translate(logicalWidth * 0.5, 380);
-          ctx.globalAlpha = 0.55;
-          for (let ring = 0; ring < 5; ring += 1) {
-            const radius = 38 + ring * 34;
-            ctx.beginPath();
-            ctx.arc(0, 0, radius, 0, Math.PI * 2);
-            ctx.stroke();
-          }
-          for (let spoke = 0; spoke < 8; spoke += 1) {
-            const angle = spoke * Math.PI * 0.25;
-            ctx.beginPath();
-            ctx.moveTo(Math.cos(angle) * 36, Math.sin(angle) * 36);
-            ctx.lineTo(Math.cos(angle) * 176, Math.sin(angle) * 176);
-            ctx.stroke();
-          }
-          ctx.restore();
-          ctx.globalAlpha = 0.48;
-          ctx.font = '400 17px "Iowan Old Style", Baskerville, Georgia, serif';
-          drawWrappedCanvasText(ctx, book.theme, 54, 650, 44, 24, 3);
+          drawTitlePage(ctx, book, ink, accent);
         } else {
-          ctx.font = '500 11px Inter, "Helvetica Neue", Arial, sans-serif';
-          ctx.letterSpacing = "2px";
-          ctx.fillText("COLOPHON", 54, 164);
-          ctx.font = '400 32px "Iowan Old Style", Baskerville, Georgia, serif';
-          ctx.letterSpacing = "0px";
-          ctx.fillText(book.title, 54, 230);
-          ctx.globalAlpha = 0.58;
-          ctx.font = '400 18px "Iowan Old Style", Baskerville, Georgia, serif';
-          drawWrappedCanvasText(
-            ctx,
-            `${book.binding}. ${book.format}. Book shelf.`,
-            54,
-            306,
-            44,
-            28,
-            7
-          );
-          ctx.globalAlpha = 0.74;
-          ctx.font = '500 10px Inter, "Helvetica Neue", Arial, sans-serif';
-          ctx.letterSpacing = "1.8px";
-          ctx.fillText(`SPECIMEN ${book.roman} / ${book.seed}  ·  IMAGINED EDITION`, 54, 676);
+          drawContentPage(ctx, contentPages[pageIndex - 1] || [], ink, accent);
         }
 
         ctx.globalAlpha = 0.62;
@@ -3360,6 +3573,7 @@
         return texture;
       });
     }
+
 
     function makeContactShadowTexture() {
       if (sharedContactShadowTexture) return sharedContactShadowTexture;
@@ -4431,10 +4645,12 @@
 
     function configureResponsiveTargets() {
       const narrow = viewWidth < 820;
-      shelfCameraPosition.set(0, narrow ? 2.02 : 1.92, narrow ? 8.7 : 8.1);
+      // On narrow screens the books fill more of the viewport by moving the
+      // camera closer (smaller Z distance) than on desktop.
+      shelfCameraPosition.set(0, narrow ? 2.02 : 1.92, narrow ? 5.5 : 8.1);
       shelfCameraTarget.set(0, narrow ? 1.57 : 1.55, 0);
       inspectPosition.set(narrow ? 0 : -2.25, narrow ? 2.3 : 1.56, narrow ? 0.15 : 0);
-      inspectCameraPosition.set(narrow ? 0 : -0.52, narrow ? 2.46 : 1.78, narrow ? 5.7 : 5.25);
+      inspectCameraPosition.set(narrow ? 0 : -0.52, narrow ? 2.46 : 1.78, narrow ? 3.0 : 5.25);
       inspectCameraTarget.copy(inspectPosition);
 
       if (narrow) {
