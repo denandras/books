@@ -2821,7 +2821,7 @@
     const openingShelfPosition = new THREE.Vector3();
     const inspectShelfPosition = new THREE.Vector3(0, -4.2, -3);
     const inspectBookQuaternion = new THREE.Quaternion().setFromEuler(
-      new THREE.Euler(0.055, -0.14, 0)
+      new THREE.Euler(0.02, -0.03, 0)
     );
     const inspectBookScale = new THREE.Vector3();
     const closingBookPosition = new THREE.Vector3();
@@ -4747,8 +4747,8 @@
       // camera closer (smaller Z distance) than on desktop.
       shelfCameraPosition.set(0, narrow ? 2.02 : 1.92, narrow ? 6.0 : 8.1);
       shelfCameraTarget.set(0, narrow ? 1.57 : 1.55, 0);
-      inspectPosition.set(narrow ? 0 : -2.25, narrow ? 2.3 : 1.56, narrow ? 0.15 : 0);
-      inspectCameraPosition.set(narrow ? 0 : -0.52, narrow ? 2.46 : 1.78, narrow ? 3.8 : 5.25);
+      inspectPosition.set(narrow ? 0 : -1.5, narrow ? 2.3 : 1.56, narrow ? 0.15 : 0);
+      inspectCameraPosition.set(narrow ? 0 : -0.2, narrow ? 2.46 : 1.78, narrow ? 3.8 : 5.25);
       inspectCameraTarget.copy(inspectPosition);
 
       if (narrow) {
@@ -5110,9 +5110,21 @@
     function populateDetail(book) {
       detailEyebrow.textContent = `Book ${book.roman} · ${book.author}`;
       detailTitle.textContent = book.title;
-      // Use HTML content if available, otherwise fall back to deck
+      // Clean and render content — book details come first (eyebrow + title above),
+      // then content below. Fix escaped HTML entities from Obsidian export.
       if (book.content) {
-        detailDeck.innerHTML = book.content;
+        let html = book.content;
+        // Unescape HTML entities that were double-escaped in the source data
+        html = html.replace(/&lt;span class="wikilink"&gt;/g, '<span class="wikilink">');
+        html = html.replace(/&lt;\/span&gt;/g, '</span>');
+        html = html.replace(/&lt;em&gt;/g, '<em>');
+        html = html.replace(/&lt;\/em&gt;/g, '</em>');
+        html = html.replace(/&lt;strong&gt;/g, '<strong>');
+        html = html.replace(/&lt;\/strong&gt;/g, '</strong>');
+        html = html.replace(/&lt;\/?code[^&]*&gt;/g, '');
+        // Remove empty placeholder paragraphs like "idegenszo::" and "-"
+        html = html.replace(/<p>\s*(idegenszo::|-)\s*<\/p>/g, '');
+        detailDeck.innerHTML = html;
       } else {
         detailDeck.textContent = book.deck;
       }
@@ -5120,6 +5132,8 @@
       detailFormat.textContent = book.format;
       detailTheme.textContent = book.theme;
       detailMotif.textContent = book.motif;
+      // Reset scroll position to top
+      detailPanel.scrollTop = 0;
     }
 
     function getSpreadLabels(book) {
