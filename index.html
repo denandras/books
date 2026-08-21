@@ -1811,6 +1811,28 @@
       }
     }
   </script>
+  <!-- CDN fallback: if jsdelivr fails, rewrite import map to unpkg -->
+  <script>
+    (function () {
+      var tried = false;
+      window.addEventListener("error", function (e) {
+        if (tried) return;
+        var msg = (e.message || "") + (e.filename || "");
+        if (msg.indexOf("jsdelivr") !== -1 || msg.indexOf("three") !== -1 ||
+            (e.target && e.target.src && e.target.src.indexOf("jsdelivr") !== -1)) {
+          tried = true;
+          var imp = document.querySelector('script[type="importmap"]');
+          if (imp) {
+            imp.textContent = imp.textContent.replace(
+              /cdn\.jsdelivr\.net/g, "unpkg.com"
+            );
+            // Force reload of the page since import maps can't be changed after first use
+            location.reload();
+          }
+        }
+      }, true);
+    })();
+  </script>
 </head>
 <body>
   <!-- Login overlay -->
@@ -6359,9 +6381,53 @@
       });
     }
 
-    initialize().catch(() => {
-      showFallback("The interactive shelf could not be prepared. The complete static catalog remains available.");
-    });
+    // Loading timeout — if initialize() doesn't complete in 15s, show fallback.
+    // This catches CDN failures (jsdelivr down/slow), module import errors,
+    // and any hang during WebGL setup.
+    let initialized = false;
+    const loadingTimeout = setTimeout(() => {
+      if (!initialized) {
+        showFallback("The interactive shelf took too long to load. The complete static catalog remains available — reload to try again.");
+      }
+    }, 15000);
+
+    initialize()
+      .then(() => { initialized = true; clearTimeout(loadingTimeout); })
+      .catch(() => {
+        initialized = true;
+        clearTimeout(loadingTimeout);
+        showFallback("The interactive shelf could not be prepared. The complete static catalog remains available.");
+      });
+
+    // Also catch module-level errors (e.g. CDN import failure) that prevent
+    // initialize() from even being called.
+    window.addEventListener("error", (e) => {
+      if (!initialized) {
+        initialized = true;
+        clearTimeout(loadingTimeout);
+        showFallback("A loading error occurred. The complete static catalog remains available — reload to try again.");
+      }
+    }, { once: true });
+
+    // Populate static fallback grid immediately so it's ready if needed
+    (async () => {
+      try {
+        const resp = await fetch("books.json");
+        if (!resp.ok) return;
+        const data = await resp.json();
+        const grid = document.querySelector("#static-fallback .fallback__grid");
+        if (!grid) return;
+        const books = data.books || data;
+        const visible = books.filter((b) => b.published !== false);
+        grid.innerHTML = visible.map((b) =>
+          `<article class="fallback-book">
+            <span>${b.author || ""}</span>
+            <strong>${b.title}</strong>
+          </article>`
+        ).join("");
+      } catch (e) { /* silent — fallback is optional */ }
+    })();
+
     window.addEventListener("beforeunload", disposeExperience, { once: true });
   </script>
 </body>
