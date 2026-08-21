@@ -40,7 +40,13 @@ SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 sys.path.insert(0, SCRIPT_DIR)
 
 try:
-    from md_to_html import markdown_to_html as _md_to_html
+    from md_to_html import BookMarkdownConverter
+    _md_converter = BookMarkdownConverter()
+
+    def _md_to_html(md_text):
+        """Convert markdown to structured HTML using the full converter."""
+        result = _md_converter.convert(md_text)
+        return result["html"]
 except ImportError:
     import html as _htmlmod
 
