@@ -2313,10 +2313,9 @@
 
       // Fallback: draw on canvas while texture loads
       const canvas = document.createElement("canvas");
-      canvas.width = 2304;
-      canvas.height = 3456;
+      canvas.width = 768;
+      canvas.height = 1152;
       const ctx = canvas.getContext("2d");
-      ctx.scale(3, 3);
 
       // Fill with book color as base
       ctx.fillStyle = book.color;
@@ -3067,10 +3066,9 @@
 
     function makeFoilTexture(book) {
       const foilCanvas = document.createElement("canvas");
-      foilCanvas.width = 2304;
-      foilCanvas.height = 3456;
+      foilCanvas.width = 768;
+      foilCanvas.height = 1152;
       const ctx = foilCanvas.getContext("2d");
-      ctx.scale(3, 3);
       const index = BOOKS.indexOf(book) + 1;
 
       ctx.clearRect(0, 0, foilCanvas.width, foilCanvas.height);
@@ -3629,10 +3627,10 @@
         const canvas = document.createElement("canvas");
         const logicalWidth = 512;
         const logicalHeight = 768;
-        canvas.width = 1152;
-        canvas.height = 1728;
+        canvas.width = 384;
+        canvas.height = 576;
         const ctx = canvas.getContext("2d");
-        ctx.scale(2.25, 2.25);
+        ctx.scale(0.75, 0.75);
         const random = seededRandom(hashSeed(`${book.id}-leaf-${pageIndex}`) + book.seed);
         drawPaperSurface(ctx, logicalWidth, logicalHeight, random);
         ctx.fillStyle = ink;
@@ -3800,26 +3798,24 @@
 
     function makeSpineTexture(book) {
       const spineCanvas = document.createElement("canvas");
-      const spineW = 384, spineH = 1536;
-      spineCanvas.width = spineW * 3;
-      spineCanvas.height = spineH * 3;
+      spineCanvas.width = 384;
+      spineCanvas.height = 1536;
       const ctx = spineCanvas.getContext("2d");
-      ctx.scale(3, 3);
       const random = seededRandom(hashSeed(`${book.id}-spine-cloth`) + book.seed);
       ctx.fillStyle = book.color;
-      ctx.fillRect(0, 0, spineW, spineH);
+      ctx.fillRect(0, 0, spineCanvas.width, spineCanvas.height);
 
-      const shade = ctx.createLinearGradient(0, 0, spineW, 0);
+      const shade = ctx.createLinearGradient(0, 0, spineCanvas.width, 0);
       shade.addColorStop(0, "rgba(0,0,0,0.2)");
       shade.addColorStop(0.14, "rgba(255,255,255,0.055)");
       shade.addColorStop(0.62, "rgba(255,255,255,0.012)");
       shade.addColorStop(1, "rgba(0,0,0,0.16)");
       ctx.fillStyle = shade;
-      ctx.fillRect(0, 0, spineW, spineH);
+      ctx.fillRect(0, 0, spineCanvas.width, spineCanvas.height);
 
       for (let thread = 0; thread < 1900; thread += 1) {
-        const x = random() * spineW;
-        const y = random() * spineH;
+        const x = random() * spineCanvas.width;
+        const y = random() * spineCanvas.height;
         const vertical = random() > 0.42;
         ctx.strokeStyle = random() > 0.5
           ? `rgba(255,255,255,${0.018 + random() * 0.038})`
@@ -3836,14 +3832,14 @@
 
       const bottomShade = ctx.createLinearGradient(
         0,
-        spineH * 0.82,
+        spineCanvas.height * 0.82,
         0,
-        spineH
+        spineCanvas.height
       );
       bottomShade.addColorStop(0, "rgba(0,0,0,0)");
       bottomShade.addColorStop(1, "rgba(0,0,0,0.12)");
       ctx.fillStyle = bottomShade;
-      ctx.fillRect(0, 0, spineW, spineH);
+      ctx.fillRect(0, 0, spineCanvas.width, spineCanvas.height);
 
       return configureCanvasTexture(
         new THREE.CanvasTexture(spineCanvas),
@@ -3853,26 +3849,24 @@
 
     function makeSpineFoilTexture(book) {
       const foilCanvas = document.createElement("canvas");
-      const foilW = 384, foilH = 1536;
-      foilCanvas.width = foilW * 3;
-      foilCanvas.height = foilH * 3;
+      foilCanvas.width = 384;
+      foilCanvas.height = 1536;
       const ctx = foilCanvas.getContext("2d");
-      ctx.scale(3, 3);
 
-      ctx.clearRect(0, 0, foilW, foilH);
+      ctx.clearRect(0, 0, foilCanvas.width, foilCanvas.height);
       ctx.fillStyle = "#ffffff";
       ctx.strokeStyle = "#ffffff";
       ctx.lineWidth = 2.4;
-      ctx.strokeRect(34, 38, foilW - 68, foilH - 76);
+      ctx.strokeRect(34, 38, foilCanvas.width - 68, foilCanvas.height - 76);
 
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
       ctx.font = '500 24px Inter, "Helvetica Neue", Arial, sans-serif';
       ctx.letterSpacing = "5px";
-      ctx.fillText(book.roman, foilW * 0.5, 118);
+      ctx.fillText(book.roman, foilCanvas.width * 0.5, 118);
 
       ctx.save();
-      ctx.translate(foilW * 0.5, foilH * 0.5);
+      ctx.translate(foilCanvas.width * 0.5, foilCanvas.height * 0.5);
       ctx.rotate(Math.PI / 2);
       ctx.font = `400 ${book.title.length > 10 ? 58 : 68}px "Iowan Old Style", Baskerville, Georgia, serif`;
       ctx.letterSpacing = "0px";
@@ -3880,11 +3874,11 @@
       ctx.restore();
 
       ctx.beginPath();
-      ctx.arc(foilW * 0.5, foilH - 120, 24, 0, Math.PI * 2);
+      ctx.arc(foilCanvas.width * 0.5, foilCanvas.height - 120, 24, 0, Math.PI * 2);
       ctx.stroke();
       ctx.beginPath();
-      ctx.moveTo(foilW * 0.5 - 24, foilH - 120);
-      ctx.lineTo(foilW * 0.5 + 24, foilH - 120);
+      ctx.moveTo(foilCanvas.width * 0.5 - 24, foilCanvas.height - 120);
+      ctx.lineTo(foilCanvas.width * 0.5 + 24, foilCanvas.height - 120);
       ctx.stroke();
 
       return configureCanvasTexture(new THREE.CanvasTexture(foilCanvas));
@@ -3892,27 +3886,25 @@
 
     function makeBackCoverTexture(book) {
       const backCanvas = document.createElement("canvas");
-      const backW = 768, backH = 1152;
-      backCanvas.width = backW * 3;
-      backCanvas.height = backH * 3;
+      backCanvas.width = 768;
+      backCanvas.height = 1152;
       const ctx = backCanvas.getContext("2d");
-      ctx.scale(3, 3);
       const random = seededRandom(hashSeed(`${book.id}-back-cloth`) + book.seed);
 
       ctx.fillStyle = book.color;
-      ctx.fillRect(0, 0, backW, backH);
+      ctx.fillRect(0, 0, backCanvas.width, backCanvas.height);
 
-      const edgeShade = ctx.createLinearGradient(0, 0, backW, 0);
+      const edgeShade = ctx.createLinearGradient(0, 0, backCanvas.width, 0);
       edgeShade.addColorStop(0, "rgba(0,0,0,0.15)");
       edgeShade.addColorStop(0.05, "rgba(255,255,255,0.028)");
       edgeShade.addColorStop(0.84, "rgba(255,255,255,0)");
       edgeShade.addColorStop(1, "rgba(0,0,0,0.11)");
       ctx.fillStyle = edgeShade;
-      ctx.fillRect(0, 0, backW, backH);
+      ctx.fillRect(0, 0, backCanvas.width, backCanvas.height);
 
       for (let thread = 0; thread < 2600; thread += 1) {
-        const x = random() * backW;
-        const y = random() * backH;
+        const x = random() * backCanvas.width;
+        const y = random() * backCanvas.height;
         const length = 5 + random() * 30;
         ctx.strokeStyle = random() > 0.5
           ? `rgba(255,255,255,${0.018 + random() * 0.03})`
@@ -3925,27 +3917,26 @@
       }
 
       const vignette = ctx.createRadialGradient(
-        backW * 0.62,
-        backH * 0.38,
+        backCanvas.width * 0.62,
+        backCanvas.height * 0.38,
         20,
-        backW * 0.62,
-        backH * 0.38,
-        backW * 0.75
+        backCanvas.width * 0.62,
+        backCanvas.height * 0.38,
+        backCanvas.width * 0.75
       );
       vignette.addColorStop(0, "rgba(255,255,255,0.03)");
       vignette.addColorStop(1, "rgba(0,0,0,0.09)");
       ctx.fillStyle = vignette;
-      ctx.fillRect(0, 0, backW, backH);
+      ctx.fillRect(0, 0, backCanvas.width, backCanvas.height);
 
       return configureCanvasTexture(new THREE.CanvasTexture(backCanvas));
     }
 
     function makeBackFoilTexture(book) {
       const foilCanvas = document.createElement("canvas");
-      foilCanvas.width = 2304;
-      foilCanvas.height = 3456;
+      foilCanvas.width = 768;
+      foilCanvas.height = 1152;
       const ctx = foilCanvas.getContext("2d");
-      ctx.scale(3, 3);
 
       ctx.clearRect(0, 0, foilCanvas.width, foilCanvas.height);
       ctx.fillStyle = "#ffffff";
