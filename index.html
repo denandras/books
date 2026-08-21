@@ -6,9 +6,9 @@
   <meta name="theme-color" content="#171a24">
   <meta
     name="description"
-    content="A personal 3D book shelf by András Denes."
+    content="A personal 3D bookshelf by András Dénes."
   >
-  <title>Book Shelf — András Denes</title>
+  <title>Bookshelf — András Dénes</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
@@ -1592,13 +1592,54 @@
         align-self: center;
       }
 
+      /* Mobile: hide the detail-panel overlay completely, except close-book + reset-view */
+      .detail-panel > .eyebrow,
+      .detail-panel > .detail-title,
+      .detail-panel > .detail-deck,
+      .detail-panel > .meta-list,
+      .detail-panel > .page-navigation,
+      .detail-panel > .detail-controls > .microcopy {
+        display: none !important;
+      }
+
       .detail-panel {
         top: auto;
         right: 22px;
         bottom: 22px;
         left: 22px;
         width: auto;
-        max-height: 40vh;
+        max-height: none;
+        padding: 0;
+        background: transparent;
+        border: 0;
+        box-shadow: none;
+        backdrop-filter: none;
+      }
+
+      .detail-panel .close-button {
+        position: fixed;
+        top: 18px;
+        right: 18px;
+        z-index: 20;
+      }
+
+      .detail-controls {
+        position: fixed;
+        bottom: 18px;
+        right: 18px;
+        z-index: 20;
+        margin: 0;
+        padding: 0;
+        border: 0;
+      }
+
+      .detail-buttons {
+        gap: 10px;
+      }
+
+      /* Mobile: hide "Open" button and arrows, keep markers (dashes) */
+      .browse-actions {
+        display: none !important;
       }
 
       .detail-title {
@@ -1844,6 +1885,7 @@
     }
 
     .admin-btn {
+      pointer-events: auto;
       margin-left: 12px;
       padding: 4px 12px;
       border: 1px solid var(--rule);
@@ -1929,11 +1971,11 @@
 
     <header class="editorial-header" aria-label="Collection">
       <div class="editorial-identity">
-        <strong>Book Shelf</strong>
-        <span>András Denes · Personal library</span>
+        <strong>Bookshelf</strong>
+        <span>András Dénes</span>
       </div>
       <div class="editorial-index">
-        <span id="palette-label">Ultramarine · bone · copper</span>
+        <span id="palette-label" hidden></span>
         <button class="admin-btn" id="admin-button" type="button" hidden>Login</button>
       </div>
     </header>
@@ -2047,8 +2089,8 @@
     <section class="static-fallback" id="static-fallback" aria-labelledby="fallback-title" hidden>
       <div class="fallback__header">
         <div>
-          <p class="fallback__kicker">Book Shelf · Static catalog</p>
-          <h2 id="fallback-title">Personal library</h2>
+          <p class="fallback__kicker">Bookshelf · Static catalog</p>
+          <h2 id="fallback-title">András Dénes</h2>
         </div>
         <p class="fallback__status" id="fallback-status">
           The complete catalog remains readable while the interactive shelf is prepared.
@@ -2989,7 +3031,7 @@
 
       ctx.font = '500 15px Inter, "Helvetica Neue", Arial, sans-serif';
       ctx.letterSpacing = "2.8px";
-      ctx.fillText(`BOOK SHELF  /  ${pad(index)}`, 58, 70);
+      ctx.fillText(`BOOKSHELF  /  ${pad(index)}`, 58, 70);
       ctx.globalAlpha = 0.7;
       ctx.lineWidth = 1;
       ctx.beginPath();
@@ -2998,12 +3040,7 @@
       ctx.stroke();
       ctx.globalAlpha = 1;
 
-      const titleSize = book.title.length > 10 ? 64 : 78;
-      ctx.font = `400 ${titleSize}px "Iowan Old Style", Baskerville, Georgia, serif`;
-      ctx.fillText(book.title, 58, 1020);
-      ctx.font = '500 14px Inter, "Helvetica Neue", Arial, sans-serif';
-      ctx.letterSpacing = "2.4px";
-      ctx.fillText(book.discipline.toUpperCase(), 60, 1066);
+      // Title and author are already on the cover image — no duplicate foil text
 
       return configureCanvasTexture(new THREE.CanvasTexture(foilCanvas));
     }
@@ -3498,9 +3535,6 @@
     function drawTitlePage(ctx, book, ink, accent) {
       ctx.fillStyle = ink;
       ctx.strokeStyle = ink;
-      ctx.font = '500 12px Inter, "Helvetica Neue", Arial, sans-serif';
-      ctx.letterSpacing = "2.3px";
-      ctx.fillText((book.author || book.discipline || "").toUpperCase(), 54, 174);
 
       // Scale font size down for long titles so they don't overflow
       const titleLen = book.title.length;
@@ -3522,7 +3556,7 @@
       ctx.fillStyle = ink;
       ctx.font = '500 10px Inter, "Helvetica Neue", Arial, sans-serif';
       ctx.letterSpacing = "1.6px";
-      ctx.fillText(`${book.roman}  ·  BOOK SHELF`, 54, 500);
+      ctx.fillText(`${book.roman}  ·  BOOKSHELF`, 54, 500);
       ctx.globalAlpha = 1;
     }
 
@@ -3559,7 +3593,7 @@
         ctx.globalAlpha = 0.58;
         ctx.font = '500 10px Inter, "Helvetica Neue", Arial, sans-serif';
         ctx.letterSpacing = "1.8px";
-        ctx.fillText(`BOOK SHELF  /  ${book.roman}`, 48, 48);
+        ctx.fillText(`BOOKSHELF  /  ${book.roman}`, 48, 48);
         ctx.textAlign = "right";
         ctx.fillText(pad(pageIndex + 1), logicalWidth - 48, 48);
         ctx.textAlign = "left";
@@ -3864,7 +3898,7 @@
 
       ctx.font = '500 16px Inter, "Helvetica Neue", Arial, sans-serif';
       ctx.letterSpacing = "3px";
-      ctx.fillText(`BOOK SHELF  /  ${book.roman}`, 68, 82);
+      ctx.fillText(`BOOKSHELF  /  ${book.roman}`, 68, 82);
       ctx.globalAlpha = 0.72;
       ctx.fillRect(68, 108, 176, 2);
       ctx.globalAlpha = 1;
@@ -3882,19 +3916,9 @@
       ctx.lineTo(704, 374);
       ctx.moveTo(548, 174);
       ctx.lineTo(548, 574);
-      ctx.stroke();
-
-      ctx.font = `400 ${book.title.length > 10 ? 52 : 62}px "Iowan Old Style", Baskerville, Georgia, serif`;
-      ctx.letterSpacing = "0px";
-      ctx.fillText(book.title, 68, 956);
-      ctx.font = '500 15px Inter, "Helvetica Neue", Arial, sans-serif';
-      ctx.letterSpacing = "2.6px";
-      ctx.fillText(book.discipline.toUpperCase(), 70, 1004);
-      ctx.globalAlpha = 0.68;
-      ctx.fillRect(68, 1040, 632, 1.5);
       ctx.globalAlpha = 1;
-      ctx.textAlign = "right";
-      ctx.fillText("AN IMAGINED EDITION", 700, 1080);
+
+      // No title/discipline text — cover image already has it
 
       return configureCanvasTexture(new THREE.CanvasTexture(foilCanvas));
     }
@@ -4333,12 +4357,14 @@
 
       const pagePivots = [];
       const pageSurfaces = [];
+      const isMobileView = viewWidth < 820;
       for (let pageIndex = 0; pageIndex < 6; pageIndex += 1) {
         const leafOrder = 5 - pageIndex;
         const frontPageMaterial = leafOrder < 4
           ? interiorPageMaterials[leafOrder * 2]
           : blankPageMaterial;
-        const backPageMaterial = leafOrder < 4
+        // On mobile: only fill right (front) pages with content, left (back) pages blank
+        const backPageMaterial = (!isMobileView && leafOrder < 4)
           ? interiorPageMaterials[leafOrder * 2 + 1]
           : blankPageMaterial;
         const pagePivot = new THREE.Group();
@@ -4738,7 +4764,7 @@
 
     function addRoom() {
       const floor = createMesh(shared.plane, new THREE.MeshStandardMaterial({
-        color: 0xd8c8aa,
+        color: 0x121620,
         roughness: 0.92,
         metalness: 0
       }), "paper-floor", false, true);
@@ -4748,7 +4774,7 @@
       scene.add(floor);
 
       const back = createMesh(shared.plane, new THREE.MeshStandardMaterial({
-        color: 0xe9dfcb,
+        color: 0x171a24,
         roughness: 1,
         metalness: 0
       }), "paper-backdrop", false, true);
@@ -4999,7 +5025,7 @@
       selectionTitle.textContent = book.title;
       selectionNote.textContent = book.author;
       counter.textContent = `${pad(selectedIndex + 1)} / ${pad(BOOKS.length)}`;
-      paletteLabel.textContent = book.paletteLabel;
+      paletteLabel.textContent = "";
       inspectButton.setAttribute("aria-label", `Open ${book.title}`);
       applyBookTheme(book);
       if (previousIndex !== selectedIndex) {
@@ -5825,6 +5851,10 @@
     }
 
     function onCanvasClick(event) {
+      if (shelfDrag.moved) {
+        shelfDrag.moved = false;
+        return;
+      }
       if (mode === "detail" && !readingOpen && event.button === 0) {
         if (!detailPress.allowClick) return;
         detailPress.allowClick = false;
@@ -5851,6 +5881,50 @@
       targetPosition += clamp(delta * 0.0022, -0.72, 0.72);
       wheelIdle = 0.14;
       requestFrame();
+    }
+
+    // Touch drag scrolling for mobile — drag horizontally on shelf to browse
+    const shelfDrag = {
+      active: false,
+      pointerId: null,
+      startX: 0,
+      lastX: 0,
+      moved: false
+    };
+
+    function onShelfDragStart(event) {
+      if (mode !== "hero" || event.button !== 0 && event.pointerType === "mouse") return;
+      if (event.pointerType === "mouse") return; // Only touch/pen
+      shelfDrag.active = true;
+      shelfDrag.pointerId = event.pointerId;
+      shelfDrag.startX = event.clientX;
+      shelfDrag.lastX = event.clientX;
+      shelfDrag.moved = false;
+    }
+
+    function onShelfDragMove(event) {
+      if (!shelfDrag.active || event.pointerId !== shelfDrag.pointerId) return;
+      const dx = event.clientX - shelfDrag.lastX;
+      shelfDrag.lastX = event.clientX;
+      const delta = -dx * 0.008;
+      targetPosition += delta;
+      wheelIdle = 0.14;
+      if (Math.abs(event.clientX - shelfDrag.startX) > 8) {
+        shelfDrag.moved = true;
+      }
+      requestFrame();
+    }
+
+    function onShelfDragEnd(event) {
+      if (!shelfDrag.active) return;
+      shelfDrag.active = false;
+      shelfDrag.pointerId = null;
+      // Snap to nearest book
+      if (shelfDrag.moved) {
+        targetPosition = Math.round(targetPosition);
+        updateSelection(mod(Math.round(targetPosition), BOOKS.length), true);
+        requestFrame();
+      }
     }
 
     function openDetail(origin = inspectButton) {
@@ -6544,7 +6618,7 @@
       renderer.setClearColor(0x000000, 0);
 
       scene = new THREE.Scene();
-      scene.fog = new THREE.FogExp2(0xe9dfcb, 0.027);
+      scene.fog = new THREE.FogExp2(0x171a24, 0.027);
       const pmremGenerator = new THREE.PMREMGenerator(renderer);
       environmentTarget = pmremGenerator.fromScene(new RoomEnvironment(), 0.04);
       scene.environment = environmentTarget.texture;
@@ -6590,6 +6664,10 @@
       canvas.addEventListener("pointermove", onPointerMove);
       canvas.addEventListener("pointerleave", onPointerLeave);
       canvas.addEventListener("click", onCanvasClick);
+      canvas.addEventListener("pointerdown", onShelfDragStart, { passive: true });
+      canvas.addEventListener("pointermove", onShelfDragMove, { passive: true });
+      canvas.addEventListener("pointerup", onShelfDragEnd, { passive: true });
+      canvas.addEventListener("pointercancel", onShelfDragEnd, { passive: true });
       canvas.addEventListener("pointerdown", onDetailBookPointerDown, { capture: true });
       canvas.addEventListener("pointermove", onDetailBookPointerMove, { capture: true });
       canvas.addEventListener("pointerup", onDetailBookPointerEnd, { capture: true });
