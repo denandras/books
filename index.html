@@ -6437,7 +6437,7 @@
       viewHeight = window.innerHeight;
       configureResponsiveTargets();
       renderer.setSize(viewWidth, viewHeight, false);
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, viewWidth < 820 ? 3 : 3));
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, viewWidth < 820 ? 2 : 3));
       camera.aspect = viewWidth / viewHeight;
       camera.updateProjectionMatrix();
 
