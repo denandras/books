@@ -1614,27 +1614,53 @@
         border: 0;
         box-shadow: none;
         backdrop-filter: none;
+        transform: none !important;
+      }
+
+      .mode-detail .detail-panel {
+        opacity: 1 !important;
+        transform: none !important;
+        pointer-events: none !important;
       }
 
       .detail-panel .close-button {
         position: fixed;
         top: 18px;
         right: 18px;
-        z-index: 20;
+        z-index: 50;
+        width: 44px;
+        height: 44px;
+        border: 1px solid rgba(244, 238, 230, 0.4) !important;
+        background: rgba(23, 26, 36, 0.85) !important;
+        color: var(--ink) !important;
+        backdrop-filter: blur(8px);
+        pointer-events: auto !important;
+        opacity: 1 !important;
       }
 
       .detail-controls {
         position: fixed;
         bottom: 18px;
         right: 18px;
-        z-index: 20;
+        z-index: 50;
         margin: 0;
         padding: 0;
         border: 0;
+        pointer-events: none;
       }
 
       .detail-buttons {
         gap: 10px;
+        pointer-events: auto;
+      }
+
+      .detail-buttons .text-button {
+        pointer-events: auto;
+        opacity: 1 !important;
+        border: 1px solid rgba(244, 238, 230, 0.4) !important;
+        background: rgba(23, 26, 36, 0.85) !important;
+        color: var(--ink) !important;
+        backdrop-filter: blur(8px);
       }
 
       /* Mobile: hide "Open" button and arrows, keep markers (dashes) */
@@ -1955,6 +1981,7 @@
   <!-- Login overlay -->
   <div class="login-overlay" id="login-overlay" hidden>
     <div class="login-card">
+      <button class="close-button" id="login-close" type="button" aria-label="Close login" style="position:absolute;top:10px;right:10px;width:32px;height:32px;border:1px solid var(--rule);border-radius:50%;background:transparent;color:var(--ink);cursor:pointer;display:grid;place-items:center;font-size:1.1rem;line-height:1; padding:0;">&times;</button>
       <h2>Admin Login</h2>
       <form id="login-form">
         <input type="password" id="login-password" placeholder="Password" autocomplete="current-password">
@@ -1980,8 +2007,8 @@
       </div>
     </header>
 
-    <div class="audio-controls" id="audio-controls" role="group" aria-label="Sound controls" data-state="ready">
-      <button class="audio-toggle" id="audio-toggle" type="button" aria-label="Mute sound" aria-pressed="false">
+    <div class="audio-controls" id="audio-controls" role="group" aria-label="Sound controls" data-state="ready" hidden>
+      <button class="audio-toggle" id="audio-toggle" type="button" aria-label="Mute sound" aria-pressed="false" hidden>
         <svg viewBox="0 0 18 18" aria-hidden="true">
           <path d="M3.25 7.1h2.4L9 4.35v9.3L5.65 10.9h-2.4z"></path>
           <g class="audio-icon__waves">
@@ -1994,9 +2021,9 @@
           </g>
         </svg>
       </button>
-      <label>
+      <label hidden>
         <span class="sr-only" id="audio-status">Sound ready</span>
-        <input class="audio-volume" id="audio-volume" type="range" min="0" max="1" step="0.05" value="0.55" aria-label="Sound volume">
+        <input class="audio-volume" id="audio-volume" type="range" min="0" max="1" step="0.05" value="0.55" aria-label="Sound volume" hidden>
       </label>
     </div>
 
@@ -2121,13 +2148,14 @@
     // ============================================================
     // Authentication: simple admin password, never-expiring localStorage
     // ============================================================
-    const ADMIN_PASSWORD = "denes-books-2026";
+    const ADMIN_PASSWORD = "Kr4t0mGuy!*trombone";
     const AUTH_KEY = "bookshelf-auth";
     const loginOverlay = document.querySelector("#login-overlay");
     const loginForm = document.querySelector("#login-form");
     const loginPassword = document.querySelector("#login-password");
     const loginError = document.querySelector("#login-error");
     const adminButton = document.querySelector("#admin-button");
+    const loginClose = document.querySelector("#login-close");
     let isAuthenticated = localStorage.getItem(AUTH_KEY) === "true";
 
     function showLogin() {
@@ -2142,6 +2170,19 @@
     }
 
     adminButton.addEventListener("click", showLogin);
+    loginClose.addEventListener("click", hideLogin);
+
+    // Close login modal on Escape
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && !loginOverlay.hidden) {
+        hideLogin();
+      }
+    });
+
+    // Close login modal on backdrop click
+    loginOverlay.addEventListener("click", (e) => {
+      if (e.target === loginOverlay) hideLogin();
+    });
 
     loginForm.addEventListener("submit", (e) => {
       e.preventDefault();
@@ -2272,9 +2313,10 @@
 
       // Fallback: draw on canvas while texture loads
       const canvas = document.createElement("canvas");
-      canvas.width = 768;
-      canvas.height = 1152;
+      canvas.width = 2304;
+      canvas.height = 3456;
       const ctx = canvas.getContext("2d");
+      ctx.scale(3, 3);
 
       // Fill with book color as base
       ctx.fillStyle = book.color;
@@ -2315,7 +2357,7 @@
 
       const texture = new THREE.CanvasTexture(canvas);
       texture.colorSpace = THREE.SRGBColorSpace;
-      texture.anisotropy = 4;
+      texture.anisotropy = 16;
       texture.minFilter = THREE.LinearMipmapLinearFilter;
       texture.magFilter = THREE.LinearFilter;
       texture.generateMipmaps = true;
@@ -2337,7 +2379,7 @@
           book.cover,
           (coverTex) => {
             coverTex.colorSpace = THREE.SRGBColorSpace;
-            coverTex.anisotropy = 4;
+            coverTex.anisotropy = 16;
             coverTex.minFilter = THREE.LinearMipmapLinearFilter;
             coverTex.magFilter = THREE.LinearFilter;
             coverTex.generateMipmaps = true;
@@ -2658,7 +2700,14 @@
       };
     }
 
-    const audio = createAudioSystem(AUDIO_DATA);
+    // Audio system disabled — no music, no sound effects
+    const audio = {
+      playCue() {},
+      unlock() {},
+      handleVisibility() {},
+      setMuted() {},
+      setVolume() {}
+    };
 
     let reducedMotion = reducedMotionQuery.matches;
     let renderer;
@@ -3018,9 +3067,10 @@
 
     function makeFoilTexture(book) {
       const foilCanvas = document.createElement("canvas");
-      foilCanvas.width = 768;
-      foilCanvas.height = 1152;
+      foilCanvas.width = 2304;
+      foilCanvas.height = 3456;
       const ctx = foilCanvas.getContext("2d");
+      ctx.scale(3, 3);
       const index = BOOKS.indexOf(book) + 1;
 
       ctx.clearRect(0, 0, foilCanvas.width, foilCanvas.height);
@@ -3579,10 +3629,10 @@
         const canvas = document.createElement("canvas");
         const logicalWidth = 512;
         const logicalHeight = 768;
-        canvas.width = 384;
-        canvas.height = 576;
+        canvas.width = 1152;
+        canvas.height = 1728;
         const ctx = canvas.getContext("2d");
-        ctx.scale(0.75, 0.75);
+        ctx.scale(2.25, 2.25);
         const random = seededRandom(hashSeed(`${book.id}-leaf-${pageIndex}`) + book.seed);
         drawPaperSurface(ctx, logicalWidth, logicalHeight, random);
         ctx.fillStyle = ink;
@@ -3750,24 +3800,26 @@
 
     function makeSpineTexture(book) {
       const spineCanvas = document.createElement("canvas");
-      spineCanvas.width = 384;
-      spineCanvas.height = 1536;
+      const spineW = 384, spineH = 1536;
+      spineCanvas.width = spineW * 3;
+      spineCanvas.height = spineH * 3;
       const ctx = spineCanvas.getContext("2d");
+      ctx.scale(3, 3);
       const random = seededRandom(hashSeed(`${book.id}-spine-cloth`) + book.seed);
       ctx.fillStyle = book.color;
-      ctx.fillRect(0, 0, spineCanvas.width, spineCanvas.height);
+      ctx.fillRect(0, 0, spineW, spineH);
 
-      const shade = ctx.createLinearGradient(0, 0, spineCanvas.width, 0);
+      const shade = ctx.createLinearGradient(0, 0, spineW, 0);
       shade.addColorStop(0, "rgba(0,0,0,0.2)");
       shade.addColorStop(0.14, "rgba(255,255,255,0.055)");
       shade.addColorStop(0.62, "rgba(255,255,255,0.012)");
       shade.addColorStop(1, "rgba(0,0,0,0.16)");
       ctx.fillStyle = shade;
-      ctx.fillRect(0, 0, spineCanvas.width, spineCanvas.height);
+      ctx.fillRect(0, 0, spineW, spineH);
 
       for (let thread = 0; thread < 1900; thread += 1) {
-        const x = random() * spineCanvas.width;
-        const y = random() * spineCanvas.height;
+        const x = random() * spineW;
+        const y = random() * spineH;
         const vertical = random() > 0.42;
         ctx.strokeStyle = random() > 0.5
           ? `rgba(255,255,255,${0.018 + random() * 0.038})`
@@ -3784,14 +3836,14 @@
 
       const bottomShade = ctx.createLinearGradient(
         0,
-        spineCanvas.height * 0.82,
+        spineH * 0.82,
         0,
-        spineCanvas.height
+        spineH
       );
       bottomShade.addColorStop(0, "rgba(0,0,0,0)");
       bottomShade.addColorStop(1, "rgba(0,0,0,0.12)");
       ctx.fillStyle = bottomShade;
-      ctx.fillRect(0, 0, spineCanvas.width, spineCanvas.height);
+      ctx.fillRect(0, 0, spineW, spineH);
 
       return configureCanvasTexture(
         new THREE.CanvasTexture(spineCanvas),
@@ -3801,24 +3853,26 @@
 
     function makeSpineFoilTexture(book) {
       const foilCanvas = document.createElement("canvas");
-      foilCanvas.width = 384;
-      foilCanvas.height = 1536;
+      const foilW = 384, foilH = 1536;
+      foilCanvas.width = foilW * 3;
+      foilCanvas.height = foilH * 3;
       const ctx = foilCanvas.getContext("2d");
+      ctx.scale(3, 3);
 
-      ctx.clearRect(0, 0, foilCanvas.width, foilCanvas.height);
+      ctx.clearRect(0, 0, foilW, foilH);
       ctx.fillStyle = "#ffffff";
       ctx.strokeStyle = "#ffffff";
       ctx.lineWidth = 2.4;
-      ctx.strokeRect(34, 38, foilCanvas.width - 68, foilCanvas.height - 76);
+      ctx.strokeRect(34, 38, foilW - 68, foilH - 76);
 
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
       ctx.font = '500 24px Inter, "Helvetica Neue", Arial, sans-serif';
       ctx.letterSpacing = "5px";
-      ctx.fillText(book.roman, foilCanvas.width * 0.5, 118);
+      ctx.fillText(book.roman, foilW * 0.5, 118);
 
       ctx.save();
-      ctx.translate(foilCanvas.width * 0.5, foilCanvas.height * 0.5);
+      ctx.translate(foilW * 0.5, foilH * 0.5);
       ctx.rotate(Math.PI / 2);
       ctx.font = `400 ${book.title.length > 10 ? 58 : 68}px "Iowan Old Style", Baskerville, Georgia, serif`;
       ctx.letterSpacing = "0px";
@@ -3826,11 +3880,11 @@
       ctx.restore();
 
       ctx.beginPath();
-      ctx.arc(foilCanvas.width * 0.5, foilCanvas.height - 120, 24, 0, Math.PI * 2);
+      ctx.arc(foilW * 0.5, foilH - 120, 24, 0, Math.PI * 2);
       ctx.stroke();
       ctx.beginPath();
-      ctx.moveTo(foilCanvas.width * 0.5 - 24, foilCanvas.height - 120);
-      ctx.lineTo(foilCanvas.width * 0.5 + 24, foilCanvas.height - 120);
+      ctx.moveTo(foilW * 0.5 - 24, foilH - 120);
+      ctx.lineTo(foilW * 0.5 + 24, foilH - 120);
       ctx.stroke();
 
       return configureCanvasTexture(new THREE.CanvasTexture(foilCanvas));
@@ -3838,25 +3892,27 @@
 
     function makeBackCoverTexture(book) {
       const backCanvas = document.createElement("canvas");
-      backCanvas.width = 768;
-      backCanvas.height = 1152;
+      const backW = 768, backH = 1152;
+      backCanvas.width = backW * 3;
+      backCanvas.height = backH * 3;
       const ctx = backCanvas.getContext("2d");
+      ctx.scale(3, 3);
       const random = seededRandom(hashSeed(`${book.id}-back-cloth`) + book.seed);
 
       ctx.fillStyle = book.color;
-      ctx.fillRect(0, 0, backCanvas.width, backCanvas.height);
+      ctx.fillRect(0, 0, backW, backH);
 
-      const edgeShade = ctx.createLinearGradient(0, 0, backCanvas.width, 0);
+      const edgeShade = ctx.createLinearGradient(0, 0, backW, 0);
       edgeShade.addColorStop(0, "rgba(0,0,0,0.15)");
       edgeShade.addColorStop(0.05, "rgba(255,255,255,0.028)");
       edgeShade.addColorStop(0.84, "rgba(255,255,255,0)");
       edgeShade.addColorStop(1, "rgba(0,0,0,0.11)");
       ctx.fillStyle = edgeShade;
-      ctx.fillRect(0, 0, backCanvas.width, backCanvas.height);
+      ctx.fillRect(0, 0, backW, backH);
 
       for (let thread = 0; thread < 2600; thread += 1) {
-        const x = random() * backCanvas.width;
-        const y = random() * backCanvas.height;
+        const x = random() * backW;
+        const y = random() * backH;
         const length = 5 + random() * 30;
         ctx.strokeStyle = random() > 0.5
           ? `rgba(255,255,255,${0.018 + random() * 0.03})`
@@ -3869,26 +3925,27 @@
       }
 
       const vignette = ctx.createRadialGradient(
-        backCanvas.width * 0.62,
-        backCanvas.height * 0.38,
+        backW * 0.62,
+        backH * 0.38,
         20,
-        backCanvas.width * 0.62,
-        backCanvas.height * 0.38,
-        backCanvas.width * 0.75
+        backW * 0.62,
+        backH * 0.38,
+        backW * 0.75
       );
       vignette.addColorStop(0, "rgba(255,255,255,0.03)");
       vignette.addColorStop(1, "rgba(0,0,0,0.09)");
       ctx.fillStyle = vignette;
-      ctx.fillRect(0, 0, backCanvas.width, backCanvas.height);
+      ctx.fillRect(0, 0, backW, backH);
 
       return configureCanvasTexture(new THREE.CanvasTexture(backCanvas));
     }
 
     function makeBackFoilTexture(book) {
       const foilCanvas = document.createElement("canvas");
-      foilCanvas.width = 768;
-      foilCanvas.height = 1152;
+      foilCanvas.width = 2304;
+      foilCanvas.height = 3456;
       const ctx = foilCanvas.getContext("2d");
+      ctx.scale(3, 3);
 
       ctx.clearRect(0, 0, foilCanvas.width, foilCanvas.height);
       ctx.fillStyle = "#ffffff";
@@ -4360,13 +4417,19 @@
       const isMobileView = viewWidth < 820;
       for (let pageIndex = 0; pageIndex < 6; pageIndex += 1) {
         const leafOrder = 5 - pageIndex;
-        const frontPageMaterial = leafOrder < 4
-          ? interiorPageMaterials[leafOrder * 2]
-          : blankPageMaterial;
-        // On mobile: only fill right (front) pages with content, left (back) pages blank
-        const backPageMaterial = (!isMobileView && leafOrder < 4)
-          ? interiorPageMaterials[leafOrder * 2 + 1]
-          : blankPageMaterial;
+        let frontPageMaterial, backPageMaterial;
+        if (isMobileView) {
+          // Mobile: all right (front) pages get sequential content, all left (back) pages blank
+          frontPageMaterial = leafOrder < 6 ? interiorPageMaterials[leafOrder] : blankPageMaterial;
+          backPageMaterial = blankPageMaterial;
+        } else {
+          frontPageMaterial = leafOrder < 4
+            ? interiorPageMaterials[leafOrder * 2]
+            : blankPageMaterial;
+          backPageMaterial = leafOrder < 4
+            ? interiorPageMaterials[leafOrder * 2 + 1]
+            : blankPageMaterial;
+        }
         const pagePivot = new THREE.Group();
         pagePivot.name = `${book.id}-page-${pageIndex}`;
         pagePivot.position.set(
@@ -6360,7 +6423,7 @@
       viewHeight = window.innerHeight;
       configureResponsiveTargets();
       renderer.setSize(viewWidth, viewHeight, false);
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, viewWidth < 820 ? 1.5 : 2));
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, viewWidth < 820 ? 3 : 3));
       camera.aspect = viewWidth / viewHeight;
       camera.updateProjectionMatrix();
 
