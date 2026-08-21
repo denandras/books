@@ -2146,11 +2146,6 @@
     import { RectAreaLightUniformsLib } from "three/addons/lights/RectAreaLightUniformsLib.js";
 
     // ============================================================
-    // Texture resolution: scale down on mobile to prevent WebGL OOM
-    // ============================================================
-    const TEX_SCALE = window.innerWidth < 820 ? 0.5 : 1;
-
-    // ============================================================
     // Authentication: simple admin password, never-expiring localStorage
     // ============================================================
     const ADMIN_PASSWORD = "Kr4t0mGuy!*trombone";
@@ -2318,10 +2313,10 @@
 
       // Fallback: draw on canvas while texture loads
       const canvas = document.createElement("canvas");
-      canvas.width = Math.round(2304 * TEX_SCALE);
-      canvas.height = Math.round(3456 * TEX_SCALE);
+      canvas.width = 2304;
+      canvas.height = 3456;
       const ctx = canvas.getContext("2d");
-      ctx.scale(3 * TEX_SCALE, 3 * TEX_SCALE);
+      ctx.scale(3, 3);
 
       // Fill with book color as base
       ctx.fillStyle = book.color;
@@ -2362,10 +2357,10 @@
 
       const texture = new THREE.CanvasTexture(canvas);
       texture.colorSpace = THREE.SRGBColorSpace;
-      texture.anisotropy = TEX_SCALE < 1 ? 4 : 16;
-      texture.minFilter = TEX_SCALE < 1 ? THREE.LinearFilter : THREE.LinearMipmapLinearFilter;
+      texture.anisotropy = 16;
+      texture.minFilter = THREE.LinearMipmapLinearFilter;
       texture.magFilter = THREE.LinearFilter;
-      texture.generateMipmaps = TEX_SCALE >= 1;
+      texture.generateMipmaps = true;
       texture.needsUpdate = true;
 
       // Edge shading
@@ -2384,10 +2379,10 @@
           book.cover,
           (coverTex) => {
             coverTex.colorSpace = THREE.SRGBColorSpace;
-            coverTex.anisotropy = TEX_SCALE < 1 ? 4 : 16;
-            coverTex.minFilter = TEX_SCALE < 1 ? THREE.LinearFilter : THREE.LinearMipmapLinearFilter;
+            coverTex.anisotropy = 16;
+            coverTex.minFilter = THREE.LinearMipmapLinearFilter;
             coverTex.magFilter = THREE.LinearFilter;
-            coverTex.generateMipmaps = TEX_SCALE >= 1;
+            coverTex.generateMipmaps = true;
             coverTex.needsUpdate = true;
             coverTextureCache.set(book.id, coverTex);
             // Update material map if book rig exists
@@ -3058,12 +3053,12 @@
     } = {}) {
       if (color) texture.colorSpace = THREE.SRGBColorSpace;
       texture.anisotropy = Math.min(
-        TEX_SCALE < 1 ? 4 : anisotropy,
+        anisotropy,
         renderer.capabilities.getMaxAnisotropy()
       );
-      texture.minFilter = TEX_SCALE < 1 ? THREE.LinearFilter : THREE.LinearMipmapLinearFilter;
+      texture.minFilter = THREE.LinearMipmapLinearFilter;
       texture.magFilter = THREE.LinearFilter;
-      texture.generateMipmaps = TEX_SCALE >= 1;
+      texture.generateMipmaps = true;
       texture.needsUpdate = true;
       return texture;
     }
@@ -3072,10 +3067,10 @@
 
     function makeFoilTexture(book) {
       const foilCanvas = document.createElement("canvas");
-      foilCanvas.width = Math.round(2304 * TEX_SCALE);
-      foilCanvas.height = Math.round(3456 * TEX_SCALE);
+      foilCanvas.width = 2304;
+      foilCanvas.height = 3456;
       const ctx = foilCanvas.getContext("2d");
-      ctx.scale(3 * TEX_SCALE, 3 * TEX_SCALE);
+      ctx.scale(3, 3);
       const index = BOOKS.indexOf(book) + 1;
 
       ctx.clearRect(0, 0, foilCanvas.width, foilCanvas.height);
@@ -3268,8 +3263,8 @@
       if (!printed && sharedPaperFaceTexture) return sharedPaperFaceTexture;
 
       const paperCanvas = document.createElement("canvas");
-      paperCanvas.width = Math.round(768 * TEX_SCALE);
-      paperCanvas.height = Math.round(1152 * TEX_SCALE);
+      paperCanvas.width = 768;
+      paperCanvas.height = 1152;
       const ctx = paperCanvas.getContext("2d");
       const random = seededRandom(printed
         ? hashSeed(`${book.id}-printed-page`) + book.seed
@@ -3634,10 +3629,10 @@
         const canvas = document.createElement("canvas");
         const logicalWidth = 512;
         const logicalHeight = 768;
-        canvas.width = Math.round(1152 * TEX_SCALE);
-        canvas.height = Math.round(1728 * TEX_SCALE);
+        canvas.width = 1152;
+        canvas.height = 1728;
         const ctx = canvas.getContext("2d");
-        ctx.scale(2.25 * TEX_SCALE, 2.25 * TEX_SCALE);
+        ctx.scale(2.25, 2.25);
         const random = seededRandom(hashSeed(`${book.id}-leaf-${pageIndex}`) + book.seed);
         drawPaperSurface(ctx, logicalWidth, logicalHeight, random);
         ctx.fillStyle = ink;
@@ -3806,10 +3801,10 @@
     function makeSpineTexture(book) {
       const spineCanvas = document.createElement("canvas");
       const spineW = 384, spineH = 1536;
-      spineCanvas.width = Math.round(spineW * 3 * TEX_SCALE);
-      spineCanvas.height = Math.round(spineH * 3 * TEX_SCALE);
+      spineCanvas.width = spineW * 3;
+      spineCanvas.height = spineH * 3;
       const ctx = spineCanvas.getContext("2d");
-      ctx.scale(3 * TEX_SCALE, 3 * TEX_SCALE);
+      ctx.scale(3, 3);
       const random = seededRandom(hashSeed(`${book.id}-spine-cloth`) + book.seed);
       ctx.fillStyle = book.color;
       ctx.fillRect(0, 0, spineW, spineH);
@@ -4899,7 +4894,7 @@
       key.name = "shadow-key";
       key.position.set(-4.6, 7.4, 5.8);
       key.castShadow = true;
-      key.shadow.mapSize.set(TEX_SCALE < 1 ? 1024 : 2048, TEX_SCALE < 1 ? 1024 : 2048);
+      key.shadow.mapSize.set(2048, 2048);
       key.shadow.camera.left = -6;
       key.shadow.camera.right = 6;
       key.shadow.camera.top = 6;
@@ -6442,7 +6437,7 @@
       viewHeight = window.innerHeight;
       configureResponsiveTargets();
       renderer.setSize(viewWidth, viewHeight, false);
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, viewWidth < 820 ? 2 : 3));
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, viewWidth < 820 ? 3 : 3));
       camera.aspect = viewWidth / viewHeight;
       camera.updateProjectionMatrix();
 
