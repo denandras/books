@@ -1811,26 +1811,25 @@
       }
     }
   </script>
-  <!-- CDN fallback: if jsdelivr fails, rewrite import map to unpkg -->
+  <!-- CDN fallback: if jsdelivr fails to load Three.js, retry from unpkg -->
   <script>
     (function () {
-      var tried = false;
+      var retried = false;
+      // Catch module script load failures (these fire as error events on the script element)
       window.addEventListener("error", function (e) {
-        if (tried) return;
-        var msg = (e.message || "") + (e.filename || "");
-        if (msg.indexOf("jsdelivr") !== -1 || msg.indexOf("three") !== -1 ||
-            (e.target && e.target.src && e.target.src.indexOf("jsdelivr") !== -1)) {
-          tried = true;
+        if (retried) return;
+        // Only react to resource load failures, not random JS errors
+        var target = e.target || e.srcElement;
+        if (target && target.tagName === "SCRIPT" && target.src &&
+            target.src.indexOf("jsdelivr") !== -1) {
+          retried = true;
           var imp = document.querySelector('script[type="importmap"]');
           if (imp) {
-            imp.textContent = imp.textContent.replace(
-              /cdn\.jsdelivr\.net/g, "unpkg.com"
-            );
-            // Force reload of the page since import maps can't be changed after first use
+            imp.textContent = imp.textContent.replace(/cdn\.jsdelivr\.net/g, "unpkg.com");
             location.reload();
           }
         }
-      }, true);
+      }, true); // capture phase to catch resource load errors
     })();
   </script>
 </head>
@@ -6178,6 +6177,8 @@
     function showFallback(message) {
       loading.hidden = true;
       experience.classList.remove("webgl-ready");
+      const fallback = document.querySelector("#static-fallback");
+      if (fallback) fallback.hidden = false;
       fallbackStatus.textContent = message;
     }
 
@@ -6265,7 +6266,12 @@
       );
 
       try {
-        await document.fonts.load("600 82px Inter");
+        // Race font loading against a 3s timeout — on slow mobile networks
+        // Google Fonts can hang and delay the entire shelf initialization
+        await Promise.race([
+          document.fonts.load("600 82px Inter"),
+          new Promise((resolve) => setTimeout(resolve, 3000)),
+        ]);
       } catch (error) {
         // The system sans-serif fallback keeps the interface usable offline.
       }
@@ -6273,6 +6279,12 @@
       // Cover atlas no longer used — individual covers loaded via TextureLoader
 
       try {
+        // Check WebGL support before creating renderer — some mobile browsers
+        // don't throw on new WebGLRenderer() but produce a broken context
+        const testCanvas = document.createElement("canvas");
+        const gl = testCanvas.getContext("webgl2") || testCanvas.getContext("webgl");
+        if (!gl) throw new Error("WebGL not supported");
+
         renderer = new THREE.WebGLRenderer({
           canvas,
           antialias: true,
@@ -6389,7 +6401,7 @@
       if (!initialized) {
         showFallback("The interactive shelf took too long to load. The complete static catalog remains available — reload to try again.");
       }
-    }, 15000);
+    }, 20000);
 
     initialize()
       .then(() => { initialized = true; clearTimeout(loadingTimeout); })
