@@ -1195,10 +1195,7 @@
       }
 
       .detail-deck {
-        display: -webkit-box;
-        overflow: hidden;
-        -webkit-box-orient: vertical;
-        -webkit-line-clamp: 3;
+        overflow: auto;
       }
 
       .meta-list {
@@ -1610,23 +1607,25 @@
 
       .detail-panel {
         top: auto;
-        right: 22px;
-        bottom: 22px;
-        left: 22px;
+        right: 16px;
+        bottom: 80px;
+        left: 16px;
         width: auto;
-        max-height: none;
-        padding: 0;
-        background: transparent;
-        border: 0;
-        box-shadow: none;
-        backdrop-filter: none;
+        max-height: 50vh;
+        padding: 20px 18px 16px;
+        background: rgba(244, 237, 220, 0.95);
+        border: 1px solid rgba(49, 38, 28, 0.18);
+        border-radius: 12px;
+        box-shadow: 0 12px 40px rgba(56, 36, 21, 0.15);
+        backdrop-filter: blur(10px);
+        overflow-y: auto;
         transform: none !important;
       }
 
       .mode-detail .detail-panel {
         opacity: 1 !important;
         transform: none !important;
-        pointer-events: none !important;
+        pointer-events: auto !important;
       }
 
       .detail-panel .close-button {
@@ -1680,6 +1679,19 @@
 
       .detail-deck {
         font-size: 1rem;
+      }
+
+      .page-navigation {
+        margin-top: 14px;
+        padding-top: 12px;
+      }
+
+      .page-status strong {
+        font-size: 0.82rem;
+      }
+
+      .page-status span {
+        font-size: 0.48rem;
       }
     }
 
