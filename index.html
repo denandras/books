@@ -1592,14 +1592,20 @@
         align-self: center;
       }
 
-      /* Mobile: hide the detail-panel overlay completely, except close-book + reset-view */
+      /* Mobile: show a compact, scrollable detail panel with content + page navigation */
       .detail-panel > .eyebrow,
       .detail-panel > .detail-title,
       .detail-panel > .detail-deck,
       .detail-panel > .meta-list,
       .detail-panel > .page-navigation,
       .detail-panel > .detail-controls > .microcopy {
-        display: none !important;
+        display: revert !important;
+      }
+
+      .detail-panel > .detail-deck {
+        display: block !important;
+        overflow: visible !important;
+        -webkit-line-clamp: unset !important;
       }
 
       .detail-panel {
@@ -3496,18 +3502,72 @@
         y = CONTENT_TOP;
       };
 
+      const usable = CONTENT_BOTTOM - CONTENT_TOP;
+
       blocks.forEach((rawBlock) => {
         const block = measureContentBlock(ctx, rawBlock);
-        const usable = CONTENT_BOTTOM - CONTENT_TOP;
-        if (block.height > usable) {
-          if (page.length) flush();
+
+        // If the entire block fits in the remaining space, place it.
+        if (y + block.height <= CONTENT_BOTTOM) {
           page.push(block);
-          flush();
+          y += block.height;
           return;
         }
-        if (y + block.height > CONTENT_BOTTOM && page.length) flush();
-        page.push(block);
-        y += block.height;
+
+        // Block doesn't fit in remaining space. Try to split it across
+        // pages at line boundaries so content is never clipped.
+
+        const spaceBefore = block.type === "heading-sm" || block.type === "heading-lg"
+          ? 16
+          : block.type === "quote" ? 10 : block.type === "code" ? 8 : 6;
+        const spaceAfter = block.type === "quote" ? 12 : 4;
+
+        // If the block fits on a fresh page, flush and start new page.
+        if (block.height <= usable) {
+          if (page.length) flush();
+          page.push(block);
+          y += block.height;
+          return;
+        }
+
+        // Block is taller than a full page — split it line by line.
+        let lineIdx = 0;
+        let isFirstChunk = true;
+
+        while (lineIdx < block.lines.length) {
+          const avail = CONTENT_BOTTOM - y;
+          // How many lines fit in the remaining space?
+          let linesToFit = 0;
+          let chunkHeight = isFirstChunk ? spaceBefore : 0;
+          while (lineIdx + linesToFit < block.lines.length) {
+            const candidateH = (isFirstChunk ? spaceBefore : 0) +
+              (linesToFit + 1) * block.lineHeight + spaceAfter;
+            if (candidateH > avail && linesToFit > 0) break;
+            linesToFit++;
+          }
+
+          if (linesToFit === 0) {
+            // Not enough room for even one line — flush and retry on fresh page
+            if (page.length) flush();
+            continue;
+          }
+
+          const chunkLines = block.lines.slice(lineIdx, lineIdx + linesToFit);
+          const chunk = {
+            ...block,
+            lines: chunkLines,
+            isContinuation: !isFirstChunk,
+            height: (isFirstChunk ? spaceBefore : 0) +
+              chunkLines.length * block.lineHeight + spaceAfter
+          };
+          page.push(chunk);
+          y += chunk.height;
+          lineIdx += linesToFit;
+          isFirstChunk = false;
+
+          // If we filled the page, flush
+          if (lineIdx < block.lines.length && y >= CONTENT_BOTTOM) flush();
+        }
       });
 
       if (page.length) pages.push(page);
@@ -3524,6 +3584,13 @@
       ctx.strokeStyle = ink;
       let y = CONTENT_TOP;
 
+      // Safety net: clip to content area so nothing ever draws past the
+      // page boundary even if a measurement drifts.
+      ctx.save();
+      ctx.beginPath();
+      ctx.rect(0, CONTENT_TOP, 512, CONTENT_BOTTOM - CONTENT_TOP);
+      ctx.clip();
+
       blocks.forEach((block) => {
         const indent = getContentBlockIndent(block.type);
         const lineHeight = block.lineHeight;
@@ -3532,33 +3599,36 @@
         ctx.font = getContentBlockFont(block.type);
         ctx.letterSpacing = "0px";
 
-        if (block.type === "heading-sm") {
-          y += 16;
-          ctx.fillStyle = ink;
-        } else if (block.type === "heading-lg") {
-          y += 16;
-          ctx.fillStyle = accent;
-        } else if (block.type === "quote") {
-          y += 10;
-          ctx.save();
-          ctx.strokeStyle = accent;
-          ctx.globalAlpha = 0.55;
-          ctx.lineWidth = 3;
-          ctx.beginPath();
-          ctx.moveTo(CONTENT_MARGIN_X + 2, y - lineHeight * 0.5);
-          ctx.lineTo(
-            CONTENT_MARGIN_X + 2,
-            y + block.lines.length * lineHeight - lineHeight * 0.5
-          );
-          ctx.stroke();
-          ctx.restore();
-          ctx.fillStyle = ink;
-        } else if (block.type === "code") {
-          y += 8;
-          ctx.fillStyle = accent;
-        } else {
-          y += 6;
-          ctx.fillStyle = ink;
+        // Skip the "spaceBefore" gap for continuation blocks (split mid-paragraph)
+        if (!block.isContinuation) {
+          if (block.type === "heading-sm") {
+            y += 16;
+            ctx.fillStyle = ink;
+          } else if (block.type === "heading-lg") {
+            y += 16;
+            ctx.fillStyle = accent;
+          } else if (block.type === "quote") {
+            y += 10;
+            ctx.save();
+            ctx.strokeStyle = accent;
+            ctx.globalAlpha = 0.55;
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.moveTo(CONTENT_MARGIN_X + 2, y - lineHeight * 0.5);
+            ctx.lineTo(
+              CONTENT_MARGIN_X + 2,
+              y + block.lines.length * lineHeight - lineHeight * 0.5
+            );
+            ctx.stroke();
+            ctx.restore();
+            ctx.fillStyle = ink;
+          } else if (block.type === "code") {
+            y += 8;
+            ctx.fillStyle = accent;
+          } else {
+            y += 6;
+            ctx.fillStyle = ink;
+          }
         }
 
         block.lines.forEach((line, lineIndex) => {
@@ -3578,6 +3648,8 @@
 
         y += block.lines.length * lineHeight + (block.type === "quote" ? 12 : 4);
       });
+
+      ctx.restore();
     }
 
     function drawTitlePage(ctx, book, ink, accent) {
