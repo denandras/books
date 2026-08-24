@@ -3896,7 +3896,7 @@
 
     function makeSpineTexture(book) {
       const spineCanvas = document.createElement("canvas");
-      spineCanvas.width = 384;
+      spineCanvas.width = 768;
       spineCanvas.height = 1536;
       const ctx = spineCanvas.getContext("2d");
       const random = seededRandom(hashSeed(`${book.id}-spine-cloth`) + book.seed);
@@ -4835,10 +4835,12 @@
       // On narrow screens the books fill more of the viewport by moving the
       // camera closer (smaller Z distance) than on desktop.
       // Mobile zoom increased: Z 6.0 → 5.2 for shelf, inspect Z 3.8 → 3.3
-      shelfCameraPosition.set(0, narrow ? 2.02 : 1.92, narrow ? 5.2 : 8.1);
+      // Desktop: camera shifted left (-0.4) and lowered (1.92 → 1.78) for less
+      // inclination and so the book reads more to the right in the viewport.
+      shelfCameraPosition.set(narrow ? 0 : -0.4, narrow ? 2.02 : 1.78, narrow ? 5.2 : 8.1);
       shelfCameraTarget.set(0, narrow ? 1.57 : 1.55, 0);
-      inspectPosition.set(narrow ? 0 : -1.5, narrow ? 2.3 : 1.56, narrow ? 0.15 : 0);
-      inspectCameraPosition.set(narrow ? 0 : -0.2, narrow ? 2.46 : 1.78, narrow ? 3.3 : 5.25);
+      inspectPosition.set(narrow ? 0 : -1.2, narrow ? 2.3 : 1.56, narrow ? 0.15 : 0);
+      inspectCameraPosition.set(narrow ? 0 : -0.6, narrow ? 2.46 : 1.68, narrow ? 3.3 : 5.25);
       inspectCameraTarget.copy(inspectPosition);
 
       if (narrow) {
@@ -6527,7 +6529,7 @@
       viewHeight = window.innerHeight;
       configureResponsiveTargets();
       renderer.setSize(viewWidth, viewHeight, false);
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, viewWidth < 820 ? 2.5 : 3));
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, viewWidth < 820 ? 2.5 : 4));
       camera.aspect = viewWidth / viewHeight;
       camera.updateProjectionMatrix();
 
