@@ -1589,14 +1589,18 @@
         align-self: center;
       }
 
-      /* Mobile: show a compact, scrollable detail panel with content + page navigation */
+      /* Mobile: show a compact, scrollable detail panel with content + page navigation.
+         Meta-list (details) is hidden on mobile — user requested content only. */
       .detail-panel > .eyebrow,
       .detail-panel > .detail-title,
       .detail-panel > .detail-deck,
-      .detail-panel > .meta-list,
       .detail-panel > .page-navigation,
       .detail-panel > .detail-controls > .microcopy {
         display: revert !important;
+      }
+
+      .detail-panel > .meta-list {
+        display: none !important;
       }
 
       .detail-panel > .detail-deck {
@@ -1613,13 +1617,43 @@
         width: auto;
         max-height: 50vh;
         padding: 20px 18px 16px;
-        background: rgba(244, 237, 220, 0.95);
+        background: rgba(244, 237, 220, 0.97);
         border: 1px solid rgba(49, 38, 28, 0.18);
         border-radius: 12px;
         box-shadow: 0 12px 40px rgba(56, 36, 21, 0.15);
         backdrop-filter: blur(10px);
         overflow-y: auto;
         transform: none !important;
+        color: #2a1a10;
+      }
+
+      .detail-panel .eyebrow,
+      .detail-panel .detail-title,
+      .detail-panel .detail-deck,
+      .detail-panel .meta-list,
+      .detail-panel .meta-list dt,
+      .detail-panel .meta-list dd,
+      .detail-panel .page-status,
+      .detail-panel .microcopy {
+        color: #2a1a10;
+      }
+
+      .detail-panel .meta-list {
+        border-top-color: rgba(42, 26, 16, 0.18);
+      }
+
+      .detail-panel .page-navigation {
+        border-top-color: rgba(42, 26, 16, 0.18);
+      }
+
+      .detail-panel .page-button {
+        border-color: rgba(42, 26, 16, 0.35);
+        color: #2a1a10;
+      }
+
+      .detail-panel .page-button:not(:disabled):hover {
+        color: var(--paper);
+        background: #2a1a10;
       }
 
       .mode-detail .detail-panel {
@@ -1703,6 +1737,19 @@
         right: auto;
         margin-left: 0;
         z-index: 60;
+        padding: 6px 16px;
+        border: 1px solid rgba(244, 238, 230, 0.4);
+        background: rgba(23, 26, 36, 0.85);
+        color: var(--ink);
+        font-size: 0.8rem;
+        backdrop-filter: blur(8px);
+      }
+
+      /* Mobile: make login close button clearly visible */
+      .login-card .close-button {
+        width: 40px !important;
+        height: 40px !important;
+        font-size: 1.4rem !important;
       }
     }
 
@@ -2011,10 +2058,10 @@
   <!-- Login overlay -->
   <div class="login-overlay" id="login-overlay" hidden>
     <div class="login-card">
-      <button class="close-button" id="login-close" type="button" aria-label="Close login" style="position:absolute;top:10px;right:10px;width:32px;height:32px;border:1px solid var(--rule);border-radius:50%;background:transparent;color:var(--ink);cursor:pointer;display:grid;place-items:center;font-size:1.1rem;line-height:1; padding:0;">&times;</button>
+      <button class="close-button" id="login-close" type="button" aria-label="Close login" style="position:absolute;top:10px;right:10px;width:36px;height:36px;border:1px solid rgba(244,238,230,0.4);border-radius:50%;background:rgba(244,238,230,0.1);color:var(--ink);cursor:pointer;display:grid;place-items:center;font-size:1.2rem;line-height:1; padding:0; z-index:2;">&times;</button>
       <h2>Admin Login</h2>
       <form id="login-form">
-        <input type="password" id="login-password" placeholder="Password" autocomplete="current-password">
+        <input type="password" id="login-password" placeholder="Password" autocomplete="current-password" autocorrect="off" autocapitalize="off" spellcheck="false">
         <button type="submit">Enter</button>
       </form>
       <p class="login-error" id="login-error" hidden>Incorrect password.</p>
@@ -2101,7 +2148,6 @@
       </button>
       <p class="eyebrow" id="detail-eyebrow"></p>
       <h2 class="detail-title" id="detail-title"></h2>
-      <p class="detail-deck" id="detail-deck"></p>
       <dl class="meta-list">
         <div>
           <dt>Author</dt>
@@ -2120,6 +2166,7 @@
           <dd id="detail-motif"></dd>
         </div>
       </dl>
+      <p class="detail-deck" id="detail-deck"></p>
       <div class="page-navigation" role="group" aria-label="Browse sample pages">
         <button class="page-button" id="previous-page" type="button" aria-label="Previous sample page" disabled>
           <svg viewBox="0 0 16 16" aria-hidden="true"><path d="m10.5 3.5-4.5 4.5 4.5 4.5"></path></svg>
@@ -2216,7 +2263,7 @@
 
     loginForm.addEventListener("submit", (e) => {
       e.preventDefault();
-      if (loginPassword.value === ADMIN_PASSWORD) {
+      if (loginPassword.value.trim() === ADMIN_PASSWORD) {
         localStorage.setItem(AUTH_KEY, "true");
         isAuthenticated = true;
         hideLogin();
