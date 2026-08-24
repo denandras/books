@@ -1693,6 +1693,17 @@
       .page-status span {
         font-size: 0.48rem;
       }
+
+      /* Mobile: move Login button to left side so it doesn't overlap the
+         detail close button (which is fixed at top-right, z-index 50). */
+      .editorial-index .admin-btn {
+        position: fixed;
+        top: 22px;
+        left: 22px;
+        right: auto;
+        margin-left: 0;
+        z-index: 60;
+      }
     }
 
     @media (max-width: 560px) {
@@ -1868,6 +1879,7 @@
     }
 
     .login-card {
+      position: relative;
       width: min(320px, 86vw);
       padding: 32px 28px;
       background: var(--paper);
@@ -3711,10 +3723,12 @@
         const canvas = document.createElement("canvas");
         const logicalWidth = 512;
         const logicalHeight = 768;
-        canvas.width = 384;
-        canvas.height = 576;
+        // Use full 1:1 canvas resolution (was 384x576 with 0.75 scale) for
+        // sharper text on high-DPI mobile displays. The previous 3x attempt
+        // caused OOM; 1x is safe and still a 1.78x pixel count increase.
+        canvas.width = 512;
+        canvas.height = 768;
         const ctx = canvas.getContext("2d");
-        ctx.scale(0.75, 0.75);
         const random = seededRandom(hashSeed(`${book.id}-leaf-${pageIndex}`) + book.seed);
         drawPaperSurface(ctx, logicalWidth, logicalHeight, random);
         ctx.fillStyle = ink;
@@ -4820,10 +4834,11 @@
       const narrow = viewWidth < 820;
       // On narrow screens the books fill more of the viewport by moving the
       // camera closer (smaller Z distance) than on desktop.
-      shelfCameraPosition.set(0, narrow ? 2.02 : 1.92, narrow ? 6.0 : 8.1);
+      // Mobile zoom increased: Z 6.0 → 5.2 for shelf, inspect Z 3.8 → 3.3
+      shelfCameraPosition.set(0, narrow ? 2.02 : 1.92, narrow ? 5.2 : 8.1);
       shelfCameraTarget.set(0, narrow ? 1.57 : 1.55, 0);
       inspectPosition.set(narrow ? 0 : -1.5, narrow ? 2.3 : 1.56, narrow ? 0.15 : 0);
-      inspectCameraPosition.set(narrow ? 0 : -0.2, narrow ? 2.46 : 1.78, narrow ? 3.8 : 5.25);
+      inspectCameraPosition.set(narrow ? 0 : -0.2, narrow ? 2.46 : 1.78, narrow ? 3.3 : 5.25);
       inspectCameraTarget.copy(inspectPosition);
 
       if (narrow) {
@@ -6512,7 +6527,7 @@
       viewHeight = window.innerHeight;
       configureResponsiveTargets();
       renderer.setSize(viewWidth, viewHeight, false);
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, viewWidth < 820 ? 2 : 3));
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, viewWidth < 820 ? 2.5 : 3));
       camera.aspect = viewWidth / viewHeight;
       camera.updateProjectionMatrix();
 
