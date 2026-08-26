@@ -1627,10 +1627,10 @@
       .detail-panel {
         top: auto;
         right: 16px;
-        bottom: 80px;
+        bottom: 16px;
         left: 16px;
         width: auto;
-        max-height: 50vh;
+        max-height: 52vh;
         padding: 20px 18px 16px;
         background: rgba(244, 237, 220, 0.97);
         border: 1px solid rgba(49, 38, 28, 0.18);
@@ -1693,14 +1693,19 @@
       }
 
       .detail-controls {
-        position: fixed;
-        bottom: 18px;
-        right: 18px;
-        z-index: 50;
-        margin: 0;
-        padding: 0;
+        position: static;
+        bottom: auto;
+        right: auto;
+        z-index: auto;
+        margin: 14px 0 0;
+        padding: 12px 0 0;
         border: 0;
-        pointer-events: none;
+        border-top: 1px solid rgba(42, 26, 16, 0.18);
+        pointer-events: auto;
+      }
+
+      .detail-controls .microcopy {
+        display: none;
       }
 
       .detail-buttons {
@@ -1711,10 +1716,15 @@
       .detail-buttons .text-button {
         pointer-events: auto;
         opacity: 1 !important;
-        border: 1px solid rgba(244, 238, 230, 0.4) !important;
-        background: rgba(23, 26, 36, 0.85) !important;
-        color: var(--ink) !important;
-        backdrop-filter: blur(8px);
+        border: 1px solid rgba(42, 26, 16, 0.35) !important;
+        background: transparent !important;
+        color: #2a1a10 !important;
+        backdrop-filter: none;
+      }
+
+      .detail-buttons .text-button:not(:disabled):hover {
+        color: var(--paper) !important;
+        background: #2a1a10 !important;
       }
 
       /* Mobile: hide "Open" button and arrows, keep markers (dashes) */
@@ -1743,21 +1753,26 @@
         font-size: 0.48rem;
       }
 
-      /* Mobile: move Login button to left side so it doesn't overlap the
-         detail close button (which is fixed at top-right, z-index 50). */
+      /* Mobile: keep Login button on the right side, below the detail close
+         button area. The editorial-index is already right-aligned by default. */
       .editorial-index .admin-btn {
         position: fixed;
         top: 22px;
-        left: 22px;
-        right: auto;
+        right: 22px;
+        left: auto;
         margin-left: 0;
-        z-index: 60;
+        z-index: 40;
         padding: 6px 16px;
         border: 1px solid rgba(244, 238, 230, 0.4);
         background: rgba(23, 26, 36, 0.85);
         color: var(--ink);
         font-size: 0.8rem;
         backdrop-filter: blur(8px);
+      }
+
+      /* When detail panel is open, hide the login button behind the close button */
+      .mode-detail .editorial-index .admin-btn {
+        display: none;
       }
 
       /* Mobile: make login close button clearly visible */
@@ -4916,9 +4931,9 @@
       // On narrow screens the books fill more of the viewport by moving the
       // camera closer (smaller Z distance) than on desktop.
       // Mobile zoom increased: Z 6.0 → 5.2 for shelf, inspect Z 3.8 → 3.3
-      // Desktop: camera shifted left (-0.4) and lowered (1.92 → 1.78) for less
-      // inclination and so the book reads more to the right in the viewport.
-      shelfCameraPosition.set(narrow ? 0 : -0.85, narrow ? 2.02 : 1.78, narrow ? 5.2 : 7.2);
+      // Desktop: camera shifted left (-0.85) and closer (Z 6.4) for higher
+      // default zoom so content is readable without manual zoom-in.
+      shelfCameraPosition.set(narrow ? 0 : -0.85, narrow ? 2.02 : 1.78, narrow ? 5.2 : 6.4);
       shelfCameraTarget.set(0, narrow ? 1.57 : 1.55, 0);
       inspectPosition.set(narrow ? 0 : -1.2, narrow ? 2.3 : 1.56, narrow ? 0.15 : 0);
       inspectCameraPosition.set(narrow ? 0 : -0.6, narrow ? 2.46 : 1.68, narrow ? 3.3 : 5.25);
