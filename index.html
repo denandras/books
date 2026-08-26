@@ -449,20 +449,35 @@
       transform: translateY(-8px);
     }
 
-    .close-button {
-      position: absolute;
+    .detail-close-button {
+      position: fixed;
       top: 18px;
       right: 18px;
+      z-index: 50;
       display: grid;
       width: 38px;
       height: 38px;
       padding: 0;
       border-radius: 50%;
       place-items: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 400ms var(--ease-out);
+    }
+
+    .mode-detail .detail-close-button {
+      opacity: 1;
+      pointer-events: auto;
+      transition-delay: 300ms;
+    }
+
+    .mode-detail.is-opening .detail-close-button {
+      opacity: 0;
+      pointer-events: none;
     }
 
     .eyebrow {
-      margin: 0 46px 18px 0;
+      margin: 0 0 18px 0;
       color: var(--ink);
     }
 
@@ -1417,7 +1432,7 @@
     }
 
     .detail-title {
-      max-width: calc(100% - 28px);
+      max-width: 100%;
       font-size: clamp(3.5rem, 6.3vw, 6.7rem);
       font-weight: 400;
       letter-spacing: -0.065em;
@@ -1544,19 +1559,19 @@
       text-transform: uppercase;
     }
 
-    .close-button {
-      top: 7px;
-      right: 7px;
+    .detail-close-button {
+      top: 14px;
+      right: 14px;
       width: 42px;
       height: 42px;
       border: 1px solid color-mix(in srgb, var(--ink) 38%, transparent);
     }
 
-    .close-button:focus-visible {
+    .detail-close-button:focus-visible {
       outline-offset: 3px;
     }
 
-    .close-button:hover {
+    .detail-close-button:hover {
       color: var(--paper);
       background: var(--ink);
     }
@@ -1683,16 +1698,13 @@
         pointer-events: auto !important;
       }
 
-      .detail-panel .close-button {
-        position: fixed;
-        top: 18px;
-        right: 18px;
-        z-index: 50;
+      .detail-close-button {
         width: 44px;
         height: 44px;
         border: 1px solid rgba(244, 238, 230, 0.4) !important;
         background: rgba(23, 26, 36, 0.92) !important;
         color: var(--ink) !important;
+        backdrop-filter: none !important;
         pointer-events: auto !important;
         opacity: 1 !important;
       }
@@ -2169,6 +2181,10 @@
       </nav>
     </section>
 
+    <button class="close-button detail-close-button" id="close-detail" type="button" aria-label="Return book to shelf" aria-hidden="true" inert>
+      <svg viewBox="0 0 16 16" aria-hidden="true"><path d="m4 4 8 8M12 4l-8 8"></path></svg>
+    </button>
+
     <aside
       class="detail-panel"
       id="detail-panel"
@@ -2178,9 +2194,6 @@
       aria-hidden="true"
       inert
     >
-      <button class="close-button" id="close-detail" type="button" aria-label="Return book to shelf">
-        <svg viewBox="0 0 16 16" aria-hidden="true"><path d="m4 4 8 8M12 4l-8 8"></path></svg>
-      </button>
       <p class="eyebrow" id="detail-eyebrow"></p>
       <h2 class="detail-title" id="detail-title"></h2>
       <dl class="meta-list">
@@ -6237,6 +6250,8 @@
       updatePageControls(false);
       detailPanel.inert = false;
       detailPanel.setAttribute("aria-hidden", "false");
+      closeButton.inert = false;
+      closeButton.setAttribute("aria-hidden", "false");
       browseUi.inert = true;
       experience.classList.add("mode-detail", "is-opening");
       pointerLabel.setAttribute("aria-hidden", "true");
@@ -6371,6 +6386,8 @@
       experience.classList.remove("mode-detail");
       detailPanel.setAttribute("aria-hidden", "true");
       detailPanel.inert = true;
+      closeButton.setAttribute("aria-hidden", "true");
+      closeButton.inert = true;
       liveRegion.textContent = `Returning ${activeBook.data.title} to the shelf.`;
       if (reducedMotion) {
         finishClosing();
