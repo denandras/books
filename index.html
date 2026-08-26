@@ -505,6 +505,17 @@
     }
 
     /* Styling for the real HTML content rendered inside the detail panel */
+    .detail-deck a {
+      color: var(--accent);
+      text-decoration: underline;
+      text-decoration-color: color-mix(in srgb, var(--accent) 45%, transparent);
+      text-underline-offset: 2px;
+    }
+
+    .detail-deck a:hover {
+      color: color-mix(in srgb, var(--accent) 70%, var(--ink));
+    }
+
     .detail-deck .wikilink {
       color: color-mix(in srgb, var(--accent) 80%, var(--ink));
       font-style: italic;
@@ -1672,6 +1683,20 @@
       .detail-panel .detail-deck .book-section-title,
       .detail-panel .detail-deck pre {
         color: #3a2a1a !important;
+      }
+
+      .detail-panel .detail-deck a {
+        color: #8a4a28 !important;
+        text-decoration-color: rgba(138, 74, 40, 0.4) !important;
+      }
+
+      .detail-panel .detail-deck a:hover {
+        color: #5a2e18 !important;
+      }
+
+      .detail-panel .detail-deck .wikilink {
+        color: #8a4a28 !important;
+        border-bottom-color: rgba(138, 74, 40, 0.4) !important;
       }
 
       .detail-panel .page-status span,
