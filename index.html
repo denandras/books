@@ -2424,8 +2424,11 @@
       const isMobile = viewWidth < 820;
       // Fallback: draw on canvas while texture loads
       const canvas = document.createElement("canvas");
-      canvas.width = isMobile ? 512 : 768;
-      canvas.height = isMobile ? 768 : 1152;
+      // 512x768 on all platforms (was 768x1152 on desktop). The cover images
+      // are all under 350x500px source resolution, so 768x1152 was upscaled
+      // and wasted memory. 512x768 is still 2x the largest source image.
+      canvas.width = 512;
+      canvas.height = 768;
       const ctx = canvas.getContext("2d");
 
       // Fill with book color as base
@@ -3181,10 +3184,9 @@
     // Original makeCoverTexture removed — replaced by new implementation above.
 
     function makeFoilTexture(book) {
-      const isMobile = viewWidth < 820;
       const foilCanvas = document.createElement("canvas");
-      foilCanvas.width = isMobile ? 512 : 768;
-      foilCanvas.height = isMobile ? 768 : 1152;
+      foilCanvas.width = 512;
+      foilCanvas.height = 768;
       const ctx = foilCanvas.getContext("2d");
       const index = BOOKS.indexOf(book) + 1;
 
@@ -3794,7 +3796,10 @@
 
     function makeInteriorPageTextures(book) {
       const isMobile = viewWidth < 820;
-      const pageCount = isMobile ? 4 : 8;
+      // 4 interior pages on all platforms (was 8 on desktop). The reading
+      // view only shows PAGINATED_LEAF_COUNT=4 leaves anyway, so pages 5-8
+      // are never visible. This cuts ~72 MB of texture memory (12 books).
+      const pageCount = 4;
       const inkColor = new THREE.Color(book.color).lerp(new THREE.Color(0x211b16), 0.62);
       // Enforce sufficient contrast against the cream paper (#e8e1d3). If the
       // computed ink still reads too light, darken it further.
@@ -3808,8 +3813,7 @@
       const blocks = extractContentBlocks(book.content);
       const contentPages = paginateContent(blocks);
 
-      // Mobile: use smaller canvas (384x576) to stay within GPU memory limits.
-      // Desktop: full 512x768 for sharp text.
+      // 384x576 on mobile, 512x768 on desktop.
       const canvasW = isMobile ? 384 : 512;
       const canvasH = isMobile ? 576 : 768;
 
@@ -3988,8 +3992,8 @@
     function makeSpineTexture(book) {
       const isMobile = viewWidth < 820;
       const spineCanvas = document.createElement("canvas");
-      spineCanvas.width = isMobile ? 384 : 768;
-      spineCanvas.height = isMobile ? 768 : 1536;
+      spineCanvas.width = isMobile ? 384 : 512;
+      spineCanvas.height = isMobile ? 768 : 1024;
       const ctx = spineCanvas.getContext("2d");
       const random = seededRandom(hashSeed(`${book.id}-spine-cloth`) + book.seed);
       ctx.fillStyle = book.color;
@@ -4040,8 +4044,8 @@
     function makeSpineFoilTexture(book) {
       const isMobile = viewWidth < 820;
       const foilCanvas = document.createElement("canvas");
-      foilCanvas.width = isMobile ? 256 : 384;
-      foilCanvas.height = isMobile ? 768 : 1536;
+      foilCanvas.width = isMobile ? 256 : 256;
+      foilCanvas.height = isMobile ? 768 : 1024;
       const ctx = foilCanvas.getContext("2d");
 
       ctx.clearRect(0, 0, foilCanvas.width, foilCanvas.height);
@@ -4078,8 +4082,10 @@
     function makeBackCoverTexture(book) {
       const isMobile = viewWidth < 820;
       const backCanvas = document.createElement("canvas");
-      backCanvas.width = isMobile ? 512 : 768;
-      backCanvas.height = isMobile ? 768 : 1152;
+      // Back cover is barely visible (only when book is flipped). 512x768
+      // on all platforms saves ~41 MB vs 768x1152 on desktop.
+      backCanvas.width = 512;
+      backCanvas.height = 768;
       const ctx = backCanvas.getContext("2d");
       const random = seededRandom(hashSeed(`${book.id}-back-cloth`) + book.seed);
 
@@ -4125,10 +4131,9 @@
     }
 
     function makeBackFoilTexture(book) {
-      const isMobile = viewWidth < 820;
       const foilCanvas = document.createElement("canvas");
-      foilCanvas.width = isMobile ? 512 : 768;
-      foilCanvas.height = isMobile ? 768 : 1152;
+      foilCanvas.width = 512;
+      foilCanvas.height = 768;
       const ctx = foilCanvas.getContext("2d");
 
       ctx.clearRect(0, 0, foilCanvas.width, foilCanvas.height);
@@ -4233,9 +4238,12 @@
       const spineFoilTexture = makeSpineFoilTexture(book);
       const backCoverTexture = makeBackCoverTexture(book);
       const backFoilTexture = makeBackFoilTexture(book);
-      const foilEmbossTexture = isMobileRig ? null : makeEmbossMap(foilTexture, `${book.id}-front-foil-emboss`);
-      const spineEmbossTexture = isMobileRig ? null : makeEmbossMap(spineFoilTexture, `${book.id}-spine-foil-emboss`);
-      const backEmbossTexture = isMobileRig ? null : makeEmbossMap(backFoilTexture, `${book.id}-back-foil-emboss`);
+      // Emboss maps removed — they reuse the foil canvas as a bump map, which
+      // is a very subtle effect but each creates a separate GPU texture upload
+      // (~3.4 MB per map × 3 maps × 12 books = ~122 MB). Not worth the memory.
+      const foilEmbossTexture = null;
+      const spineEmbossTexture = null;
+      const backEmbossTexture = null;
       const cloth = new THREE.MeshPhysicalMaterial({
         color: book.color,
         normalMap: clothSurfaceMaps?.normal ?? null,
@@ -4931,9 +4939,9 @@
       // On narrow screens the books fill more of the viewport by moving the
       // camera closer (smaller Z distance) than on desktop.
       // Mobile zoom increased: Z 6.0 → 5.2 for shelf, inspect Z 3.8 → 3.3
-      // Desktop: camera shifted left (-0.85) and closer (Z 6.4) for higher
+      // Desktop: camera shifted left (-0.85) and closer (Z 5.5) for higher
       // default zoom so content is readable without manual zoom-in.
-      shelfCameraPosition.set(narrow ? 0 : -0.85, narrow ? 2.02 : 1.78, narrow ? 5.2 : 6.4);
+      shelfCameraPosition.set(narrow ? 0 : -0.85, narrow ? 2.02 : 1.78, narrow ? 5.2 : 5.5);
       shelfCameraTarget.set(0, narrow ? 1.57 : 1.55, 0);
       inspectPosition.set(narrow ? 0 : -1.2, narrow ? 2.3 : 1.56, narrow ? 0.15 : 0);
       inspectCameraPosition.set(narrow ? 0 : -0.6, narrow ? 2.46 : 1.68, narrow ? 3.3 : 5.25);
