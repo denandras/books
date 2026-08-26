@@ -1630,7 +1630,7 @@
       }
 
       .detail-panel > .meta-list {
-        display: none !important;
+        display: grid !important;
       }
 
       .detail-panel > .detail-deck {
@@ -1665,6 +1665,18 @@
       .detail-panel .page-status,
       .detail-panel .microcopy {
         color: #2a1a10;
+      }
+
+      /* Darken secondary text inside content for readability on cream */
+      .detail-panel .detail-deck .inline-field b,
+      .detail-panel .detail-deck .book-section-title,
+      .detail-panel .detail-deck pre {
+        color: #3a2a1a !important;
+      }
+
+      .detail-panel .page-status span,
+      .detail-panel .meta-list dt {
+        color: #3a2a1a !important;
       }
 
       .detail-panel .meta-list {
