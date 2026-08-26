@@ -497,6 +497,18 @@
       padding-bottom: 1px;
     }
 
+    .detail-deck .inline-field {
+      display: inline;
+    }
+
+    .detail-deck .inline-field b {
+      font-weight: 600;
+      color: var(--ink-soft);
+      font-size: 0.85em;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+
     .detail-deck .book-section-title {
       margin: 1.4em 0 0.35em;
       font-size: 0.72em;
@@ -2271,7 +2283,10 @@
         isAuthenticated = true;
         hideLogin();
         adminButton.hidden = true;
-        rebuildShelf();
+        // Reload the page so the shelf is rebuilt from scratch with the new
+        // auth state. Calling rebuildShelf() in-place leaves stale geometries
+        // and textures that collide with the new book rigs.
+        location.reload();
       } else {
         loginError.hidden = false;
         loginPassword.select();
@@ -2391,10 +2406,11 @@
         return coverTextureCache.get(book.id);
       }
 
+      const isMobile = viewWidth < 820;
       // Fallback: draw on canvas while texture loads
       const canvas = document.createElement("canvas");
-      canvas.width = 768;
-      canvas.height = 1152;
+      canvas.width = isMobile ? 512 : 768;
+      canvas.height = isMobile ? 768 : 1152;
       const ctx = canvas.getContext("2d");
 
       // Fill with book color as base
@@ -2524,11 +2540,16 @@
       // Rebuild
       buildMarkers();
 
-      bookRigs = BOOKS.map((book, index) => {
-        const rig = createBookRig(book, index);
-        shelfStage.add(rig.root);
-        return rig;
-      });
+      bookRigs = [];
+      for (let index = 0; index < BOOKS.length; index++) {
+        try {
+          const rig = createBookRig(BOOKS[index], index);
+          shelfStage.add(rig.root);
+          bookRigs.push(rig);
+        } catch (err) {
+          console.warn(`Skipping book "${BOOKS[index].id}" — texture creation failed:`, err);
+        }
+      }
 
       updateSelection(0, true);
       requestFrame();
@@ -3145,9 +3166,10 @@
     // Original makeCoverTexture removed — replaced by new implementation above.
 
     function makeFoilTexture(book) {
+      const isMobile = viewWidth < 820;
       const foilCanvas = document.createElement("canvas");
-      foilCanvas.width = 768;
-      foilCanvas.height = 1152;
+      foilCanvas.width = isMobile ? 512 : 768;
+      foilCanvas.height = isMobile ? 768 : 1152;
       const ctx = foilCanvas.getContext("2d");
       const index = BOOKS.indexOf(book) + 1;
 
@@ -3410,9 +3432,10 @@
     }
 
     function makeEndpaperTexture(book) {
+      const isMobile = viewWidth < 820;
       const canvas = document.createElement("canvas");
-      canvas.width = 512;
-      canvas.height = 768;
+      canvas.width = isMobile ? 384 : 512;
+      canvas.height = isMobile ? 576 : 768;
       const ctx = canvas.getContext("2d");
       const random = seededRandom(hashSeed(`${book.id}-endpaper`) + book.seed);
       drawPaperSurface(ctx, canvas.width, canvas.height, random);
@@ -3755,7 +3778,8 @@
     }
 
     function makeInteriorPageTextures(book) {
-      const pageCount = 8;
+      const isMobile = viewWidth < 820;
+      const pageCount = isMobile ? 4 : 8;
       const inkColor = new THREE.Color(book.color).lerp(new THREE.Color(0x211b16), 0.62);
       // Enforce sufficient contrast against the cream paper (#e8e1d3). If the
       // computed ink still reads too light, darken it further.
@@ -3769,15 +3793,17 @@
       const blocks = extractContentBlocks(book.content);
       const contentPages = paginateContent(blocks);
 
+      // Mobile: use smaller canvas (384x576) to stay within GPU memory limits.
+      // Desktop: full 512x768 for sharp text.
+      const canvasW = isMobile ? 384 : 512;
+      const canvasH = isMobile ? 576 : 768;
+
       return Array.from({ length: pageCount }, (_, pageIndex) => {
         const canvas = document.createElement("canvas");
-        const logicalWidth = 512;
-        const logicalHeight = 768;
-        // Use full 1:1 canvas resolution (was 384x576 with 0.75 scale) for
-        // sharper text on high-DPI mobile displays. The previous 3x attempt
-        // caused OOM; 1x is safe and still a 1.78x pixel count increase.
-        canvas.width = 512;
-        canvas.height = 768;
+        const logicalWidth = canvasW;
+        const logicalHeight = canvasH;
+        canvas.width = canvasW;
+        canvas.height = canvasH;
         const ctx = canvas.getContext("2d");
         const random = seededRandom(hashSeed(`${book.id}-leaf-${pageIndex}`) + book.seed);
         drawPaperSurface(ctx, logicalWidth, logicalHeight, random);
@@ -3945,9 +3971,10 @@
     }
 
     function makeSpineTexture(book) {
+      const isMobile = viewWidth < 820;
       const spineCanvas = document.createElement("canvas");
-      spineCanvas.width = 768;
-      spineCanvas.height = 1536;
+      spineCanvas.width = isMobile ? 384 : 768;
+      spineCanvas.height = isMobile ? 768 : 1536;
       const ctx = spineCanvas.getContext("2d");
       const random = seededRandom(hashSeed(`${book.id}-spine-cloth`) + book.seed);
       ctx.fillStyle = book.color;
@@ -3961,7 +3988,7 @@
       ctx.fillStyle = shade;
       ctx.fillRect(0, 0, spineCanvas.width, spineCanvas.height);
 
-      for (let thread = 0; thread < 1900; thread += 1) {
+      for (let thread = 0; thread < (isMobile ? 800 : 1900); thread += 1) {
         const x = random() * spineCanvas.width;
         const y = random() * spineCanvas.height;
         const vertical = random() > 0.42;
@@ -3996,9 +4023,10 @@
     }
 
     function makeSpineFoilTexture(book) {
+      const isMobile = viewWidth < 820;
       const foilCanvas = document.createElement("canvas");
-      foilCanvas.width = 384;
-      foilCanvas.height = 1536;
+      foilCanvas.width = isMobile ? 256 : 384;
+      foilCanvas.height = isMobile ? 768 : 1536;
       const ctx = foilCanvas.getContext("2d");
 
       ctx.clearRect(0, 0, foilCanvas.width, foilCanvas.height);
@@ -4033,9 +4061,10 @@
     }
 
     function makeBackCoverTexture(book) {
+      const isMobile = viewWidth < 820;
       const backCanvas = document.createElement("canvas");
-      backCanvas.width = 768;
-      backCanvas.height = 1152;
+      backCanvas.width = isMobile ? 512 : 768;
+      backCanvas.height = isMobile ? 768 : 1152;
       const ctx = backCanvas.getContext("2d");
       const random = seededRandom(hashSeed(`${book.id}-back-cloth`) + book.seed);
 
@@ -4050,7 +4079,7 @@
       ctx.fillStyle = edgeShade;
       ctx.fillRect(0, 0, backCanvas.width, backCanvas.height);
 
-      for (let thread = 0; thread < 2600; thread += 1) {
+      for (let thread = 0; thread < (isMobile ? 1000 : 2600); thread += 1) {
         const x = random() * backCanvas.width;
         const y = random() * backCanvas.height;
         const length = 5 + random() * 30;
@@ -4081,9 +4110,10 @@
     }
 
     function makeBackFoilTexture(book) {
+      const isMobile = viewWidth < 820;
       const foilCanvas = document.createElement("canvas");
-      foilCanvas.width = 768;
-      foilCanvas.height = 1152;
+      foilCanvas.width = isMobile ? 512 : 768;
+      foilCanvas.height = isMobile ? 768 : 1152;
       const ctx = foilCanvas.getContext("2d");
 
       ctx.clearRect(0, 0, foilCanvas.width, foilCanvas.height);
@@ -4175,10 +4205,11 @@
       const pageHeight = height - 0.068;
       const pageDepth = depth - 0.026;
 
+      const isMobileRig = viewWidth < 820;
       const coverTexture = makeCoverTexture(book);
       const foilTexture = makeFoilTexture(book);
-      const clothBumpTexture = makeClothBumpTexture(book);
-      const clothSurfaceMaps = makeClothSurfaceMaps(book);
+      const clothBumpTexture = isMobileRig ? null : makeClothBumpTexture(book);
+      const clothSurfaceMaps = isMobileRig ? null : makeClothSurfaceMaps(book);
       const paperFaceTexture = makePaperFaceTexture(book);
       const interiorPageTextures = makeInteriorPageTextures(book);
       const endpaperTexture = makeEndpaperTexture(book);
@@ -4187,14 +4218,14 @@
       const spineFoilTexture = makeSpineFoilTexture(book);
       const backCoverTexture = makeBackCoverTexture(book);
       const backFoilTexture = makeBackFoilTexture(book);
-      const foilEmbossTexture = makeEmbossMap(foilTexture, `${book.id}-front-foil-emboss`);
-      const spineEmbossTexture = makeEmbossMap(spineFoilTexture, `${book.id}-spine-foil-emboss`);
-      const backEmbossTexture = makeEmbossMap(backFoilTexture, `${book.id}-back-foil-emboss`);
+      const foilEmbossTexture = isMobileRig ? null : makeEmbossMap(foilTexture, `${book.id}-front-foil-emboss`);
+      const spineEmbossTexture = isMobileRig ? null : makeEmbossMap(spineFoilTexture, `${book.id}-spine-foil-emboss`);
+      const backEmbossTexture = isMobileRig ? null : makeEmbossMap(backFoilTexture, `${book.id}-back-foil-emboss`);
       const cloth = new THREE.MeshPhysicalMaterial({
         color: book.color,
-        normalMap: clothSurfaceMaps.normal,
+        normalMap: clothSurfaceMaps?.normal ?? null,
         normalScale: new THREE.Vector2(0.34, 0.34),
-        roughnessMap: clothSurfaceMaps.roughness,
+        roughnessMap: clothSurfaceMaps?.roughness ?? null,
         roughness: 0.98,
         metalness: 0.02,
         bumpMap: clothBumpTexture,
@@ -4206,9 +4237,9 @@
       });
       const coverArt = new THREE.MeshPhysicalMaterial({
         map: coverTexture,
-        normalMap: clothSurfaceMaps.normal,
+        normalMap: clothSurfaceMaps?.normal ?? null,
         normalScale: new THREE.Vector2(0.28, 0.28),
-        roughnessMap: clothSurfaceMaps.roughness,
+        roughnessMap: clothSurfaceMaps?.roughness ?? null,
         bumpMap: clothBumpTexture,
         bumpScale: 0.0035,
         roughness: 0.92,
@@ -4236,9 +4267,9 @@
       });
       const spineArt = new THREE.MeshPhysicalMaterial({
         map: spineTexture,
-        normalMap: clothSurfaceMaps.normal,
+        normalMap: clothSurfaceMaps?.normal ?? null,
         normalScale: new THREE.Vector2(0.3, 0.3),
-        roughnessMap: clothSurfaceMaps.roughness,
+        roughnessMap: clothSurfaceMaps?.roughness ?? null,
         bumpMap: clothBumpTexture,
         bumpScale: 0.004,
         roughness: 0.95,
@@ -4266,9 +4297,9 @@
       });
       const backArt = new THREE.MeshPhysicalMaterial({
         map: backCoverTexture,
-        normalMap: clothSurfaceMaps.normal,
+        normalMap: clothSurfaceMaps?.normal ?? null,
         normalScale: new THREE.Vector2(0.28, 0.28),
-        roughnessMap: clothSurfaceMaps.roughness,
+        roughnessMap: clothSurfaceMaps?.roughness ?? null,
         bumpMap: clothBumpTexture,
         bumpScale: 0.0035,
         roughness: 0.96,
@@ -4887,7 +4918,7 @@
       // Mobile zoom increased: Z 6.0 → 5.2 for shelf, inspect Z 3.8 → 3.3
       // Desktop: camera shifted left (-0.4) and lowered (1.92 → 1.78) for less
       // inclination and so the book reads more to the right in the viewport.
-      shelfCameraPosition.set(narrow ? 0 : -0.4, narrow ? 2.02 : 1.78, narrow ? 5.2 : 8.1);
+      shelfCameraPosition.set(narrow ? 0 : -0.85, narrow ? 2.02 : 1.78, narrow ? 5.2 : 7.2);
       shelfCameraTarget.set(0, narrow ? 1.57 : 1.55, 0);
       inspectPosition.set(narrow ? 0 : -1.2, narrow ? 2.3 : 1.56, narrow ? 0.15 : 0);
       inspectCameraPosition.set(narrow ? 0 : -0.6, narrow ? 2.46 : 1.68, narrow ? 3.3 : 5.25);
@@ -5256,7 +5287,10 @@
       // then content below. Fix escaped HTML entities from Obsidian export.
       if (book.content) {
         let html = book.content;
-        // Unescape HTML entities that were double-escaped in the source data
+        // Unescape HTML entities that were double-escaped in the source data.
+        // Some entries use &quot; for attribute quotes (e.g. inline-field spans),
+        // so unescape &quot; first, then the tag-level entities.
+        html = html.replace(/&quot;/g, '"');
         html = html.replace(/&lt;span class="wikilink"&gt;/g, '<span class="wikilink">');
         html = html.replace(/&lt;\/span&gt;/g, '</span>');
         html = html.replace(/&lt;em&gt;/g, '<em>');
@@ -5266,6 +5300,9 @@
         html = html.replace(/&lt;\/?code[^&]*&gt;/g, '');
         // Remove empty placeholder paragraphs like "idegenszo::" and "-"
         html = html.replace(/<p>\s*(idegenszo::|-)\s*<\/p>/g, '');
+        // Remove empty idegenszo placeholder paragraphs that contain only
+        // the inline-field wrapper with no content
+        html = html.replace(/<p>\s*<span class="inline-field">\s*<b>idegenszo<\/b>:\s*<\/span>\s*<\/p>/g, '');
         detailDeck.innerHTML = html;
       } else {
         detailDeck.textContent = book.deck;
@@ -6579,7 +6616,7 @@
       viewHeight = window.innerHeight;
       configureResponsiveTargets();
       renderer.setSize(viewWidth, viewHeight, false);
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, viewWidth < 820 ? 2.5 : 4));
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, viewWidth < 820 ? 2 : 4));
       camera.aspect = viewWidth / viewHeight;
       camera.updateProjectionMatrix();
 
@@ -6871,11 +6908,22 @@
       addLights();
       buildMarkers();
 
-      bookRigs = BOOKS.map((book, index) => {
-        const rig = createBookRig(book, index);
-        shelfStage.add(rig.root);
-        return rig;
-      });
+      // Build book rigs with per-book error isolation — if one book's texture
+      // creation throws (e.g. canvas OOM on a low-memory device), skip it
+      // instead of crashing the entire shelf.
+      bookRigs = [];
+      for (let index = 0; index < BOOKS.length; index++) {
+        try {
+          const rig = createBookRig(BOOKS[index], index);
+          shelfStage.add(rig.root);
+          bookRigs.push(rig);
+        } catch (err) {
+          console.warn(`Skipping book "${BOOKS[index].id}" — texture creation failed:`, err);
+        }
+      }
+      if (bookRigs.length === 0) {
+        throw new Error("No book rigs could be created — likely GPU memory exhaustion");
+      }
 
       updateSelection(0, true);
       resize();
