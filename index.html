@@ -1630,13 +1630,12 @@
         bottom: 16px;
         left: 16px;
         width: auto;
-        max-height: 52vh;
+        max-height: 80vh;
         padding: 20px 18px 16px;
         background: rgba(244, 237, 220, 0.97);
         border: 1px solid rgba(49, 38, 28, 0.18);
         border-radius: 12px;
         box-shadow: 0 12px 40px rgba(56, 36, 21, 0.15);
-        backdrop-filter: blur(10px);
         overflow-y: auto;
         transform: none !important;
         color: #2a1a10;
@@ -1655,6 +1654,13 @@
 
       .detail-panel .meta-list {
         border-top-color: rgba(42, 26, 16, 0.18);
+      }
+
+      /* Mobile: hide page navigation and open-book button — books are cover-only on mobile */
+      .detail-panel > .page-navigation,
+      .detail-panel > .detail-controls > .detail-buttons > #toggle-book,
+      .detail-panel > .detail-controls > .detail-buttons > #reset-view {
+        display: none !important;
       }
 
       .detail-panel .page-navigation {
@@ -1685,9 +1691,8 @@
         width: 44px;
         height: 44px;
         border: 1px solid rgba(244, 238, 230, 0.4) !important;
-        background: rgba(23, 26, 36, 0.85) !important;
+        background: rgba(23, 26, 36, 0.92) !important;
         color: var(--ink) !important;
-        backdrop-filter: blur(8px);
         pointer-events: auto !important;
         opacity: 1 !important;
       }
@@ -5360,12 +5365,15 @@
       pageLabel.textContent = readingOpen ? labels[currentSpread] : "Closed";
       pageCounter.textContent = readingOpen
         ? `${pad(currentSpread + 1)} / ${pad(SPREAD_COUNT)}`
-        : "Click book to open";
+        : (viewWidth < 880 ? "Cover view" : "Click book to open");
       toggleBookButton.textContent = readingOpen ? "Close book" : "Open book";
       toggleBookButton.setAttribute("aria-pressed", String(readingOpen));
-      detailMicrocopy.textContent = readingOpen
-        ? "Drag pages · Drag cover to close · Background to orbit"
-        : "Drag cover or click once to open · Background to orbit";
+      const isMobile = viewWidth < 880;
+      detailMicrocopy.textContent = isMobile
+        ? "Drag background to orbit"
+        : readingOpen
+          ? "Drag pages · Drag cover to close · Background to orbit"
+          : "Drag cover or click once to open · Background to orbit";
       previousPageButton.setAttribute(
         "aria-label",
         previousDisabled
@@ -5386,6 +5394,7 @@
 
     function setReadingOpen(open, announce = true) {
       if (mode !== "detail" || readingOpen === open) return;
+      if (open && viewWidth < 880) return;
       cancelPageDrag();
       readingOpen = open;
       audio.playCue(readingOpen ? "open" : "close");
@@ -5935,6 +5944,7 @@
       const coverSurface = coverSurfaceAtPointer();
       const pageSurface = readingOpen ? pageSurfaceAtPointer() : null;
       if (!coverSurface && !pageSurface) return;
+      if (!readingOpen && coverSurface && viewWidth < 880) return;
 
       event.preventDefault();
       event.stopImmediatePropagation();
@@ -6136,6 +6146,7 @@
       }
       if (mode === "detail" && !readingOpen && event.button === 0) {
         if (!detailPress.allowClick) return;
+        if (viewWidth < 880) return;
         detailPress.allowClick = false;
         setPointerFromEvent(event);
         if (!activeBookAtPointer()) return;
@@ -6678,7 +6689,7 @@
           event.preventDefault();
           openDetail(inspectButton);
           return;
-        } else if (mode === "detail" && !readingOpen) {
+        } else if (mode === "detail" && !readingOpen && viewWidth >= 880) {
           event.preventDefault();
           setReadingOpen(true);
           return;
