@@ -2582,10 +2582,11 @@
     // ============================================================
     // On mobile, cap the number of 3D book rigs to avoid GPU OOM.
     // 65 books × ~17 MB textures = ~1.1 GB — guaranteed crash on phones.
-    // 14 books × ~23 MB = ~322 MB — within mobile GPU limits (~384 MB ceiling).
-    // Previously 24, which pushed logged-in (all books) mobile usage to ~551 MB
-    // and caused tab crashes (OOM). 14 keeps it safely under the GPU budget.
-    const MOBILE_BOOK_CAP = 14;
+    // 20 books × ~12 MB = ~240 MB — within mobile GPU limits (~384 MB ceiling).
+    // Interior page textures are skipped on mobile (books can't be opened),
+    // cutting per-book cost from ~16 MB to ~12 MB. This allows a higher cap
+    // while staying well under the GPU budget.
+    const MOBILE_BOOK_CAP = 20;
 
     function getVisibleBooks() {
       let books = isAuthenticated
@@ -4329,8 +4330,14 @@
       const clothBumpTexture = isMobileRig ? null : makeClothBumpTexture(book);
       const clothSurfaceMaps = isMobileRig ? null : makeClothSurfaceMaps(book);
       const paperFaceTexture = makePaperFaceTexture(book);
-      const interiorPageTextures = makeInteriorPageTextures(book);
-      const endpaperTexture = makeEndpaperTexture(book);
+      // Interior page textures are skipped on mobile — books can't be opened
+      // there (open-book button is CSS-hidden), so these 4 textures/book
+      // (~4.5 MB/book with mipmaps) were wasted GPU memory.
+      const interiorPageTextures = isMobileRig ? [] : makeInteriorPageTextures(book);
+      // Endpaper textures are also per-book and only visible when a book is
+      // opened — skip on mobile to save ~1.1 MB/book. The endpaper material
+      // will fall back to its base color (book.color mixed with paper).
+      const endpaperTexture = isMobileRig ? null : makeEndpaperTexture(book);
       const pageEdgeTextures = makePageEdgeTextures(book);
       const spineTexture = makeSpineTexture(book);
       const spineFoilTexture = makeSpineFoilTexture(book);
@@ -4710,8 +4717,9 @@
         const leafOrder = 5 - pageIndex;
         let frontPageMaterial, backPageMaterial;
         if (isMobileView) {
-          // Mobile: all right (front) pages get sequential content, all left (back) pages blank
-          frontPageMaterial = leafOrder < 6 ? interiorPageMaterials[leafOrder] : blankPageMaterial;
+          // Mobile: no interior page textures — all pages use the blank
+          // (paper-textured) material. Books can't be opened on mobile.
+          frontPageMaterial = blankPageMaterial;
           backPageMaterial = blankPageMaterial;
         } else {
           frontPageMaterial = leafOrder < 4
