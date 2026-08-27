@@ -564,6 +564,45 @@
       margin: 0.28em 0;
     }
 
+    .detail-deck .task-item {
+      list-style: none;
+      display: flex;
+      align-items: baseline;
+      gap: 0.5em;
+    }
+
+    .detail-deck .task-item input[type="checkbox"] {
+      appearance: none;
+      -webkit-appearance: none;
+      width: 14px;
+      height: 14px;
+      min-width: 14px;
+      border: 1.5px solid color-mix(in srgb, var(--ink) 40%, transparent);
+      border-radius: 2px;
+      background: transparent;
+      cursor: default;
+      margin: 0;
+      position: relative;
+      top: 0.15em;
+    }
+
+    .detail-deck .task-item input[type="checkbox"]:checked {
+      background: color-mix(in srgb, var(--accent) 70%, transparent);
+      border-color: color-mix(in srgb, var(--accent) 70%, transparent);
+    }
+
+    .detail-deck .task-item input[type="checkbox"]:checked::after {
+      content: "";
+      position: absolute;
+      left: 3px;
+      top: 0px;
+      width: 4px;
+      height: 8px;
+      border: solid var(--paper);
+      border-width: 0 1.5px 1.5px 0;
+      transform: rotate(45deg);
+    }
+
     .detail-deck .book-preamble {
       margin-bottom: 0.6em;
     }
@@ -5766,6 +5805,11 @@
         // Remove empty idegenszo placeholder paragraphs that contain only
         // the inline-field wrapper with no content
         html = html.replace(/<p>\s*<span class="inline-field">\s*<b>idegenszo<\/b>:\s*<\/span>\s*<\/p>/g, '');
+        // Convert Markdown task list checkboxes to real checkbox inputs
+        // Pattern: <li>[ ] text → <li class="task"><input type="checkbox" disabled> text
+        //          <li>[x] text → <li class="task"><input type="checkbox" checked disabled> text
+        html = html.replace(/<li>\s*\[ \]\s*/g, '<li class="task-item"><input type="checkbox" disabled> ');
+        html = html.replace(/<li>\s*\[([xX])\]\s*/g, '<li class="task-item"><input type="checkbox" checked disabled> ');
         detailDeck.innerHTML = html;
       } else {
         detailDeck.textContent = book.deck;
