@@ -21,6 +21,7 @@ import urllib.request
 import urllib.error
 import hashlib
 import textwrap
+from io import BytesIO
 
 from PIL import Image, ImageDraw, ImageFont
 
@@ -78,6 +79,11 @@ def _download(url, dest_path):
             with urllib.request.urlopen(req, timeout=COVER_TIMEOUT) as resp:
                 data = resp.read()
             if len(data) < MIN_IMAGE_BYTES:
+                return False
+            # Validate that downloaded data is actually an image (not HTML/etc)
+            try:
+                Image.open(BytesIO(data)).verify()
+            except Exception:
                 return False
             # Determine extension from actual data
             ext = _determine_ext(url, data)

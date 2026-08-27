@@ -2477,11 +2477,11 @@
       const isMobile = viewWidth < 820;
       // Fallback: draw on canvas while texture loads
       const canvas = document.createElement("canvas");
-      // 512x768 on all platforms (was 768x1152 on desktop). The cover images
-      // are all under 350x500px source resolution, so 768x1152 was upscaled
-      // and wasted memory. 512x768 is still 2x the largest source image.
-      canvas.width = 512;
-      canvas.height = 768;
+      // 512x768 on desktop, 256x384 on mobile. Cover source images are
+      // all under 500x750px, so 256x384 on mobile is near-native with no
+      // visible quality loss on a phone screen.
+      canvas.width = isMobile ? 256 : 512;
+      canvas.height = isMobile ? 384 : 768;
       const ctx = canvas.getContext("2d");
 
       // Fill with book color as base
@@ -2490,14 +2490,15 @@
 
       // Draw title text as fallback
       ctx.fillStyle = book.foil;
-      ctx.font = `600 ${book.title.length > 20 ? 42 : 56}px "Iowan Old Style", Baskerville, Georgia, serif`;
+      const titleSize = isMobile ? (book.title.length > 20 ? 21 : 28) : (book.title.length > 20 ? 42 : 56);
+      ctx.font = `600 ${titleSize}px "Iowan Old Style", Baskerville, Georgia, serif`;
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
       // Wrap title
       const words = book.title.split(" ");
       const lines = [];
       let currentLine = "";
-      const maxWidth = canvas.width - 80;
+      const maxWidth = canvas.width - (isMobile ? 40 : 80);
       for (const word of words) {
         const testLine = currentLine ? currentLine + " " + word : word;
         if (ctx.measureText(testLine).width > maxWidth && currentLine) {
@@ -2516,14 +2517,14 @@
 
       // Author text below title
       if (book.author) {
-        ctx.font = '400 32px Inter, sans-serif';
+        ctx.font = `400 ${isMobile ? 16 : 32}px Inter, sans-serif`;
         ctx.fillStyle = book.foil;
-        ctx.fillText(book.author, canvas.width / 2, startY + lines.length * lineHeight + 40);
+        ctx.fillText(book.author, canvas.width / 2, startY + lines.length * lineHeight + (isMobile ? 20 : 40));
       }
 
       const texture = new THREE.CanvasTexture(canvas);
       texture.colorSpace = THREE.SRGBColorSpace;
-      texture.anisotropy = 16;
+      texture.anisotropy = isMobile ? 8 : 16;
       texture.minFilter = THREE.LinearMipmapLinearFilter;
       texture.magFilter = THREE.LinearFilter;
       texture.generateMipmaps = true;
@@ -2545,18 +2546,48 @@
           book.cover,
           (coverTex) => {
             coverTex.colorSpace = THREE.SRGBColorSpace;
-            coverTex.anisotropy = 16;
             coverTex.minFilter = THREE.LinearMipmapLinearFilter;
             coverTex.magFilter = THREE.LinearFilter;
             coverTex.generateMipmaps = true;
             coverTex.needsUpdate = true;
-            coverTextureCache.set(book.id, coverTex);
+
+            // On mobile, downscale the loaded cover image to 256x384 before
+            // GPU upload — the source images are ≤500x750px, and on a phone
+            // screen 256x384 is more than enough. This prevents the 4 oversized
+            // covers (previously 1280-1500px wide) from uploading ~14-18 MB
+            // textures each.
+            let finalTex = coverTex;
+            if (isMobile) {
+              const maxW = 256, maxH = 384;
+              const img = coverTex.image;
+              if (img && (img.width > maxW || img.height > maxH)) {
+                const scale = Math.min(maxW / img.width, maxH / img.height);
+                const dw = Math.round(img.width * scale);
+                const dh = Math.round(img.height * scale);
+                const smallCanvas = document.createElement("canvas");
+                smallCanvas.width = dw;
+                smallCanvas.height = dh;
+                const sctx = smallCanvas.getContext("2d");
+                sctx.drawImage(img, 0, 0, dw, dh);
+                finalTex = new THREE.CanvasTexture(smallCanvas);
+                finalTex.colorSpace = THREE.SRGBColorSpace;
+                finalTex.anisotropy = 8;
+                finalTex.minFilter = THREE.LinearMipmapLinearFilter;
+                finalTex.magFilter = THREE.LinearFilter;
+                finalTex.generateMipmaps = true;
+                finalTex.needsUpdate = true;
+                coverTex.dispose(); // free the full-res texture
+              }
+            }
+            finalTex.anisotropy = isMobile ? 8 : 16;
+
+            coverTextureCache.set(book.id, finalTex);
             // Update material map if book rig exists
             const rig = bookRigs.find((r) => r.data.id === book.id);
             if (rig && rig.materials) {
               const coverMat = rig.materials.find((m) => m && m.map === texture);
               if (coverMat) {
-                coverMat.map = coverTex;
+                coverMat.map = finalTex;
                 coverMat.needsUpdate = true;
               }
             }
@@ -2582,11 +2613,11 @@
     // ============================================================
     // On mobile, cap the number of 3D book rigs to avoid GPU OOM.
     // 65 books × ~17 MB textures = ~1.1 GB — guaranteed crash on phones.
-    // 20 books × ~12 MB = ~240 MB — within mobile GPU limits (~384 MB ceiling).
-    // Interior page textures are skipped on mobile (books can't be opened),
-    // cutting per-book cost from ~16 MB to ~12 MB. This allows a higher cap
-    // while staying well under the GPU budget.
-    const MOBILE_BOOK_CAP = 20;
+    // No mobile cap — all 65 books are rendered on every platform.
+    // Mobile textures are halved (256x384 vs 512x768) and interior/endpaper
+    // textures are skipped, keeping per-book GPU cost at ~3 MB.
+    // 65 books × 3 MB = ~195 MB + ~80 MB shared = ~275 MB total (under ~384 MB).
+    const MOBILE_BOOK_CAP = 999;
 
     function getVisibleBooks() {
       let books = isAuthenticated
@@ -3283,9 +3314,10 @@
     // Original makeCoverTexture removed — replaced by new implementation above.
 
     function makeFoilTexture(book) {
+      const isMobile = viewWidth < 820;
       const foilCanvas = document.createElement("canvas");
-      foilCanvas.width = 512;
-      foilCanvas.height = 768;
+      foilCanvas.width = isMobile ? 256 : 512;
+      foilCanvas.height = isMobile ? 384 : 768;
       const ctx = foilCanvas.getContext("2d");
       const index = BOOKS.indexOf(book) + 1;
 
@@ -3295,14 +3327,14 @@
       ctx.textAlign = "left";
       ctx.textBaseline = "alphabetic";
 
-      ctx.font = '500 15px Inter, "Helvetica Neue", Arial, sans-serif';
-      ctx.letterSpacing = "2.8px";
-      ctx.fillText(`BOOKSHELF  /  ${pad(index)}`, 58, 70);
+      ctx.font = `500 ${isMobile ? 8 : 15}px Inter, "Helvetica Neue", Arial, sans-serif`;
+      ctx.letterSpacing = isMobile ? "1.4px" : "2.8px";
+      ctx.fillText(`BOOKSHELF  /  ${pad(index)}`, isMobile ? 29 : 58, isMobile ? 35 : 70);
       ctx.globalAlpha = 0.7;
       ctx.lineWidth = 1;
       ctx.beginPath();
-      ctx.moveTo(58, 86);
-      ctx.lineTo(164, 86);
+      ctx.moveTo(isMobile ? 29 : 58, isMobile ? 43 : 86);
+      ctx.lineTo(isMobile ? 82 : 164, isMobile ? 43 : 86);
       ctx.stroke();
       ctx.globalAlpha = 1;
 
@@ -4091,8 +4123,8 @@
     function makeSpineTexture(book) {
       const isMobile = viewWidth < 820;
       const spineCanvas = document.createElement("canvas");
-      spineCanvas.width = isMobile ? 384 : 512;
-      spineCanvas.height = isMobile ? 768 : 1024;
+      spineCanvas.width = isMobile ? 256 : 512;
+      spineCanvas.height = isMobile ? 512 : 1024;
       const ctx = spineCanvas.getContext("2d");
       const random = seededRandom(hashSeed(`${book.id}-spine-cloth`) + book.seed);
       ctx.fillStyle = book.color;
@@ -4106,7 +4138,7 @@
       ctx.fillStyle = shade;
       ctx.fillRect(0, 0, spineCanvas.width, spineCanvas.height);
 
-      for (let thread = 0; thread < (isMobile ? 800 : 1900); thread += 1) {
+      for (let thread = 0; thread < (isMobile ? 200 : 1900); thread += 1) {
         const x = random() * spineCanvas.width;
         const y = random() * spineCanvas.height;
         const vertical = random() > 0.42;
@@ -4143,26 +4175,27 @@
     function makeSpineFoilTexture(book) {
       const isMobile = viewWidth < 820;
       const foilCanvas = document.createElement("canvas");
-      foilCanvas.width = isMobile ? 256 : 256;
-      foilCanvas.height = isMobile ? 768 : 1024;
+      foilCanvas.width = isMobile ? 128 : 256;
+      foilCanvas.height = isMobile ? 512 : 1024;
       const ctx = foilCanvas.getContext("2d");
 
       ctx.clearRect(0, 0, foilCanvas.width, foilCanvas.height);
       ctx.fillStyle = "#ffffff";
       ctx.strokeStyle = "#ffffff";
-      ctx.lineWidth = 2.4;
-      ctx.strokeRect(34, 38, foilCanvas.width - 68, foilCanvas.height - 76);
+      ctx.lineWidth = isMobile ? 1.2 : 2.4;
+      const m = isMobile ? 0.5 : 1;
+      ctx.strokeRect(34*m, 38*m, foilCanvas.width - 68*m, foilCanvas.height - 76*m);
 
       ctx.textAlign = "center";
       ctx.textBaseline = "middle";
-      ctx.font = '500 24px Inter, "Helvetica Neue", Arial, sans-serif';
-      ctx.letterSpacing = "5px";
-      ctx.fillText(book.roman, foilCanvas.width * 0.5, 118);
+      ctx.font = `500 ${isMobile ? 12 : 24}px Inter, "Helvetica Neue", Arial, sans-serif`;
+      ctx.letterSpacing = isMobile ? "2.5px" : "5px";
+      ctx.fillText(book.roman, foilCanvas.width * 0.5, 118*m);
 
       ctx.save();
       ctx.translate(foilCanvas.width * 0.5, foilCanvas.height * 0.5);
       ctx.rotate(Math.PI / 2);
-      ctx.font = `400 ${book.title.length > 10 ? 58 : 68}px "Iowan Old Style", Baskerville, Georgia, serif`;
+      ctx.font = `400 ${(book.title.length > 10 ? 58 : 68) * m}px "Iowan Old Style", Baskerville, Georgia, serif`;
       ctx.letterSpacing = "0px";
       ctx.fillText(book.title, 0, 0);
       ctx.restore();
@@ -4181,10 +4214,9 @@
     function makeBackCoverTexture(book) {
       const isMobile = viewWidth < 820;
       const backCanvas = document.createElement("canvas");
-      // Back cover is barely visible (only when book is flipped). 512x768
-      // on all platforms saves ~41 MB vs 768x1152 on desktop.
-      backCanvas.width = 512;
-      backCanvas.height = 768;
+      // 512x768 on desktop, 256x384 on mobile.
+      backCanvas.width = isMobile ? 256 : 512;
+      backCanvas.height = isMobile ? 384 : 768;
       const ctx = backCanvas.getContext("2d");
       const random = seededRandom(hashSeed(`${book.id}-back-cloth`) + book.seed);
 
@@ -4199,7 +4231,7 @@
       ctx.fillStyle = edgeShade;
       ctx.fillRect(0, 0, backCanvas.width, backCanvas.height);
 
-      for (let thread = 0; thread < (isMobile ? 1000 : 2600); thread += 1) {
+      for (let thread = 0; thread < (isMobile ? 250 : 2600); thread += 1) {
         const x = random() * backCanvas.width;
         const y = random() * backCanvas.height;
         const length = 5 + random() * 30;
@@ -4230,9 +4262,10 @@
     }
 
     function makeBackFoilTexture(book) {
+      const isMobile = viewWidth < 820;
       const foilCanvas = document.createElement("canvas");
-      foilCanvas.width = 512;
-      foilCanvas.height = 768;
+      foilCanvas.width = isMobile ? 256 : 512;
+      foilCanvas.height = isMobile ? 384 : 768;
       const ctx = foilCanvas.getContext("2d");
 
       ctx.clearRect(0, 0, foilCanvas.width, foilCanvas.height);
@@ -4241,26 +4274,26 @@
       ctx.textAlign = "left";
       ctx.textBaseline = "alphabetic";
 
-      ctx.font = '500 16px Inter, "Helvetica Neue", Arial, sans-serif';
-      ctx.letterSpacing = "3px";
-      ctx.fillText(`BOOKSHELF  /  ${book.roman}`, 68, 82);
+      ctx.font = `500 ${isMobile ? 8 : 16}px Inter, "Helvetica Neue", Arial, sans-serif`;
+      ctx.letterSpacing = isMobile ? "1.5px" : "3px";
+      ctx.fillText(`BOOKSHELF  /  ${book.roman}`, isMobile ? 34 : 68, isMobile ? 41 : 82);
       ctx.globalAlpha = 0.72;
-      ctx.fillRect(68, 108, 176, 2);
+      ctx.fillRect(isMobile ? 34 : 68, isMobile ? 54 : 108, isMobile ? 88 : 176, 2);
       ctx.globalAlpha = 1;
 
-      ctx.lineWidth = 1.5;
+      ctx.lineWidth = isMobile ? 0.75 : 1.5;
       for (let ring = 0; ring < 5; ring += 1) {
         ctx.globalAlpha = 0.24 - ring * 0.032;
         ctx.beginPath();
-        ctx.arc(548, 374, 74 + ring * 38, 0, Math.PI * 2);
+        ctx.arc(isMobile ? 274 : 548, isMobile ? 187 : 374, (isMobile ? 37 : 74) + ring * (isMobile ? 19 : 38), 0, Math.PI * 2);
         ctx.stroke();
       }
       ctx.globalAlpha = 1;
       ctx.beginPath();
-      ctx.moveTo(348, 374);
-      ctx.lineTo(704, 374);
-      ctx.moveTo(548, 174);
-      ctx.lineTo(548, 574);
+      ctx.moveTo(isMobile ? 174 : 348, isMobile ? 187 : 374);
+      ctx.lineTo(isMobile ? 352 : 704, isMobile ? 187 : 374);
+      ctx.moveTo(isMobile ? 274 : 548, isMobile ? 87 : 174);
+      ctx.lineTo(isMobile ? 274 : 548, isMobile ? 287 : 574);
       ctx.globalAlpha = 1;
 
       // No title/discipline text — cover image already has it
