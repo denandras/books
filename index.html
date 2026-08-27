@@ -2619,6 +2619,13 @@
     // 65 books × 3 MB = ~195 MB + ~80 MB shared = ~275 MB total (under ~384 MB).
     const MOBILE_BOOK_CAP = 999;
 
+    // Safety net: on mobile, only the first N books get full 3D rigs.
+    // Books beyond this get lightweight rigs (cover + spine + page block
+    // only, no foils/interior/endpaper/bump textures). This keeps GPU
+    // memory bounded even if the library grows to 100+ books.
+    // 40 full rigs × ~3 MB + 25 lightweight × ~0.5 MB = ~133 MB.
+    const MOBILE_3D_CAP = 40;
+
     function getVisibleBooks() {
       let books = isAuthenticated
         ? ALL_BOOKS
@@ -2691,7 +2698,10 @@
       bookRigs = [];
       for (let index = 0; index < BOOKS.length; index++) {
         try {
-          const rig = createBookRig(BOOKS[index], index);
+          const useLightweight = viewWidth < 820 && index >= MOBILE_3D_CAP;
+          const rig = useLightweight
+            ? createLightweightRig(BOOKS[index], index)
+            : createBookRig(BOOKS[index], index);
           shelfStage.add(rig.root);
           bookRigs.push(rig);
         } catch (err) {
@@ -4309,6 +4319,158 @@
       return mesh;
     }
 
+    // ============================================================
+    // Lightweight book rig — cover + spine only, no interior pages,
+    // no foils, no endpapers, no bump maps. Used for books beyond the
+    // MOBILE_3D_CAP safety net on mobile. Same return interface as
+    // createBookRig so the carousel animation code works unchanged.
+    // Per-book GPU cost: ~0.5 MB (one 256x384 cover texture) vs ~3 MB
+    // for a full mobile rig.
+    // ============================================================
+    function createLightweightRig(book, index) {
+      const isMobile = viewWidth < 820;
+      const width = book.width;
+      const height = book.height;
+      const depth = book.depth;
+      const board = 0.032;
+
+      const root = new THREE.Group();
+      root.name = `book-${book.id}`;
+      root.userData.index = index;
+
+      const motion = new THREE.Group();
+      motion.name = `${book.id}-motion`;
+      root.add(motion);
+
+      // Cover plane — just the cover texture on a flat plane
+      const coverTexture = makeCoverTexture(book);
+      const coverMaterial = new THREE.MeshPhysicalMaterial({
+        map: coverTexture,
+        color: new THREE.Color(book.color),
+        roughness: 0.92,
+        metalness: 0.03,
+        transparent: true,
+        side: THREE.DoubleSide
+      });
+
+      const coverGeometry = createRoundedPlaneGeometry(
+        width - 0.007,
+        height - 0.007,
+        0.0035
+      );
+      const frontCover = createMesh(coverGeometry, coverMaterial, `${book.id}-lw-cover`, false, false);
+      frontCover.position.set(0, 0, depth * 0.5 + board * 0.5);
+      motion.add(frontCover);
+
+      // Simple spine — flat box with spine color
+      const spineWidth = 0.082;
+      const spineGeometry = new RoundedBoxGeometry(
+        0.014,
+        height - 0.012,
+        depth + board * 1.88,
+        1,
+        0.0015
+      );
+      const spineMaterial = new THREE.MeshPhysicalMaterial({
+        color: new THREE.Color(book.color),
+        roughness: 0.95,
+        metalness: 0.02,
+        transparent: true
+      });
+      const spine = createMesh(spineGeometry, spineMaterial, `${book.id}-lw-spine`);
+      spine.position.x = -width * 0.5 - 0.005;
+      motion.add(spine);
+
+      // Simple page block (closed book — just a box)
+      const pageBlockMaterial = new THREE.MeshPhysicalMaterial({
+        color: 0xe7dfcf,
+        roughness: 0.95,
+        metalness: 0,
+        transparent: true
+      });
+      const pageBlock = createMesh(
+        new RoundedBoxGeometry(width - 0.074, height - 0.068, depth - 0.026, 2, 0.0025),
+        pageBlockMaterial,
+        `${book.id}-lw-pageblock`
+      );
+      pageBlock.position.x = 0.018;
+      motion.add(pageBlock);
+
+      // Hit target — same as full rig
+      const hitMaterial = new THREE.MeshBasicMaterial({
+        transparent: true,
+        opacity: 0,
+        depthWrite: false
+      });
+      const hit = createMesh(shared.box, hitMaterial, `${book.id}-hit-target`, false, false);
+      hit.scale.set(width * 1.34, height * 1.2, Math.max(depth * 4, 1));
+      hit.position.set(-spineWidth * 0.18, 0, 0.12);
+      hit.userData.index = index;
+      motion.add(hit);
+      hitTargets.push(hit);
+
+      // Contact shadow — same as full rig
+      const contactShadowMaterial = new THREE.MeshBasicMaterial({
+        color: new THREE.Color(book.palette.shelfDark),
+        alphaMap: makeContactShadowTexture(),
+        transparent: true,
+        opacity: 0.24,
+        depthWrite: false,
+        side: THREE.DoubleSide
+      });
+      const contactShadow = createMesh(
+        shared.plane,
+        contactShadowMaterial,
+        `${book.id}-contact-shadow`,
+        false,
+        false
+      );
+      contactShadow.scale.set(width * 1.22, depth * 2.05, 1);
+      contactShadow.rotation.x = -Math.PI * 0.5;
+      contactShadow.position.set(0, -height * 0.5 - 0.022, 0.025);
+      root.add(contactShadow);
+
+      // Front pivot — needed by animation code
+      const frontPivot = new THREE.Group();
+      frontPivot.name = `${book.id}-front-pivot`;
+      motion.add(frontPivot);
+
+      return {
+        data: book,
+        root,
+        motion,
+        frontPivot,
+        frontCover,
+        pageBlock,
+        pagePivots: [],
+        pageSurfaces: [],
+        pageGestureSurfaces: [pageBlock],
+        hit,
+        coverTexture,
+        foilTexture: null,
+        clothBumpTexture: null,
+        clothSurfaceMaps: null,
+        paperFaceTexture: null,
+        interiorPageTextures: [],
+        endpaperTexture: null,
+        pageEdgeTextures: null,
+        spineTexture: null,
+        spineFoilTexture: null,
+        backCoverTexture: null,
+        backFoilTexture: null,
+        foilEmbossTexture: null,
+        spineEmbossTexture: null,
+        backEmbossTexture: null,
+        contactShadow,
+        opacity: 1,
+        lastOffset: null,
+        lightweight: true,
+        fadeMaterials: [coverMaterial, spineMaterial, pageBlockMaterial],
+        materials: [coverMaterial, spineMaterial, pageBlockMaterial, contactShadowMaterial, hitMaterial],
+        base: { width, height, depth }
+      };
+    }
+
     function addTurnIns(pivot, book, side, width, height, insideZ, material) {
       const stripDepth = 0.002;
       const border = 0.018;
@@ -4333,6 +4495,127 @@
         strip.position.set(x, y, insideZ);
         pivot.add(strip);
       });
+    }
+
+    // ──────────────────────────────────────────────────────────────
+    // Flat cover rig: a lightweight stand-in for books beyond the 3D
+    // cap. It renders just the cover image on a plane with a thin spine
+    // edge, contact shadow, and hit target — enough to participate in
+    // the carousel, selection, and detail-panel metadata. No pages,
+    // interior, endpaper, or heavy geometry. ~1.5 MB vs ~3 MB per book.
+    // ──────────────────────────────────────────────────────────────
+    function createFlatCoverRig(book, index) {
+      const root = new THREE.Group();
+      root.name = `flat-${book.id}`;
+      root.userData.index = index;
+
+      const motion = new THREE.Group();
+      motion.name = `${book.id}-flat-motion`;
+      root.add(motion);
+
+      const width = book.width;
+      const height = book.height;
+      const depth = book.depth;
+      const isMobileRig = viewWidth < 820;
+
+      // Cover texture (same as full rig — async loads real image)
+      const coverTexture = makeCoverTexture(book);
+
+      // Cover plane — front face only
+      const coverGeo = new THREE.PlaneGeometry(width, height);
+      const coverMat = new THREE.MeshPhysicalMaterial({
+        map: coverTexture,
+        roughness: 0.92,
+        metalness: 0.035,
+        transparent: true,
+        side: THREE.FrontSide
+      });
+      const coverPlane = new THREE.Mesh(coverGeo, coverMat);
+      coverPlane.name = `${book.id}-flat-cover`;
+      coverPlane.castShadow = true;
+      coverPlane.receiveShadow = true;
+      coverPlane.position.set(0, 0, depth * 0.5);
+      motion.add(coverPlane);
+
+      // Thin spine edge — a slim box on the left side
+      const spineGeo = new THREE.BoxGeometry(0.014, height, depth);
+      const spineMat = new THREE.MeshPhysicalMaterial({
+        color: new THREE.Color(book.color),
+        roughness: 0.95,
+        metalness: 0.02,
+        transparent: true
+      });
+      const spineEdge = new THREE.Mesh(spineGeo, spineMat);
+      spineEdge.name = `${book.id}-flat-spine`;
+      spineEdge.castShadow = true;
+      spineEdge.receiveShadow = true;
+      spineEdge.position.set(-width * 0.5 - 0.007, 0, 0);
+      motion.add(spineEdge);
+
+      // Hit target — invisible box for raycasting
+      const hitMat = new THREE.MeshBasicMaterial({
+        transparent: true,
+        opacity: 0,
+        depthWrite: false
+      });
+      const hit = new THREE.Mesh(shared.box, hitMat);
+      hit.name = `${book.id}-flat-hit`;
+      hit.scale.set(width * 1.34, height * 1.2, Math.max(depth * 4, 1));
+      hit.position.set(-0.014 * 0.18, 0, 0.12);
+      hit.userData.index = index;
+      motion.add(hit);
+      hitTargets.push(hit);
+
+      // Contact shadow
+      const contactShadowMat = new THREE.MeshBasicMaterial({
+        color: new THREE.Color(book.palette.shelfDark),
+        alphaMap: makeContactShadowTexture(),
+        transparent: true,
+        opacity: 0.24,
+        depthWrite: false,
+        side: THREE.DoubleSide
+      });
+      const contactShadow = new THREE.Mesh(shared.plane, contactShadowMat);
+      contactShadow.name = `${book.id}-flat-shadow`;
+      contactShadow.scale.set(width * 1.22, depth * 2.05, 1);
+      contactShadow.rotation.x = -Math.PI * 0.5;
+      contactShadow.position.set(0, -height * 0.5 - 0.022, 0.025);
+      root.add(contactShadow);
+
+      return {
+        data: book,
+        root,
+        motion,
+        frontPivot: motion,      // no front cover pivot — idle anim on motion
+        frontCover: coverPlane,
+        pageBlock: null,
+        pagePivots: [],
+        pageSurfaces: [],
+        pageGestureSurfaces: [],
+        hit,
+        coverTexture,
+        foilTexture: null,
+        clothBumpTexture: null,
+        clothSurfaceMaps: null,
+        paperFaceTexture: null,
+        interiorPageTextures: [],
+        endpaperTexture: null,
+        pageEdgeTextures: null,
+        spineTexture: null,
+        spineFoilTexture: null,
+        backCoverTexture: null,
+        backFoilTexture: null,
+        foilEmbossTexture: null,
+        spineEmbossTexture: null,
+        backEmbossTexture: null,
+        contactShadow,
+        isFlatCover: true,
+        opacity: 1,
+        lastOffset: null,
+        fadeMaterials: [coverMat, spineMat, contactShadowMat, hitMat],
+        materials: [coverMat, spineMat, contactShadowMat, hitMat],
+        base: { width, height, depth }
+      };
     }
 
     function createBookRig(book, index) {
@@ -7086,7 +7369,10 @@
       bookRigs = [];
       for (let index = 0; index < BOOKS.length; index++) {
         try {
-          const rig = createBookRig(BOOKS[index], index);
+          const useLightweight = viewWidth < 820 && index >= MOBILE_3D_CAP;
+          const rig = useLightweight
+            ? createLightweightRig(BOOKS[index], index)
+            : createBookRig(BOOKS[index], index);
           shelfStage.add(rig.root);
           bookRigs.push(rig);
         } catch (err) {
