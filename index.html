@@ -2619,12 +2619,29 @@
     // 65 books × 3 MB = ~195 MB + ~80 MB shared = ~275 MB total (under ~384 MB).
     const MOBILE_BOOK_CAP = 999;
 
-    // Safety net: on mobile, only the first N books get full 3D rigs.
-    // Books beyond this get lightweight rigs (cover + spine + page block
-    // only, no foils/interior/endpaper/bump textures). This keeps GPU
-    // memory bounded even if the library grows to 100+ books.
-    // 40 full rigs × ~3 MB + 25 lightweight × ~0.5 MB = ~133 MB.
-    const MOBILE_3D_CAP = 40;
+    // GPU memory budget for mobile (340 MB). Shared textures (~80 MB for
+    // paper, page edges, wood, environment) are subtracted first, then the
+    // remaining budget is split between full 3D rigs (~3 MB each) and
+    // lightweight cover-only rigs (~0.5 MB each). The cap is computed at
+    // runtime so it auto-adjusts as the library grows — always staying
+    // within budget. Current 65 books all fit as full 3D (~275 MB).
+    const MOBILE_GPU_BUDGET_MB = 340;
+    const MOBILE_SHARED_MB = 80;
+    const MOBILE_FULL_RIG_MB = 3.0;
+    const MOBILE_LIGHT_RIG_MB = 0.5;
+
+    function computeMobile3DCap(totalBooks) {
+      const available = MOBILE_GPU_BUDGET_MB - MOBILE_SHARED_MB;
+      // If all books fit as full 3D, no cap needed
+      if (totalBooks * MOBILE_FULL_RIG_MB <= available) return totalBooks;
+      // Solve: cap * full + (total - cap) * light <= available
+      // cap * (full - light) <= available - total * light
+      const cap = Math.floor(
+        (available - totalBooks * MOBILE_LIGHT_RIG_MB) /
+        (MOBILE_FULL_RIG_MB - MOBILE_LIGHT_RIG_MB)
+      );
+      return Math.max(0, Math.min(cap, totalBooks));
+    }
 
     function getVisibleBooks() {
       let books = isAuthenticated
@@ -2696,9 +2713,10 @@
       buildMarkers();
 
       bookRigs = [];
+      const mobile3DCap = computeMobile3DCap(BOOKS.length);
       for (let index = 0; index < BOOKS.length; index++) {
         try {
-          const useLightweight = viewWidth < 820 && index >= MOBILE_3D_CAP;
+          const useLightweight = viewWidth < 820 && index >= mobile3DCap;
           const rig = useLightweight
             ? createLightweightRig(BOOKS[index], index)
             : createBookRig(BOOKS[index], index);
@@ -7367,9 +7385,10 @@
       // creation throws (e.g. canvas OOM on a low-memory device), skip it
       // instead of crashing the entire shelf.
       bookRigs = [];
+      const mobile3DCap = computeMobile3DCap(BOOKS.length);
       for (let index = 0; index < BOOKS.length; index++) {
         try {
-          const useLightweight = viewWidth < 820 && index >= MOBILE_3D_CAP;
+          const useLightweight = viewWidth < 820 && index >= mobile3DCap;
           const rig = useLightweight
             ? createLightweightRig(BOOKS[index], index)
             : createBookRig(BOOKS[index], index);
