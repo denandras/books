@@ -81,33 +81,6 @@
     "lent": false
   },
   {
-    "id": "karen-horney-a-neurozis-es-az-emberi-fejlodes",
-    "title": "A neurózis és az emberi fejlődés",
-    "author": "",
-    "cover": "covers/karen-horney-a-neurozis-es-az-emberi-fejlodes.jpg",
-    "content": "<div class=\"book-content\">\n<div class=\"book-section book-preamble\"><h1>üres</h1>\n<p><span class=\"wikilink\">Karen Horney</span></p></div>\n</div>",
-    "published": false,
-    "lent": false
-  },
-  {
-    "id": "bertrand-russell-a-nyugati-filozofia-tortenete",
-    "title": "A nyugati filozófia története",
-    "author": "",
-    "cover": "covers/bertrand-russell-a-nyugati-filozofia-tortenete.jpg",
-    "content": "<div class=\"book-content\">\n<div class=\"book-section book-preamble\"><h1>üres</h1>\n<p><span class=\"wikilink\">Bertrand Russell</span></p></div>\n</div>",
-    "published": false,
-    "lent": false
-  },
-  {
-    "id": "alex-comfort-a-szex-orome",
-    "title": "A szex öröme",
-    "author": "",
-    "cover": "covers/alex-comfort-a-szex-orome.jpg",
-    "content": "<div class=\"book-content\">\n<div class=\"book-section book-preamble\"><h1>üres</h1>\n<p><span class=\"wikilink\">Alex Comfort</span></p></div>\n</div>",
-    "published": false,
-    "lent": false
-  },
-  {
     "id": "andre-gide-a-vatikan-titka",
     "title": "A Vatikán titka",
     "author": "André Gide",
@@ -130,7 +103,7 @@
     "title": "Abszurd egypercesek",
     "author": "Anthony de Mello",
     "cover": "covers/anthony-de-mello-abszurd-egypercesek.jpg",
-    "content": "<div class=\"book-content\">\n<div class=\"book-section\" data-section=\"mentions\"><h3 class=\"book-section-title\">Említések</h3><p>-</p></div>\n<div class=\"book-section\" data-section=\"opinion\"><h3 class=\"book-section-title\">Vélemény</h3><p>-</p></div>\n<div class=\"book-section\" data-section=\"quotes\"><h3 class=\"book-section-title\">Idézetek</h3><blockquote class=\"book-quote\"><p>Minden azon múlik, hogy hogyan csináljuk. Az emberek olyanok, mint a virágok: a lágyan hulló harmatra nyitottak és befogadják, de a szakadó esőtől bezárulnak.</p></blockquote>\n\n<blockquote class=\"book-quote\"><p>Az emberek nem akarják feladni féltékenykedéseiket és szoromgásaikat, megbántottságukat és bűntudatukat, mert ezek a negatív érzelmek biztosítják számukra a &quot;tüzet&quot;, azt az érzést, hogy élnek.</p></blockquote></div>\n</div>",
+    "content": "<div class=\"book-content\">\n<div class=\"book-section\" data-section=\"mentions\"><h3 class=\"book-section-title\">Említések</h3><p>-</p></div>\n<div class=\"book-section\" data-section=\"opinion\"><h3 class=\"book-section-title\">Vélemény</h3><p>-</p></div>\n<div class=\"book-section\" data-section=\"quotes\"><h3 class=\"book-section-title\">Idézetek</h3><blockquote class=\"book-quote\"><p>Minden azon múlik, hogy hogyan csináljuk. Az emberek olyanok, mint a virágok: a lágyan hulló harmatra nyitottak és befogadják, de a szakadó esőtől bezárulnak.</p></blockquote>\n\n<blockquote class=\"book-quote\"><p>Az emberek nem akarják feladni féltékenykedéseiket és szorongásaikat, megbántottságukat és bűntudatukat, mert ezek a negatív érzelmek biztosítják számukra a &quot;tüzet&quot;, azt az érzést, hogy élnek.</p></blockquote></div>\n</div>",
     "published": false,
     "lent": false
   },
@@ -563,7 +536,7 @@
     "author": "Daniel Goleman",
     "cover": "covers/daniel-goleman-erzelmi-intelligencia.jpg",
     "content": "<div class=\"book-content\">\n<div class=\"book-section book-preamble\"><blockquote class=\"book-quote\"><p>Open Kiadó, 30 éves jubileumi kiadás</p></blockquote></div>\n<div class=\"book-section\" data-section=\"foreign-words\"><h3 class=\"book-section-title\">Idegen szavak</h3><p>idegenszo::</p></div>\n<div class=\"book-section\" data-section=\"mentions\"><h3 class=\"book-section-title\">Említések</h3><p>-</p></div>\n<div class=\"book-section\" data-section=\"opinion\"><h3 class=\"book-section-title\">Vélemény</h3><p>-</p></div>\n<div class=\"book-section\" data-section=\"quotes\"><h3 class=\"book-section-title\">Idézetek</h3></div>\n</div>",
-    "published": false,
+    "published": true,
     "lent": false
   },
   {
