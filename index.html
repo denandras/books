@@ -2580,9 +2580,22 @@
     // ============================================================
     // Filtering: public sees published only, admin sees all
     // ============================================================
+    // On mobile, cap the number of 3D book rigs to avoid GPU OOM.
+    // 65 books × ~17 MB textures = ~1.1 GB — guaranteed crash on phones.
+    // 14 books × ~23 MB = ~322 MB — within mobile GPU limits (~384 MB ceiling).
+    // Previously 24, which pushed logged-in (all books) mobile usage to ~551 MB
+    // and caused tab crashes (OOM). 14 keeps it safely under the GPU budget.
+    const MOBILE_BOOK_CAP = 14;
+
     function getVisibleBooks() {
-      if (isAuthenticated) return ALL_BOOKS;
-      return ALL_BOOKS.filter((b) => b.published);
+      let books = isAuthenticated
+        ? ALL_BOOKS
+        : ALL_BOOKS.filter((b) => b.published);
+      // Cap on mobile to prevent GPU memory exhaustion
+      if (viewWidth < 820 && books.length > MOBILE_BOOK_CAP) {
+        books = books.slice(0, MOBILE_BOOK_CAP);
+      }
+      return books;
     }
 
     function applyFilter() {
@@ -2600,6 +2613,38 @@
           // Dispose materials
           if (rig.materials) {
             rig.materials.filter(Boolean).forEach((material) => material.dispose());
+          }
+          // Dispose geometries — traversing the rig's root group
+          if (rig.root) {
+            rig.root.traverse((child) => {
+              if (child.isMesh && child.geometry) {
+                child.geometry.dispose();
+              }
+            });
+          }
+          // Dispose per-book textures (shared textures like paper face
+          // and page edges are NOT disposed here — they persist across rebuilds)
+          const texProps = [
+            "coverTexture", "foilTexture", "clothBumpTexture",
+            "interiorPageTextures", "endpaperTexture",
+            "spineTexture", "spineFoilTexture",
+            "backCoverTexture", "backFoilTexture",
+            "foilEmbossTexture", "spineEmbossTexture", "backEmbossTexture"
+          ];
+          texProps.forEach((prop) => {
+            const tex = rig[prop];
+            if (tex) {
+              if (Array.isArray(tex)) {
+                tex.filter(Boolean).forEach((t) => t.dispose());
+              } else {
+                tex.dispose();
+              }
+            }
+          });
+          // Dispose cloth surface maps (normal + roughness)
+          if (rig.clothSurfaceMaps) {
+            if (rig.clothSurfaceMaps.normal) rig.clothSurfaceMaps.normal.dispose();
+            if (rig.clothSurfaceMaps.roughness) rig.clothSurfaceMaps.roughness.dispose();
           }
         });
       }
