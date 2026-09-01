@@ -162,38 +162,11 @@
     "lent": false
   },
   {
-    "id": "t-s-eliot-burnt-norton-in-four-quartets",
-    "title": "Burnt Norton in Four Quartets",
-    "author": "",
-    "cover": "covers/t-s-eliot-burnt-norton-in-four-quartets.jpg",
-    "content": "<div class=\"book-content\">\n<div class=\"book-section book-preamble\"><h1>üres</h1>\n<p><span class=\"wikilink\">T S Eliot</span></p></div>\n</div>",
-    "published": false,
-    "lent": false
-  },
-  {
     "id": "yung-pueblo-clarity-connection",
     "title": "Clarity & Connection",
     "author": "Yung Pueblo",
     "cover": "covers/yung-pueblo-clarity-connection.jpg",
     "content": "<div class=\"book-content\">\n<div class=\"book-section\" data-section=\"quotes\"><h3 class=\"book-section-title\">Idézetek</h3><blockquote class=\"book-quote\"><p>we are seeing today and simultaneouely feeling all of our yesterdays</p></blockquote>\n\n<blockquote class=\"book-quote\"><p>the energy you most often repeat is the energy you will most easily connect with</p></blockquote></div>\n<div class=\"book-section\" data-section=\"opinion\"><h3 class=\"book-section-title\">Vélemény</h3><h4>2023-07-11</h4>\n<p>Az első 4 oldalon kitisztult számomra az egóm elhatalmasodása minden felett. Sokkal nyitottabnak kell lennem, magamból indulok ki folyton. Több pszichológiát olvasni, beszélgetni, hallgatni, befogadni, magamat is szemlélni.\nEgyszerre van meg bennem a kényszeres jó mutatása, a nehézségek tagadása és a vágy a képtelenre, a betetesült szerelemre, miért? A válasz az elfogadáson vezet. Elfogadji a vágyaimat reménytelenségével együtt.\nGyönyörű szó a szeretnék. Szeretnék szeretve lenni, de nem állok rá készen, mert az az én, amit adni tudnék nem elég nemes annak az embernek, akit szeretnék. Akit szeretek.</p></div>\n</div>",
-    "published": false,
-    "lent": false
-  },
-  {
-    "id": "jacques-choron-death-and-western-thought",
-    "title": "Death and Western Thought",
-    "author": "",
-    "cover": "covers/jacques-choron-death-and-western-thought.jpg",
-    "content": "<div class=\"book-content\">\n<div class=\"book-section book-preamble\"><h1>üres</h1>\n<p><span class=\"wikilink\">Jacues Choron</span></p></div>\n</div>",
-    "published": false,
-    "lent": false
-  },
-  {
-    "id": "ernest-becker-denial-of-death",
-    "title": "Denial of Death",
-    "author": "",
-    "cover": "covers/ernest-becker-denial-of-death.jpg",
-    "content": "<div class=\"book-content\">\n<div class=\"book-section book-preamble\"><h1>üres</h1>\n<p><span class=\"wikilink\">Ernest Becker</span></p></div>\n</div>",
     "published": false,
     "lent": false
   },
@@ -212,15 +185,6 @@
     "author": "Irvin D Yalom",
     "cover": "covers/irvin-d-yalom-egzisztencialis-pszichoterapia.jpg",
     "content": "<div class=\"book-content\">\n<div class=\"book-section book-preamble\"><ul>\n<li>4 rész<ul>\n<li>halál (leghosszabb)<ul>\n<li>milyen szerepe lehet a halálnak fizikailag egészséges páciensek terápiájában?</li>\n</ul>\n</li>\n<li>szabadság<ul>\n<li>életünk kétségtelen szerzői (<span class=\"wikilink\">Jean-Paul Sartre</span>)</li>\n<li>minden esetleges</li>\n</ul>\n</li>\n<li>elszigeteltség<ul>\n<li>egyedül jöttünk, egyedül megyünk</li>\n<li>&ldquo;egyetlen vigaszunk, amely a halálba elkísér, az a tudat, hogy jól éltünk&rdquo;</li>\n</ul>\n</li>\n<li>értelemnélküliség<ul>\n<li>az élet értelme, ha semmi sem állandó</li>\n<li><span class=\"wikilink\">Allen Wheelis</span> beszámolója a kutyájával való játékról</li>\n</ul>\n</li>\n</ul>\n</li>\n<li>klinikai megfigyelések, filozófusok és írók forrásainak bemutatása</li>\n<li><span class=\"wikilink\">Irvin D Yalom</span> nem akart önálló területet létrehozni a könyvvel</li>\n</ul></div>\n</div>",
-    "published": false,
-    "lent": false
-  },
-  {
-    "id": "rollo-may-existence",
-    "title": "Existence",
-    "author": "",
-    "cover": "covers/rollo-may-existence.jpg",
-    "content": "<div class=\"book-content\">\n<div class=\"book-section book-preamble\"><h1>üres</h1>\n<p><span class=\"wikilink\">Rollo May</span></p></div>\n</div>",
     "published": false,
     "lent": false
   },
@@ -518,15 +482,6 @@
     "author": "Samuel Beckett",
     "cover": "covers/samuel-beckett-watt.jpg",
     "content": "<div class=\"book-content\">\n<div class=\"book-section\" data-section=\"opinion\"><h3 class=\"book-section-title\">Vélemény</h3><ul>\n<li>teljesen őrült és indokolatlan</li>\n</ul></div>\n<div class=\"book-section\" data-section=\"quotes\"><h3 class=\"book-section-title\">Idézetek</h3><blockquote class=\"book-quote\"><p>éppoly valós volt, mint amennyire alaptalan 214</p></blockquote></div>\n</div>",
-    "published": false,
-    "lent": false
-  },
-  {
-    "id": "t-s-eliot-atokfoldje",
-    "title": "Átokföldje",
-    "author": "",
-    "cover": "covers/t-s-eliot-atokfoldje.jpg",
-    "content": "<div class=\"book-content\">\n<div class=\"book-section book-preamble\"><h1>üres</h1>\n<p><span class=\"wikilink\">T S Eliot</span></p></div>\n</div>",
     "published": false,
     "lent": false
   },
