@@ -396,6 +396,15 @@
     "lent": false
   },
   {
+    "id": "susanna-clarke-piranesi",
+    "title": "Piranesi",
+    "author": "Susanna Clarke",
+    "cover": "covers/susanna-clarke-piranesi.jpg",
+    "content": "<div class=\"book-content\">\n<div class=\"book-section\" data-section=\"foreign-words\"><h3 class=\"book-section-title\">Idegen szavak</h3><p>idegenszo::</p></div>\n<div class=\"book-section\" data-section=\"mentions\"><h3 class=\"book-section-title\">Említések</h3><p>-</p></div>\n<div class=\"book-section\" data-section=\"opinion\"><h3 class=\"book-section-title\">Vélemény</h3><p>-</p></div>\n<div class=\"book-section\" data-section=\"quotes\"><h3 class=\"book-section-title\">Idézetek</h3></div>\n</div>",
+    "published": false,
+    "lent": false
+  },
+  {
     "id": "henryk-sienkiewicz-quo-vadis",
     "title": "Quo vadis",
     "author": "Henryk Sienkiewicz",
