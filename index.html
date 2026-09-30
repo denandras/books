@@ -2350,11 +2350,15 @@
     import { RectAreaLightUniformsLib } from "three/addons/lights/RectAreaLightUniformsLib.js";
 
     // ============================================================
-    // Authentication: simple admin password, never-expiring localStorage
+    // Authentication: password-derived key (PBKDF2 → AES-256-GCM).
+    // The password is NEVER stored or shipped — it unlocks the encrypted
+    // private dataset (data/books-private.json.enc) after successful login.
+    // A wrong password = decryption failure = login error. The auth flag in
+    // localStorage only marks "previously unlocked on this device".
     // ============================================================
-    const ADMIN_PASSWORD = "Kr4t0mGuy!*trombone";
-    const AUTH_KEY = "bookshelf-auth";
+    const AUTH_KEY="***";
     const PENDING_PERMALINK_KEY = "bookshelf-pending-permalink";
+    const PRIVDATA_KEY = "bookshelf-privdata";
     const loginOverlay = document.querySelector("#login-overlay");
     const loginForm = document.querySelector("#login-form");
     const loginPassword = document.querySelector("#login-password");
@@ -2362,6 +2366,62 @@
     const adminButton = document.querySelector("#admin-button");
     const loginClose = document.querySelector("#login-close");
     let isAuthenticated = localStorage.getItem(AUTH_KEY) === "true";
+    let cachedEncArtifact = null; // fetched once per page load
+
+    async function fetchEncArtifact() {
+      if (cachedEncArtifact) return cachedEncArtifact;
+      const resp = await fetch("data/books-private.json.enc");
+      if (!resp.ok) {
+        throw new Error(`Encrypted dataset unavailable (HTTP ${resp.status})`);
+      }
+      cachedEncArtifact = await resp.json();
+      return cachedEncArtifact;
+    }
+
+    async function deriveUnlockKey(password, saltB64, iterations) {
+      const enc = new TextEncoder();
+      const keyMat = await crypto.subtle.importKey(
+        "raw", enc.encode(password), "PBKDF2", false, ["deriveKey"]
+      );
+      return crypto.subtle.deriveKey(
+        {
+          name: "PBKDF2",
+          salt: Uint8Array.from(atob(saltB64), (c) => c.charCodeAt(0)),
+          iterations,
+          hash: "SHA-256",
+        },
+        keyMat,
+        { name: "AES-GCM", length: 256 },
+        false,
+        ["decrypt"]
+      );
+    }
+
+    function b64ToBytes(b64) {
+      const bin = atob(b64);
+      const out = new Uint8Array(bin.length);
+      for (let i = 0; i < bin.length; i++) out[i] = bin.charCodeAt(i);
+      return out;
+    }
+
+    async function decryptPrivateData(password) {
+      const art = await fetchEncArtifact();
+      if (!art || art.kdf !== "pbkdf2-sha256") {
+        throw new Error("Unknown encryption format");
+      }
+      const key = await deriveUnlockKey(password, art.salt, art.iterations);
+      const joined = new Uint8Array(
+        b64ToBytes(art.ct).length + b64ToBytes(art.tag).length
+      );
+      joined.set(b64ToBytes(art.ct), 0);
+      joined.set(b64ToBytes(art.tag), b64ToBytes(art.ct).length);
+      const plainBuf = await crypto.subtle.decrypt(
+        { name: "AES-GCM", iv: b64ToBytes(art.iv) },
+        key,
+        joined
+      );
+      return JSON.parse(new TextDecoder().decode(plainBuf));
+    }
 
     function showLogin() {
       loginOverlay.hidden = false;
@@ -2389,19 +2449,31 @@
       if (e.target === loginOverlay) hideLogin();
     });
 
-    loginForm.addEventListener("submit", (e) => {
+    loginForm.addEventListener("submit", async (e) => {
       e.preventDefault();
-      if (loginPassword.value.trim() === ADMIN_PASSWORD) {
-        localStorage.setItem(AUTH_KEY, "true");
+      const password = loginPassword.value;
+      loginError.hidden = true;
+      // Wrong password = PBKDF2 derives the wrong key = AES-GCM decrypt throws.
+      // The password itself is never stored, compared, or shipped.
+      try {
+        const privData = await decryptPrivateData(password);
         isAuthenticated = true;
+        localStorage.setItem(AUTH_KEY, "true");
         hideLogin();
         adminButton.hidden = true;
         // Resolve the login source route:
         //  - #/login explicit visit        → reload into full shelf
         //  - #/book/<private-id> deep link → reload; initialize() then opens
-        //    the pending book (it's now visible in the unfiltered data).
+        //    the pending book (it's now unlocked).
         // Reload (not rebuildShelf) — stale geometries/textures must be dropped
-        // before the unfiltered rig set is built.
+        // before the unfiltered rig set is built. The decrypted payload is
+        // handed to the next page load via sessionStorage.
+        try {
+          sessionStorage.setItem(PRIVDATA_KEY, JSON.stringify(privData));
+        } catch (quotaErr) {
+          /* payload too large for sessionStorage — reload falls back to
+             re-entry of the password; acceptable rare path */
+        }
         if (pendingPermalinkId) {
           suppressHashSync = true;
           try {
@@ -2409,13 +2481,13 @@
           } catch (err) {
             window.location.hash = `#/book/${pendingPermalinkId}`;
           }
-          // reloadToPermalink is consumed after reload by initialize()
           sessionStorage.setItem(PENDING_PERMALINK_KEY, pendingPermalinkId);
           pendingPermalinkId = null;
           suppressHashSync = false;
         }
         location.reload();
-      } else {
+      } catch (err) {
+        console.warn("Login failed:", err && err.name);
         loginError.hidden = false;
         loginPassword.select();
       }
@@ -7495,23 +7567,32 @@
             .map((b) => b.id)
             .filter(Boolean);
         }
-        // Admin session: private books live only in the gitignored local copy.
-        // On the deployed site this file doesn't exist (404) → shelf stays
-        // public; on a local/proxied deployment the full shelf appears.
+        // Admin session: the login form decrypted data/books-private.json.enc
+        // (WebCrypto, PBKDF2→AES-GCM) and handed the payload here via
+        // sessionStorage. No plaintext password, no fetchable private file.
+        let privLoaded = false;
         if (isAuthenticated) {
           try {
-            const privResp = await fetch("data/books-private.json");
-            if (privResp.ok) {
-              const privData = await privResp.json();
+            const privRaw = sessionStorage.getItem(PRIVDATA_KEY);
+            if (privRaw) {
+              const privData = JSON.parse(privRaw);
               const privBooks = privData.books || [];
               if (privBooks.length > ALL_BOOKS.length) {
                 ALL_BOOKS = privBooks.map((raw, index) => mapBook(raw, index));
                 privateMetadataIds = [];
+                privLoaded = true;
               }
             }
           } catch (e) {
             /* private data unavailable — public shelf is the fallback */
           }
+        }
+        // Stale auth flag (sessionStorage payload gone — new session, quota
+        // eviction, different tab): demote to logged-out so the Login button
+        // shows again and private permalinks re-prompt.
+        if (isAuthenticated && !privLoaded) {
+          isAuthenticated = false;
+          localStorage.removeItem(AUTH_KEY);
         }
       } catch (error) {
         showFallback("Could not load books.json. The interactive shelf needs book data.");

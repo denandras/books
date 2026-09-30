@@ -27,6 +27,9 @@ VAULT_PATH = os.path.expanduser("~/obsidian")
 REPO_DIR = os.path.expanduser("~/repos/books")
 COVERS_DIR = os.path.join(REPO_DIR, "covers")
 OUTPUT_FILE = os.path.join(REPO_DIR, "books.json")
+# Private data: full list including notes — gitignored, local API only.
+# Never committed or deployed; the static site must never see this.
+PRIVATE_OUTPUT_FILE = os.path.join(REPO_DIR, "data", "books-private.json")
 
 SKIP_DIRS = {".obsidian", "Notion", "_templates", ".trash", ".git", "node_modules"}
 
@@ -364,14 +367,57 @@ def scan_vault(vault_path, covers_dir, skip_covers=False):
     return books, skipped
 
 
-def generate_books_json(books, output_file):
-    """Write books.json as a flat array."""
+def generate_books_json(books, output_file, private_output_file):
+    """Write public books.json (published only) + gitignored books-private.json.
+
+    Public file: only dg-publish:true books, WITH note content (they're
+    meant to be public). Private books are entirely absent from the deployed
+    JSON — a logged-out visitor cannot even discover their titles from it.
+
+    The full list (all books + content) goes to data/books-private.json,
+    which is gitignored and only consumed by the local API server.
+    Private entries have their content stripped to id/title/author/cover so
+    permalinks can resolve after login without leaking note text in the
+    initial payload.
+    """
+    published = [b for b in books if b["published"]]
+    # Private book stubs in the PUBLIC file: enough to detect "permalink
+    # exists but is locked" (login prompt) without leaking note content.
+    # Titles/authors/cover paths are public metadata (same info the physical
+    # shelf shows); the notes stay in books-private.json behind the API.
+    private_meta = []
+    for b in books:
+        if b["published"]:
+            continue
+        private_meta.append(
+            {k: b[k] for k in ("id", "title", "author", "cover", "published", "lent")}
+        )
+
     os.makedirs(os.path.dirname(output_file) or ".", exist_ok=True)
 
     with open(output_file, "w", encoding="utf-8") as f:
-        json.dump(books, f, ensure_ascii=False, indent=2)
+        json.dump(
+            {"books": published, "private_meta": private_meta},
+            f,
+            ensure_ascii=False,
+            indent=2,
+        )
 
-    print(f"\nWrote {len(books)} books -> {output_file}")
+    os.makedirs(os.path.dirname(private_output_file), exist_ok=True)
+    with open(private_output_file, "w", encoding="utf-8") as f:
+        json.dump(
+            {
+                "books": books,
+                "count": len(books),
+                "updated": datetime.now().isoformat(),
+            },
+            f,
+            ensure_ascii=False,
+            indent=2,
+        )
+
+    print(f"\nWrote {len(published)} published books (+{len(private_meta)} private stubs) -> {output_file}")
+    print(f"Wrote {len(books)} books (full, private) -> {private_output_file}")
 
 
 def print_summary(books, skipped):
@@ -414,10 +460,38 @@ def main():
     # Sort by title (case-insensitive)
     books.sort(key=lambda b: str(b["title"]).lower())
 
-    generate_books_json(books, output_file)
+    generate_books_json(books, output_file, PRIVATE_OUTPUT_FILE)
+    encrypt_private_artifact()
+
     print_summary(books, skipped)
 
     return books
+
+
+def encrypt_private_artifact():
+    """Re-encrypt data/books-private.json.enc after each scan.
+
+    Delegates to scripts/encrypt_private.py (subprocess isolates the crypto
+    dependency). Password comes from BOOKSHELF_ADMIN_PW env (same source the
+    api_server uses). Non-fatal: a failed re-encrypt leaves the previous
+    artifact deployed — stale, but functional for the next successful cycle.
+    """
+    import subprocess
+
+    encrypter = os.path.join(REPO_DIR, "scripts", "encrypt_private.py")
+    try:
+        result = subprocess.run(
+            [sys.executable, encrypter],
+            capture_output=True,
+            text=True,
+            timeout=60,
+        )
+        if result.returncode == 0:
+            print(f"Encrypted artifact: {result.stdout.strip().splitlines()[0]}")
+        else:
+            print(f"WARN: encrypt failed: {result.stderr.strip()[:200]}")
+    except Exception as e:
+        print(f"WARN: encrypt invocation failed: {e}")
 
 
 if __name__ == "__main__":
