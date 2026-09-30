@@ -91,6 +91,15 @@
       "lent": false
     },
     {
+      "id": "orkeny-istvan-novellak",
+      "title": "Novellák",
+      "author": "Örkény István",
+      "cover": "covers/orkeny-istvan-novellak.jpg",
+      "content": "<div class=\"book-content\">\n<div class=\"book-section book-preamble\"><blockquote class=\"book-quote\"><p>Szépirodalmi, Budapest, 1980 · Örkény István művei · keménytáblás · 472 oldal</p></blockquote>\n\n<h1>Novellák</h1></div>\n<div class=\"book-section\" data-section=\"foreign-words\"><h3 class=\"book-section-title\">Idegen szavak</h3><p>idegenszo::</p></div>\n<div class=\"book-section\" data-section=\"mentions\"><h3 class=\"book-section-title\">Említések</h3><p>-</p></div>\n<div class=\"book-section\" data-section=\"opinion\"><h3 class=\"book-section-title\">Vélemény</h3><p>-</p></div>\n<div class=\"book-section\" data-section=\"quotes\"><h3 class=\"book-section-title\">Idézetek</h3><blockquote class=\"book-quote\"><p>idezet:: Arcom színét sem váltotta, pillánat meg se rezzentette a látvány. Mint a fál a hóhatárig, érzelmek csak addig a pontig bírtak fölhatolni, ahol az élet nyomai még felismerhetők. Aminek már nincs köze a léthez, annak érzelmeinkhez sincs.</p></blockquote>\n\n<p>74</p>\n<blockquote class=\"book-quote\"><p>Aki átélt egy tűzvészt, és nem tudta, micsoda a tűz, érezheti magát ilyen bizonytalanul; mert aminek nincs neve, az majdnem nincs.</p></blockquote>\n\n<p>85</p></div>\n</div>",
+      "published": true,
+      "lent": false
+    },
+    {
       "id": "soltesz-bela-osztatlan-kozos",
       "title": "Osztatlan közös",
       "author": "Soltész Béla",
@@ -389,14 +398,6 @@
       "title": "Napok romjai",
       "author": "Kazuo Ishiguro",
       "cover": "covers/kazuo-ishiguro-napok-romjai.jpg",
-      "published": false,
-      "lent": false
-    },
-    {
-      "id": "orkeny-istvan-novellak",
-      "title": "Novellák",
-      "author": "Örkény István",
-      "cover": "covers/orkeny-istvan-novellak.jpg",
       "published": false,
       "lent": false
     },
