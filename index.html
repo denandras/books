@@ -2123,6 +2123,10 @@
       transition: color 200ms ease, border-color 200ms ease;
     }
 
+    .permalink-btn.copied {
+      color: var(--accent);
+    }
+
     .admin-btn:hover {
       color: var(--ink);
       border-color: var(--ink);
@@ -2304,6 +2308,7 @@
       <div class="detail-controls">
         <p class="microcopy">Drag cover or click once to open · Background to orbit</p>
         <div class="detail-buttons">
+          <button class="text-button reset-button permalink-btn" id="permalink-button" type="button" aria-label="Copy link to this book">Link</button>
           <button class="text-button reset-button" id="toggle-book" type="button" aria-pressed="false">Open book</button>
           <button class="text-button reset-button" id="reset-view" type="button">Reset view</button>
         </div>
@@ -2349,6 +2354,7 @@
     // ============================================================
     const ADMIN_PASSWORD = "Kr4t0mGuy!*trombone";
     const AUTH_KEY = "bookshelf-auth";
+    const PENDING_PERMALINK_KEY = "bookshelf-pending-permalink";
     const loginOverlay = document.querySelector("#login-overlay");
     const loginForm = document.querySelector("#login-form");
     const loginPassword = document.querySelector("#login-password");
@@ -2390,9 +2396,24 @@
         isAuthenticated = true;
         hideLogin();
         adminButton.hidden = true;
-        // Reload the page so the shelf is rebuilt from scratch with the new
-        // auth state. Calling rebuildShelf() in-place leaves stale geometries
-        // and textures that collide with the new book rigs.
+        // Resolve the login source route:
+        //  - #/login explicit visit        → reload into full shelf
+        //  - #/book/<private-id> deep link → reload; initialize() then opens
+        //    the pending book (it's now visible in the unfiltered data).
+        // Reload (not rebuildShelf) — stale geometries/textures must be dropped
+        // before the unfiltered rig set is built.
+        if (pendingPermalinkId) {
+          suppressHashSync = true;
+          try {
+            history.replaceState(null, "", `#/book/${pendingPermalinkId}`);
+          } catch (err) {
+            window.location.hash = `#/book/${pendingPermalinkId}`;
+          }
+          // reloadToPermalink is consumed after reload by initialize()
+          sessionStorage.setItem(PENDING_PERMALINK_KEY, pendingPermalinkId);
+          pendingPermalinkId = null;
+          suppressHashSync = false;
+        }
         location.reload();
       } else {
         loginError.hidden = false;
@@ -2401,10 +2422,170 @@
     });
 
     // ============================================================
+    // Permalink routing — hash-based URLs
+    //   #/book/<id>  → open that book's detail view
+    //   #/login      → open the login card
+    // Private books 403 client-side: content is filtered from the static
+    // build for logged-out visitors (see server-gating in watcher.py).
+    // ============================================================
+    let suppressHashSync = false;
+
+    function parseHashRoute() {
+      const raw = decodeURIComponent(window.location.hash.replace(/^#/, ""));
+      const bookMatch = raw.match(/^\/book\/([\w\-]+)$/);
+      if (bookMatch) return { kind: "book", id: bookMatch[1] };
+      if (raw === "/login") return { kind: "login" };
+      if (raw === "") return { kind: "root" };
+      return { kind: "unknown", raw };
+    }
+
+    function currentPermalink() {
+      const book = BOOKS[selectedIndex];
+      if (!book) return null;
+      return `#/book/${book.id}`;
+    }
+
+    function syncHashToSelection() {
+      if (suppressHashSync) return;
+      const link = currentPermalink();
+      if (!link) return;
+      if (window.location.hash !== link) {
+        suppressHashSync = true;
+        try {
+          history.replaceState(null, "", link);
+        } catch (e) {
+          window.location.hash = link;
+        }
+        suppressHashSync = false;
+      }
+    }
+
+    function clearHashRoute() {
+      if (suppressHashSync) return;
+      const route = parseHashRoute();
+      if (route.kind === "root") return;
+      suppressHashSync = true;
+      try {
+        history.replaceState(null, "", window.location.pathname + window.location.search);
+      } catch (e) {
+        window.location.hash = "";
+      }
+      suppressHashSync = false;
+    }
+
+    function findBookIndexById(id) {
+      return BOOKS.findIndex((b) => b.id === id);
+    }
+
+    function isBookBookInAnyList(id) {
+      return ALL_BOOKS.some((b) => b.id === id);
+    }
+
+    function onHashChange() {
+      if (suppressHashSync) return;
+      const route = parseHashRoute();
+      if (route.kind === "book") {
+        const idx = findBookIndexById(route.id);
+        if (idx < 0) {
+          // Private book (stripped from this shelf) → prompt login
+          if (isBookBookInAnyList(route.id) && !isAuthenticated) {
+            pendingPermalinkId = route.id;
+            showLogin();
+          }
+          return;
+        }
+        if (mode === "detail") {
+          // Same book → nothing. Different book → close, then reopen target.
+          if (BOOKS[selectedIndex]?.id === route.id) return;
+          closeDetail();
+          const waitReady = setInterval(() => {
+            if (mode === "hero") {
+              clearInterval(waitReady);
+              selectMarker(idx, null);
+              openDetail(null);
+            }
+          }, 120);
+          setTimeout(() => clearInterval(waitReady), 6000);
+        } else if (mode === "hero") {
+          selectMarker(idx, null);
+          openDetail(null);
+        }
+      } else if (route.kind === "root" || route.kind === "login") {
+        if (mode === "detail") {
+          // Back button from a permalink → return book to shelf
+          closeDetail();
+        }
+        if (route.kind === "login") showLogin();
+      }
+    }
+
+    function resolvePermalink(preventScroll = false) {
+      const route = parseHashRoute();
+      if (route.kind === "login") {
+        showLogin();
+        return;
+      }
+      if (route.kind !== "book") return;
+      const idx = findBookIndexById(route.id);
+      if (idx >= 0) {
+        selectMarker(idx, null, preventScroll);
+        const openNow = () => openDetail(preventScroll ? null : inspectButton);
+        if (mode === "hero") {
+          openNow();
+        } else if (mode === "detail") {
+          // Already in detail — only switch if target differs
+        }
+        pendingPermalinkId = null;
+        return;
+      }
+      // Book exists in full data but isn't on this shelf (private + logged out)
+      if (isBookBookInAnyList(route.id)) {
+        pendingPermalinkId = route.id;
+        showLogin();
+      }
+      // Unknown id: leave as-is (no state change).
+    }
+
+    async function copyPermalink() {
+      const link = `${window.location.origin}${window.location.pathname}${currentPermalink()}`;
+      try {
+        await navigator.clipboard.writeText(link);
+      } catch (err) {
+        // Fallback for non-secure contexts / older browsers
+        const input = document.createElement("input");
+        input.value = link;
+        document.body.appendChild(input);
+        input.select();
+        try { document.execCommand("copy"); } catch (e) { /* noop */ }
+        input.remove();
+      }
+      permalinkButton.classList.add("copied");
+      permalinkButton.textContent = "Copied";
+      liveRegion.textContent = "Link to this book copied to clipboard.";
+      setTimeout(() => {
+        permalinkButton.classList.remove("copied");
+        permalinkButton.textContent = "Link";
+      }, 1800);
+    }
+
+    function stripPrivateContent(book) {
+      // For unauthenticated visitors, keep title/author/cover but drop notes.
+      if (book.published) return book;
+      return {
+        ...book,
+        content: "",
+        deck: "",
+      };
+    }
+
+    // ============================================================
     // Book data: fetched from books.json, mapped to engine schema
     // ============================================================
     let BOOKS = [];
     let ALL_BOOKS = []; // unfiltered, kept for auth toggle
+    // Pending deep-link target — set when URL contains #/book/<id> for a
+    // private book while logged out; resolved after successful login.
+    let pendingPermalinkId = null;
     const textureLoader = new THREE.TextureLoader();
 
     // Color palette — deterministic from book id hash, no red
@@ -2789,6 +2970,7 @@
     const inspectButton = document.querySelector("#inspect");
     const closeButton = document.querySelector("#close-detail");
     const resetButton = document.querySelector("#reset-view");
+    const permalinkButton = document.querySelector("#permalink-button");
     const toggleBookButton = document.querySelector("#toggle-book");
     const previousPageButton = document.querySelector("#previous-page");
     const nextPageButton = document.querySelector("#next-page");
@@ -5766,6 +5948,7 @@
       paletteLabel.textContent = "";
       inspectButton.setAttribute("aria-label", `Open ${book.title}`);
       applyBookTheme(book);
+      syncHashToSelection();
       if (previousIndex !== selectedIndex) {
         audio.playCue("navigate");
       }
@@ -6144,7 +6327,7 @@
       if (delta > BOOKS.length / 2) delta -= BOOKS.length;
       if (delta < -BOOKS.length / 2) delta += BOOKS.length;
       targetPosition = rounded + delta;
-      focusReturnTarget = origin;
+      focusReturnTarget = origin || inspectButton;
       updateSelection(index, true);
       requestFrame();
     }
@@ -6713,6 +6896,7 @@
       activeBook = bookRigs[selectedIndex];
       activeBook.contactShadow.visible = false;
       populateDetail(activeBook.data);
+      syncHashToSelection();
       updatePageControls(false);
       detailPanel.inert = false;
       detailPanel.setAttribute("aria-hidden", "false");
@@ -6854,6 +7038,7 @@
       detailPanel.inert = true;
       closeButton.setAttribute("aria-hidden", "true");
       closeButton.inert = true;
+      syncHashToSelection();
       liveRegion.textContent = `Returning ${activeBook.data.title} to the shelf.`;
       if (reducedMotion) {
         finishClosing();
@@ -7339,8 +7524,31 @@
         return;
       }
 
-      // Apply auth-based filtering
+      // Apply auth-based filtering + resolve any deep-link route
       applyFilter();
+      resolvePermalink(true);
+      const pendingAfterLogin = sessionStorage.getItem(PENDING_PERMALINK_KEY);
+      if (pendingAfterLogin && isAuthenticated) {
+        sessionStorage.removeItem(PENDING_PERMALINK_KEY);
+        // Let the shelf finish building, then open the pending book once rigs
+        // are ready (openDetail is only valid in hero mode).
+        const targetId = pendingAfterLogin;
+        const tryOpen = () => {
+          const idx = findBookIndexById(targetId);
+          if (idx >= 0) {
+            selectMarker(idx, null, true);
+            openDetail(null);
+            return true;
+          }
+          return false;
+        };
+        if (!tryOpen()) {
+          const pollOpen = setInterval(() => {
+            if (tryOpen()) clearInterval(pollOpen);
+          }, 200);
+          setTimeout(() => clearInterval(pollOpen), 8000);
+        }
+      }
 
       // Admin button shown for unauthenticated users (optional login)
       if (!isAuthenticated) {
@@ -7472,6 +7680,7 @@
       canvas.addEventListener("webglcontextlost", handleContextLost);
       window.addEventListener("resize", resize);
       window.addEventListener("keydown", onKeyDown);
+      window.addEventListener("hashchange", onHashChange);
       window.addEventListener("blur", onWindowBlur);
       document.addEventListener("visibilitychange", onVisibilityChange);
       reducedMotionQuery.addEventListener("change", onReducedMotionChange);
@@ -7494,6 +7703,7 @@
       previousPageButton.addEventListener("click", () => turnPage(-1));
       nextPageButton.addEventListener("click", () => turnPage(1));
       resetButton.addEventListener("click", resetInspectionView);
+      permalinkButton.addEventListener("click", copyPermalink);
 
       renderer.render(scene, camera);
       loading.hidden = true;
