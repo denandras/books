@@ -2490,6 +2490,7 @@
           // Private book (stripped from this shelf) → prompt login
           if (isBookBookInAnyList(route.id) && !isAuthenticated) {
             pendingPermalinkId = route.id;
+            sessionStorage.setItem(PENDING_PERMALINK_KEY, route.id);
             showLogin();
           }
           return;
@@ -2528,13 +2529,7 @@
       if (route.kind !== "book") return;
       const idx = findBookIndexById(route.id);
       if (idx >= 0) {
-        selectMarker(idx, null, preventScroll);
-        const openNow = () => openDetail(preventScroll ? null : inspectButton);
-        if (mode === "hero") {
-          openNow();
-        } else if (mode === "detail") {
-          // Already in detail — only switch if target differs
-        }
+        selectMarker(idx, null);
         pendingPermalinkId = null;
         return;
       }
@@ -7524,31 +7519,8 @@
         return;
       }
 
-      // Apply auth-based filtering + resolve any deep-link route
+      // Apply auth-based filtering
       applyFilter();
-      resolvePermalink(true);
-      const pendingAfterLogin = sessionStorage.getItem(PENDING_PERMALINK_KEY);
-      if (pendingAfterLogin && isAuthenticated) {
-        sessionStorage.removeItem(PENDING_PERMALINK_KEY);
-        // Let the shelf finish building, then open the pending book once rigs
-        // are ready (openDetail is only valid in hero mode).
-        const targetId = pendingAfterLogin;
-        const tryOpen = () => {
-          const idx = findBookIndexById(targetId);
-          if (idx >= 0) {
-            selectMarker(idx, null, true);
-            openDetail(null);
-            return true;
-          }
-          return false;
-        };
-        if (!tryOpen()) {
-          const pollOpen = setInterval(() => {
-            if (tryOpen()) clearInterval(pollOpen);
-          }, 200);
-          setTimeout(() => clearInterval(pollOpen), 8000);
-        }
-      }
 
       // Admin button shown for unauthenticated users (optional login)
       if (!isAuthenticated) {
@@ -7656,6 +7628,40 @@
 
       updateSelection(0, true);
       resize();
+
+      // Deep-link routing — deferred until rigs exist because openDetail
+      // requires a valid bookRigs[selectedIndex]. Handles:
+      //   1. Direct visit with #/book/<id> in the URL
+      //   2. Post-login redirect (pendingPermalinkId set before reload)
+      //   3. #/login explicit visit (login card, no auto-open)
+      const initialRoute = parseHashRoute();
+      const pendingAfterLogin = sessionStorage.getItem(PENDING_PERMALINK_KEY);
+      if (pendingAfterLogin && isAuthenticated) {
+        sessionStorage.removeItem(PENDING_PERMALINK_KEY);
+      }
+      const permalinkTargetId =
+        initialRoute.kind === "book" ? initialRoute.id : pendingAfterLogin;
+      if (permalinkTargetId) {
+        const tryOpenPermalink = () => {
+          const idx = findBookIndexById(permalinkTargetId);
+          if (idx >= 0 && mode === "hero") {
+            selectMarker(idx, null);
+            openDetail(null);
+            return true;
+          }
+          return false;
+        };
+        if (!tryOpenPermalink()) {
+          const pollOpen = setInterval(() => {
+            if (tryOpenPermalink()) clearInterval(pollOpen);
+          }, 200);
+          setTimeout(() => clearInterval(pollOpen), 12000);
+        }
+      } else if (initialRoute.kind === "login") {
+        showLogin();
+      }
+      // Unknown/private-book deep link while logged out: resolvePermalink()
+      // already triggered the login prompt via onHashChange semantics.
 
       canvas.addEventListener("pointermove", onPointerMove);
       canvas.addEventListener("pointerleave", onPointerLeave);
