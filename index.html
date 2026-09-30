@@ -2477,7 +2477,8 @@
       return BOOKS.findIndex((b) => b.id === id);
     }
 
-    function isBookBookInAnyList(id) {
+    function isBookBookInAnyList(list, id) {
+      if (Array.isArray(list)) return list.some((b) => b === id || (b && b.id === id));
       return ALL_BOOKS.some((b) => b.id === id);
     }
 
@@ -2487,8 +2488,8 @@
       if (route.kind === "book") {
         const idx = findBookIndexById(route.id);
         if (idx < 0) {
-          // Private book (stripped from this shelf) → prompt login
-          if (isBookBookInAnyList(route.id) && !isAuthenticated) {
+          // Private book (not on this shelf) → prompt login
+          if (isBookBookInAnyList(privateMetadataIds, route.id) && !isAuthenticated) {
             pendingPermalinkId = route.id;
             sessionStorage.setItem(PENDING_PERMALINK_KEY, route.id);
             showLogin();
@@ -2520,27 +2521,6 @@
       }
     }
 
-    function resolvePermalink(preventScroll = false) {
-      const route = parseHashRoute();
-      if (route.kind === "login") {
-        showLogin();
-        return;
-      }
-      if (route.kind !== "book") return;
-      const idx = findBookIndexById(route.id);
-      if (idx >= 0) {
-        selectMarker(idx, null);
-        pendingPermalinkId = null;
-        return;
-      }
-      // Book exists in full data but isn't on this shelf (private + logged out)
-      if (isBookBookInAnyList(route.id)) {
-        pendingPermalinkId = route.id;
-        showLogin();
-      }
-      // Unknown id: leave as-is (no state change).
-    }
-
     async function copyPermalink() {
       const link = `${window.location.origin}${window.location.pathname}${currentPermalink()}`;
       try {
@@ -2563,21 +2543,14 @@
       }, 1800);
     }
 
-    function stripPrivateContent(book) {
-      // For unauthenticated visitors, keep title/author/cover but drop notes.
-      if (book.published) return book;
-      return {
-        ...book,
-        content: "",
-        deck: "",
-      };
-    }
-
     // ============================================================
     // Book data: fetched from books.json, mapped to engine schema
     // ============================================================
     let BOOKS = [];
     let ALL_BOOKS = []; // unfiltered, kept for auth toggle
+    // IDs of private (unpublished) books — from books.json' private_meta
+    // block. Enables "this permalink exists but is locked" detection.
+    let privateMetadataIds = [];
     // Pending deep-link target — set when URL contains #/book/<id> for a
     // private book while logged out; resolved after successful login.
     let pendingPermalinkId = null;
@@ -7513,7 +7486,33 @@
         const response = await fetch("books.json");
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         const rawData = await response.json();
-        ALL_BOOKS = rawData.map((raw, index) => mapBook(raw, index));
+        if (Array.isArray(rawData)) {
+          ALL_BOOKS = rawData.map((raw, index) => mapBook(raw, index));
+        } else {
+          // Envelope form: { books: [...], private_meta: [...] }
+          ALL_BOOKS = (rawData.books || []).map((raw, index) => mapBook(raw, index));
+          privateMetadataIds = (rawData.private_meta || [])
+            .map((b) => b.id)
+            .filter(Boolean);
+        }
+        // Admin session: private books live only in the gitignored local copy.
+        // On the deployed site this file doesn't exist (404) → shelf stays
+        // public; on a local/proxied deployment the full shelf appears.
+        if (isAuthenticated) {
+          try {
+            const privResp = await fetch("data/books-private.json");
+            if (privResp.ok) {
+              const privData = await privResp.json();
+              const privBooks = privData.books || [];
+              if (privBooks.length > ALL_BOOKS.length) {
+                ALL_BOOKS = privBooks.map((raw, index) => mapBook(raw, index));
+                privateMetadataIds = [];
+              }
+            }
+          } catch (e) {
+            /* private data unavailable — public shelf is the fallback */
+          }
+        }
       } catch (error) {
         showFallback("Could not load books.json. The interactive shelf needs book data.");
         return;
@@ -7521,6 +7520,20 @@
 
       // Apply auth-based filtering
       applyFilter();
+
+      // Capture incoming hash route BEFORE any updateSelection() call —
+      // updateSelection syncs the hash to the selected book (index 0), which
+      // would clobber the deep link at page load.
+      const initialRoute = parseHashRoute();
+      // #/login is a one-shot route — after the shelf loads, restore a clean
+      // URL so updateSelection's hash sync doesn't stamp a book permalink.
+      if (initialRoute.kind === "login" || initialRoute.kind === "unknown") {
+        suppressHashSync = true;
+        try {
+          history.replaceState(null, "", window.location.pathname + window.location.search);
+        } catch (e) { /* noop */ }
+        suppressHashSync = false;
+      }
 
       // Admin button shown for unauthenticated users (optional login)
       if (!isAuthenticated) {
@@ -7630,23 +7643,22 @@
       resize();
 
       // Deep-link routing — deferred until rigs exist because openDetail
-      // requires a valid bookRigs[selectedIndex]. Handles:
-      //   1. Direct visit with #/book/<id> in the URL
-      //   2. Post-login redirect (pendingPermalinkId set before reload)
-      //   3. #/login explicit visit (login card, no auto-open)
-      const initialRoute = parseHashRoute();
+      // requires a valid bookRigs[selectedIndex]. initialRoute was captured
+      // earlier (before updateSelection rewrote the hash).
       const pendingAfterLogin = sessionStorage.getItem(PENDING_PERMALINK_KEY);
       if (pendingAfterLogin && isAuthenticated) {
         sessionStorage.removeItem(PENDING_PERMALINK_KEY);
       }
       const permalinkTargetId =
         initialRoute.kind === "book" ? initialRoute.id : pendingAfterLogin;
+      let permalinkHandled = false;
       if (permalinkTargetId) {
         const tryOpenPermalink = () => {
           const idx = findBookIndexById(permalinkTargetId);
           if (idx >= 0 && mode === "hero") {
             selectMarker(idx, null);
             openDetail(null);
+            permalinkHandled = true;
             return true;
           }
           return false;
@@ -7656,12 +7668,27 @@
             if (tryOpenPermalink()) clearInterval(pollOpen);
           }, 200);
           setTimeout(() => clearInterval(pollOpen), 12000);
+          // If the book never lands on this shelf (private + logged out),
+          // prompt for the password so the post-login redirect can open it.
+          setTimeout(() => {
+            if (
+              !permalinkHandled &&
+              !isAuthenticated &&
+              isBookBookInAnyList(privateMetadataIds, permalinkTargetId)
+            ) {
+              pendingPermalinkId = permalinkTargetId;
+              sessionStorage.setItem(PENDING_PERMALINK_KEY, permalinkTargetId);
+              showLogin();
+            }
+          }, 2600);
         }
       } else if (initialRoute.kind === "login") {
         showLogin();
       }
-      // Unknown/private-book deep link while logged out: resolvePermalink()
-      // already triggered the login prompt via onHashChange semantics.
+      // Not-found permalink outcomes:
+      //  - Private book id (in privateMetadataIds, logged out) → login prompt,
+      //    post-login redirect re-opens it via PENDING_PERMALINK_KEY.
+      //  - Truly unknown id → shelf just loads at its first book.
 
       canvas.addEventListener("pointermove", onPointerMove);
       canvas.addEventListener("pointerleave", onPointerLeave);
