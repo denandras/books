@@ -2616,8 +2616,11 @@
     }
 
     // ============================================================
-    // Book data: fetched from books.json, mapped to engine schema
+    // Book data: fetched from S3 (books.json), mapped to engine schema
+    // Content (books.json + covers) is served from MinIO S3, NOT bundled
+    // with the site — git deploys only happen for code changes.
     // ============================================================
+    const S3_BOOKS_BASE = "https://s3.tb1.denandras.cloud/tb1/documents/009%20Egy%C3%A9b/Books/";
     let BOOKS = [];
     let ALL_BOOKS = []; // unfiltered, kept for auth toggle
     // IDs of private (unpublished) books — from books.json' private_meta
@@ -2686,7 +2689,7 @@
         id: raw.id,
         title: raw.title,
         author: raw.author,
-        cover: raw.cover,
+        cover: raw.cover ? S3_BOOKS_BASE + raw.cover : raw.cover,
         content: raw.content || "",
         published: raw.published || false,
         lent: raw.lent || false,
@@ -7555,7 +7558,7 @@
     async function initialize() {
       // Fetch books.json and map to engine schema
       try {
-        const response = await fetch("books.json");
+        const response = await fetch(S3_BOOKS_BASE + "books.json");
         if (!response.ok) throw new Error(`HTTP ${response.status}`);
         const rawData = await response.json();
         if (Array.isArray(rawData)) {
@@ -7862,7 +7865,7 @@
     // Populate static fallback grid immediately so it's ready if needed
     (async () => {
       try {
-        const resp = await fetch("books.json");
+        const resp = await fetch(S3_BOOKS_BASE + "books.json");
         if (!resp.ok) return;
         const data = await resp.json();
         const grid = document.querySelector("#static-fallback .fallback__grid");
