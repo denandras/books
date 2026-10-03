@@ -177,6 +177,18 @@ def extract_lent(fm):
     return False
 
 
+def extract_lent_to(fm):
+    """Extract borrower name from lent-to frontmatter (strip wikilinks).
+
+    Empty string = not lent / unknown borrower.
+    """
+    val = fm.get("lent-to", "")
+    if isinstance(val, list):
+        val = ", ".join(str(v) for v in val) if val else ""
+    val = str(val).replace("[[", "").replace("]]", "").strip()
+    return val
+
+
 def extract_title(fm, filename):
     """Extract title from frontmatter, fall back to filename."""
     title = fm.get("title", "")
@@ -310,6 +322,7 @@ def scan_vault(vault_path, covers_dir, skip_covers=False):
                 author = extract_author(fm)
                 published = extract_published(fm)
                 lent = extract_lent(fm)
+                lent_to = extract_lent_to(fm)
                 book_id = slugify_filename(fname)
                 cover_url = fm.get("cover", "")
                 if isinstance(cover_url, list):
@@ -355,6 +368,7 @@ def scan_vault(vault_path, covers_dir, skip_covers=False):
                     "content": content_html,
                     "published": published,
                     "lent": lent,
+                    "lent_to": lent_to,
                 }
 
                 print(f"  [{len(books)+1:3d}] {title[:50]:50s} cover={status}")
@@ -390,7 +404,7 @@ def generate_books_json(books, output_file, private_output_file):
         if b["published"]:
             continue
         private_meta.append(
-            {k: b[k] for k in ("id", "title", "author", "cover", "published", "lent")}
+            {k: b[k] for k in ("id", "title", "author", "cover", "published", "lent", "lent_to")}
         )
 
     os.makedirs(os.path.dirname(output_file) or ".", exist_ok=True)
@@ -425,12 +439,13 @@ def print_summary(books, skipped):
     published = sum(1 for b in books if b["published"])
     unpublished = len(books) - published
     lent = sum(1 for b in books if b["lent"])
+    lent_named = sum(1 for b in books if b.get("lent_to"))
 
     print(f"\n{'='*50}")
     print(f"  Total books:    {len(books)}")
     print(f"  Published:      {published}")
     print(f"  Unpublished:    {unpublished}")
-    print(f"  Lent:           {lent}")
+    print(f"  Lent:           {lent} ({lent_named} with name)")
     print(f"  Skipped (not books): {skipped}")
     print(f"  Updated:        {datetime.now().isoformat()}")
     print(f"{'='*50}")

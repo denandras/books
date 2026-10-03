@@ -2291,6 +2291,10 @@
           <dt>Motif</dt>
           <dd id="detail-motif"></dd>
         </div>
+        <div id="detail-lent-wrap" hidden>
+          <dt>Lent to</dt>
+          <dd id="detail-lent-to"></dd>
+        </div>
       </dl>
       <p class="detail-deck" id="detail-deck"></p>
       <div class="page-navigation" role="group" aria-label="Browse sample pages">
@@ -2693,6 +2697,7 @@
         content: raw.content || "",
         published: raw.published || false,
         lent: raw.lent || false,
+        lentTo: raw.lent_to || "",
         // Engine fields
         seed: seed,
         color: p.color,
@@ -3027,6 +3032,8 @@
     const detailFormat = document.querySelector("#detail-format");
     const detailTheme = document.querySelector("#detail-theme");
     const detailMotif = document.querySelector("#detail-motif");
+    const detailLentWrap = document.querySelector("#detail-lent-wrap");
+    const detailLentTo = document.querySelector("#detail-lent-to");
     const liveRegion = document.querySelector("#live-region");
     const pointerLabel = document.querySelector("#pointer-label");
     const pointerLabelIndex = document.querySelector("#pointer-label-index");
@@ -6044,6 +6051,13 @@
       detailFormat.textContent = book.format;
       detailTheme.textContent = book.theme;
       detailMotif.textContent = book.motif;
+      if (book.lent) {
+        detailLentWrap.hidden = false;
+        detailLentTo.textContent = book.lentTo || "—";
+      } else {
+        detailLentWrap.hidden = true;
+        detailLentTo.textContent = "";
+      }
       // Reset scroll position to top
       detailPanel.scrollTop = 0;
     }
