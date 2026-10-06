@@ -2374,7 +2374,7 @@
 
     async function fetchEncArtifact() {
       if (cachedEncArtifact) return cachedEncArtifact;
-      const resp = await fetch("data/books-private.json.enc");
+      const resp = await fetch(S3_BOOKS_BASE + "data/books-private.json.enc");
       if (!resp.ok) {
         throw new Error(`Encrypted dataset unavailable (HTTP ${resp.status})`);
       }

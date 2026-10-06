@@ -4,3 +4,11 @@ __pycache__/
 *.local
 data/books-private.json
 covers/private/
+# ─── Content (S3-only delivery channel) ───
+# books.json, covers/, and the encrypted private dataset are synced to
+# tb1/documents/009 Egyéb/Books/ via sync_s3.py. NEVER git-add them: git
+# pushes trigger Vercel deploys (free-tier daily cap) and a tracked copy
+# would shadow the live S3 content at the site root.
+books.json
+data/books-private.json.enc
+covers/
